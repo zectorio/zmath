@@ -1,0 +1,33 @@
+{
+  "name": "zmath",
+  "version": "0.0.1",
+  "description": "Math functionality for Zector",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
+    "test": "mocha build/zmath-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jay3sh/zmath.git"
+  },
+  "author": "Jayesh Salvi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jay3sh/zmath/issues"
+  },
+  "homepage": "https://github.com/jay3sh/zmath#readme",
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0",
+    "mocha": "^3.2.0",
+    "webpack": "^1.14.0"
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ]
+  }
+}
