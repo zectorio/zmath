@@ -101,4 +101,4 @@ const vec2 = {
 
 };
 
-export {vec2};
+export default vec2;
