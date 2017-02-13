@@ -1,5 +1,6 @@
 
 import {vec2} from '../..'
+import {AABB} from '../..'
 import Curve from './curve'
 
 class Line extends Curve {
@@ -10,19 +11,24 @@ class Line extends Curve {
     this.end = end;
   }
 
-  _evaluate(t) {
+  evaluate(t) {
     return vec2.add(
       this.start,
       vec2.mul(vec2.sub(this.end, this.start),t)
     );
   }
 
-  evaluate(t) {
-    if(Array.isArray(t)) {
-      return t.map(tsingle => this._evaluate(tsingle))
-    } else {
-      return this._evaluate(t);
-    }
+  aabb() {
+    return new AABB({
+      min: [
+        Math.min(this.start[0], this.end[0]),
+        Math.min(this.start[1], this.end[1])
+      ],
+      max: [
+        Math.max(this.start[0], this.end[0]),
+        Math.max(this.start[1], this.end[1])
+      ]
+    });
   }
 
   toString() {

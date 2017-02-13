@@ -50,6 +50,12 @@ class AABB {
     s += ' [min:'+vec2.format(this.min)+' -> max:'+vec2.format(this.max)+']';
     return s;
   }
+
+  toSVGRect() {
+    return `<rect x="${this.min[0]}" y="${this.min[1]}" `+
+      `width="${this.width()}" height="${this.height()}" `+
+      `style="fill:none;stroke:#888"></rect>`;
+  }
 }
 
 export default AABB;
