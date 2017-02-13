@@ -7,7 +7,7 @@ class Curve {
   /**
    * Evaluate the curve at parameter value `t`.
    * Abstract method - Sub-classes should implement it
-   * @param t
+   * @param t Number or array of numbers for multiple point evaluations
    */
   evaluate(t) {
     throw new Error('Not implemented');

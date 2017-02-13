@@ -10,11 +10,19 @@ class Line extends Curve {
     this.end = end;
   }
 
-  evaluate(t) {
+  _evaluate(t) {
     return vec2.add(
       this.start,
       vec2.mul(vec2.sub(this.end, this.start),t)
     );
+  }
+
+  evaluate(t) {
+    if(Array.isArray(t)) {
+      return t.map(tsingle => this._evaluate(tsingle))
+    } else {
+      return this._evaluate(t);
+    }
   }
 
   toString() {
@@ -31,6 +39,12 @@ class Line extends Curve {
       s += 'y = '+m.toFixed(2)+' x + '+c.toFixed(2);
     }
     return s;
+  }
+
+  toSVGPath() {
+    let [x0,y0] = this.start;
+    let [x1,y1] = this.end;
+    return `M ${x0},${y0} L ${x1},${y1}`;
   }
 
   generateMemento() {
