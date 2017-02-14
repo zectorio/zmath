@@ -47,7 +47,7 @@ class Line extends Curve {
     return s;
   }
 
-  toSVGPath() {
+  toSVGPathData() {
     let [x0,y0] = this.start;
     let [x1,y1] = this.end;
     return `M ${x0},${y0} L ${x1},${y1}`;
