@@ -78,6 +78,23 @@ class CubicBezier extends Bezier {
     });
   }
 
+  split(u) {
+    let [p0,p1,p2,p3] = this.cpoints;
+    let p01 = vec2.add(vec2.mul(p0,1-u), vec2.mul(p1,u));
+    let p12 = vec2.add(vec2.mul(p1,1-u), vec2.mul(p2,u));
+    let p23 = vec2.add(vec2.mul(p2,1-u), vec2.mul(p3,u));
+
+    let p012 = vec2.add(vec2.mul(p01,1-u), vec2.mul(p12,u));
+    let p123 = vec2.add(vec2.mul(p12,1-u), vec2.mul(p23,u));
+
+    let p0123 = vec2.add(vec2.mul(p012,1-u), vec2.mul(p123,u));
+
+    return [
+      new CubicBezier([p0,p01,p012,p0123]),
+      new CubicBezier([p0123,p123,p23,p3])
+    ];
+  }
+
   toSVGPathData() {
     let p = this.cpoints;
     return `M ${p[0][0]},${p[0][1]} `+

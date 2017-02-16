@@ -10,6 +10,8 @@ let points = [];
 points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
 points = points.concat(cbez3._getExtremes().map(t => cbez3.evaluate(t)));
 
+let [cbez3a,cbez3b] = cbez3.split(0.76);
+
 console.log(`
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
   <g>
@@ -26,6 +28,11 @@ console.log(`
     
     <path d="${cbez3.toSVGPathData()}" style="stroke:#000;fill:none"></path>
     ${cbez3.aabb().toSVGRect()}
+    
+    <!--
+    <path d="${cbez3a.toSVGPathData()}" style="stroke:#f00;fill:none"></path>
+    <path d="${cbez3b.toSVGPathData()}" style="stroke:#00f;fill:none"></path>
+    -->
     
     ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
   </g>
