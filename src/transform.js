@@ -20,9 +20,19 @@ class Transform {
       this.d === 1 && this.e === 1 && this.f === 0;
   }
 
-  translate(dx=0, dy=0) {
-    this.e += dx;
-    this.f += dy;
+  /**
+   * @param {number[]|number} coord|dx
+   * @param number dy
+   * @returns {Transform}
+   */
+  translate() {
+    if(Array.isArray(arguments[0])) {
+      this.e += arguments[0][0];
+      this.f += arguments[0][1];
+    } else {
+      this.e += arguments[0];
+      this.f += arguments[1];
+    }
     this._cachedInverse = null;
     return this;
   }
