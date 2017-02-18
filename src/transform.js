@@ -211,4 +211,25 @@ Transform.revive = function (m) {
 
 Transform.IDENTITY = new Transform();
 
+class Translation extends Transform {
+  constructor(arg0, arg1) {
+    let arr;
+    if(Array.isArray(arg0)) {
+      arr = [1,0,0,1,arg0[0],arg0[1]];
+    } else {
+      arr = [1,0,0,1,arg0,arg1];
+    }
+    super(arr);
+  }
+}
+
+class Rotation extends Transform {
+  constructor(angle) {
+    let cos = Math.cos(angle);
+    let sin = Math.sin(angle);
+    super([cos,sin,-sin,cos,0,0]);
+  }
+}
+
 export default Transform;
+export {Translation, Rotation};
