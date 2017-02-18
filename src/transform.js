@@ -1,5 +1,5 @@
 
-class Transform {
+export default class Transform {
   constructor(array) {
     if(array) {
       this.fromArray(array);
@@ -211,7 +211,7 @@ Transform.revive = function (m) {
 
 Transform.IDENTITY = new Transform();
 
-class Translation extends Transform {
+export class Translation extends Transform {
   constructor(arg0, arg1) {
     let arr;
     if(Array.isArray(arg0)) {
@@ -223,7 +223,7 @@ class Translation extends Transform {
   }
 }
 
-class Rotation extends Transform {
+export class Rotation extends Transform {
   constructor(angle) {
     let cos = Math.cos(angle);
     let sin = Math.sin(angle);
@@ -231,5 +231,3 @@ class Rotation extends Transform {
   }
 }
 
-export default Transform;
-export {Translation, Rotation};
