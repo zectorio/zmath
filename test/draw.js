@@ -10,6 +10,11 @@ let points = [];
 points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
 points = points.concat(cbez3._getExtremes().map(t => cbez3.evaluate(t)));
 
+let offpoint = [150,212];
+let projection = cbez1.project(offpoint);
+points.push(projection);
+points.push(offpoint);
+
 let [cbez3a,cbez3b] = cbez3.split(0.76);
 
 console.log(`

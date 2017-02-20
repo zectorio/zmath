@@ -33,4 +33,4 @@ var drawConfig = {
   }
 };
 
-module.exports = testConfig;
+module.exports = drawConfig;

@@ -95,6 +95,67 @@ class CubicBezier extends Bezier {
     ];
   }
 
+  project(pt) {
+    const COARSE_ITERS = 8;
+    let tarr = [];
+    for (let i = 0; i <= COARSE_ITERS; i++) {
+      tarr.push(i/COARSE_ITERS);
+    }
+    let coarsePoints = tarr.map(t => this.evaluate(t));
+    let minidx = 0;
+    let mindistsq = Infinity;
+    let coarsev = [];
+    coarsePoints.forEach((coarsept, idx) => {
+      let distSq = vec2.distSq(coarsept, pt);
+      coarsev.push(distSq);
+      if(distSq < mindistsq) {
+        mindistsq = distSq;
+        minidx = idx;
+      }
+    });
+
+    let idxleft = Math.max(minidx-1, 0);
+    let idxright = Math.min(minidx+1, coarsePoints.length-1);
+    let tleft = idxleft/COARSE_ITERS;
+    let tright = idxright/COARSE_ITERS;
+    let vleft = coarsev[idxleft];
+    let vright = coarsev[idxright];
+    let vmid;
+    let tmid;
+    let gapleft, gapright;
+
+    const MAX_ITERS = 15;
+    let i;
+    for(i=0; i<MAX_ITERS; i++) {
+
+      tmid = (tleft+tright)/2;
+
+      vmid = vec2.distSq(this.evaluate(tmid), pt);
+
+      gapleft = Math.abs(vleft-vmid);
+      gapright = Math.abs(vright-vmid);
+
+      if(gapleft < 1) {
+        tmid = tleft;
+        break;
+      }
+      if(gapright < 1) {
+        tmid = tright;
+        break;
+      }
+
+      if(gapleft < gapright) {
+        tright = tmid;
+        vright = vmid;
+      } else {
+        tleft = tmid;
+        vleft = vmid;
+      }
+    }
+
+    return this.evaluate(tmid);
+  }
+
   toSVGPathData() {
     let p = this.cpoints;
     return `M ${p[0][0]},${p[0][1]} `+
