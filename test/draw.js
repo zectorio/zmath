@@ -17,6 +17,7 @@ let boundaryCurves = [];
 for(let surf of surfgrid.getBezierSurfaces()) {
   boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
 }
+surfgrid.subdivide([325,380]);
 
 let points = [];
 points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));

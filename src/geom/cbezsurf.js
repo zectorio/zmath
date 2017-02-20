@@ -6,45 +6,45 @@ export default class CubicBezierSurface {
   constructor(pointgrid) {
     this.pointgrid = pointgrid;
 
-    console.assert(this.pointgrid.length % 4 === 0);
+    console.assert(this.pointgrid.length === 4);
     this.pointgrid.forEach(row => {
-      console.assert(row.length%4 === 0);
+      console.assert(row.length === 4);
     });
   }
 
   getBoundaryCurves() {
+    return [
+      this.getTopCurve(),
+      this.getRightCurve(),
+      this.getBottomCurve(),
+      this.getLeftCurve()
+    ];
+  }
 
-    let curves = [];
-    let nrows = this.pointgrid.length;
-    let ncols = this.pointgrid[0].length;
+  getTopCurve() {
+    return new CubicBezier(this.pointgrid[0].slice(0, 4));
+  }
 
-    for(let i=0; i<ncols; i+=4) {
-      let cpoints = this.pointgrid[0].slice(i, i+4);
-      curves.push(new CubicBezier(cpoints));
-    }
-    for(let i=0; i<ncols; i+=4) {
-      let cpoints = this.pointgrid[nrows-1].slice(i, i+4);
-      curves.push(new CubicBezier(cpoints));
-    }
-    for(let i=0; i<nrows; i+=4) {
-      let cpoints = [
-        this.pointgrid[i][0],
-        this.pointgrid[i+1][0],
-        this.pointgrid[i+2][0],
-        this.pointgrid[i+3][0]
-      ];
-      curves.push(new CubicBezier(cpoints));
-    }
-    for(let i=0; i<nrows; i+=4) {
-      let cpoints = [
-        this.pointgrid[i][ncols-1],
-        this.pointgrid[i+1][ncols-1],
-        this.pointgrid[i+2][ncols-1],
-        this.pointgrid[i+3][ncols-1]
-      ];
-      curves.push(new CubicBezier(cpoints));
-    }
-    return curves;
+  getBottomCurve() {
+    return new CubicBezier(this.pointgrid[3].slice(0, 4));
+  }
+
+  getLeftCurve() {
+    return new CubicBezier([
+      this.pointgrid[0][0],
+      this.pointgrid[1][0],
+      this.pointgrid[2][0],
+      this.pointgrid[3][0]
+    ]);
+  }
+
+  getRightCurve() {
+    return new CubicBezier([
+      this.pointgrid[0][3],
+      this.pointgrid[1][3],
+      this.pointgrid[2][3],
+      this.pointgrid[3][3]
+    ]);
   }
 
 }
