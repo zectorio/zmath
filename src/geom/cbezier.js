@@ -167,12 +167,12 @@ class CubicBezier extends Bezier {
     return this.evaluate(tmid);
   }
 
-  toSVGPathData() {
+  toSVGPathData(precision=2) {
     let p = this.cpoints;
-    return `M ${p[0][0]},${p[0][1]} `+
-      `C ${p[1][0]},${p[1][1]}`+
-      ` ${p[2][0]},${p[2][1]}`+
-      ` ${p[3][0]},${p[3][1]}`
+    return `M ${p[0][0].toFixed(precision)},${p[0][1].toFixed(precision)} `+
+      `C ${p[1][0].toFixed(precision)},${p[1][1].toFixed(precision)}`+
+      ` ${p[2][0].toFixed(precision)},${p[2][1].toFixed(precision)}`+
+      ` ${p[3][0].toFixed(precision)},${p[3][1].toFixed(precision)}`
       ;
   }
 }

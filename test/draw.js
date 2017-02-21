@@ -7,6 +7,8 @@ let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
 let cbez2 = new geom.CubicBezier([[100,210],[0,300],[210,105],[400,300]]);
 let cbez3 = new geom.CubicBezier([[400,100],[450,50],[400,300],[300,400]]);
 
+let points = [];
+
 let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
   [ [100,50], [200,100], [300,100], [310,50] ],
   [ [120,150], [200,150], [300,150], [400,150] ],
@@ -14,16 +16,22 @@ let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({gr
   [ [100,450], [200,400], [300,400], [400,450] ]
 ]})]]);
 
+let divPt1 = [225,281];
+let divPt2 = [175,150];
 // let boundaryCurves = [];
-surfgrid.subdivide([225,281]);
-surfgrid.subdivide([305,350]);
+surfgrid.subdivide(divPt1);
+surfgrid.subdivide(divPt2);
+
+points.push(divPt1);
+points.push(divPt2);
+
 let boundaryCurveData = [];
 for(let surf of surfgrid.getBezierSurfaces()) {
   // boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
   boundaryCurveData.push(surf.toSVGPathData());
 }
 
-let points = [];
+/*
 points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
 points = points.concat(cbez3._getExtremes().map(t => cbez3.evaluate(t)));
 
@@ -31,6 +39,7 @@ let offpoint = [150,212];
 let projection = cbez1.project(offpoint);
 points.push(projection);
 points.push(offpoint);
+*/
 
 let [cbez3a,cbez3b] = cbez3.split(0.76);
 
@@ -55,7 +64,6 @@ require('fs').writeFileSync('out.svg', `
     <path d="${cbez3a.toSVGPathData()}" style="stroke:#f00;fill:none"></path>
     <path d="${cbez3b.toSVGPathData()}" style="stroke:#00f;fill:none"></path>
     
-    ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
     -->
     
     ${boundaryCurveData.map((data,idx) => `
@@ -63,6 +71,7 @@ require('fs').writeFileSync('out.svg', `
         style="stroke:none;fill:${Color({h:Math.round((idx/boundaryCurveData.length)*360),s:100,l:50}).rgb().string()}">
       </path>`).join('\n')}
     
+    ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
   </g>
 </svg>
 `);

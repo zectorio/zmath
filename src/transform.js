@@ -86,8 +86,8 @@ export default class Transform {
     return [this.a, this.b, this.c, this.d, this.e, this.f];
   }
 
-  toAttributeString() {
-    return `matrix(${this.toArray().join(',')})`;
+  toAttributeString(precision=2) {
+    return `matrix(${this.toArray().map(x=>x.toFixed(precision)).join(',')})`;
   }
 
   fromArray([a,b,c,d,e,f]) {

@@ -564,13 +564,41 @@ export default class CubicBezierSurface {
     ];
   }
 
-  toSVGPathData() {
+  toSVGPathData(precision=2) {
+    let d = '';
     let P = this.pointgrid;
-    return `M ${P[0][0][0]},${P[0][0][1]} `+
-      `C ${P[0][1][0]},${P[0][1][1]} ${P[0][2][0]},${P[0][2][1]} ${P[0][3][0]},${P[0][3][1]} `+
-      `C ${P[1][3][0]},${P[1][3][1]} ${P[2][3][0]},${P[2][3][1]} ${P[3][3][0]},${P[3][3][1]} `+
-      `C ${P[3][2][0]},${P[3][2][1]} ${P[3][1][0]},${P[3][1][1]} ${P[3][0][0]},${P[3][0][1]} `+
-      `C ${P[2][0][0]},${P[2][0][1]} ${P[1][0][0]},${P[1][0][1]} ${P[0][0][0]},${P[0][0][1]}`;
+    let cpx0 = P[0][0][0].toFixed(precision);
+    let cpy0 = P[0][0][1].toFixed(precision);
+    d += `M ${cpx0},${cpy0} `;
+    let cpx1 = P[0][1][0].toFixed(precision);
+    let cpy1 = P[0][1][1].toFixed(precision);
+    let cpx2 = P[0][2][0].toFixed(precision);
+    let cpy2 = P[0][2][1].toFixed(precision);
+    let cpx3 = P[0][3][0].toFixed(precision);
+    let cpy3 = P[0][3][1].toFixed(precision);
+    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+    cpx1 = P[1][3][0].toFixed(precision);
+    cpy1 = P[1][3][1].toFixed(precision);
+    cpx2 = P[2][3][0].toFixed(precision);
+    cpy2 = P[2][3][1].toFixed(precision);
+    cpx3 = P[3][3][0].toFixed(precision);
+    cpy3 = P[3][3][1].toFixed(precision);
+    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+    cpx1 = P[3][2][0].toFixed(precision);
+    cpy1 = P[3][2][1].toFixed(precision);
+    cpx2 = P[3][1][0].toFixed(precision);
+    cpy2 = P[3][1][1].toFixed(precision);
+    cpx3 = P[3][0][0].toFixed(precision);
+    cpy3 = P[3][0][1].toFixed(precision);
+    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+    cpx1 = P[2][0][0].toFixed(precision);
+    cpy1 = P[2][0][1].toFixed(precision);
+    cpx2 = P[1][0][0].toFixed(precision);
+    cpy2 = P[1][0][1].toFixed(precision);
+    cpx3 = P[0][0][0].toFixed(precision);
+    cpy3 = P[0][0][1].toFixed(precision);
+    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3}`;
+    return d;
   }
 
 }
