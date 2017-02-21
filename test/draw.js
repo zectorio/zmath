@@ -30,7 +30,7 @@ points.push(offpoint);
 
 let [cbez3a,cbez3b] = cbez3.split(0.76);
 
-console.log(`
+require('fs').writeFileSync('out.svg', `
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
   <g>
     <!--

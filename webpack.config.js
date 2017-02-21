@@ -19,6 +19,7 @@ var testConfig = {
 
 var drawConfig = {
   entry : "./test/draw",
+  target : 'node',
   output : {
     path : path.resolve(__dirname, "build"),
     filename : "zmath-draw.js"

@@ -78,6 +78,12 @@ class CubicBezier extends Bezier {
     });
   }
 
+  /**
+   * Split the curve at given u value and return two Cubic Bezier curves that
+   * are identical to this curve when put together
+   * @param u
+   * @returns {[*,*]}
+   */
   split(u) {
     let [p0,p1,p2,p3] = this.cpoints;
     let p01 = vec2.add(vec2.mul(p0,1-u), vec2.mul(p1,u));
@@ -95,7 +101,12 @@ class CubicBezier extends Bezier {
     ];
   }
 
-  project(pt) {
+  /**
+   * Find a point on this curve that's closest to input point
+   * @param ipoint
+   * @returns {*}
+   */
+  project(ipoint) {
     const COARSE_ITERS = 8;
     let tarr = [];
     for (let i = 0; i <= COARSE_ITERS; i++) {
@@ -106,7 +117,7 @@ class CubicBezier extends Bezier {
     let mindistsq = Infinity;
     let coarsev = [];
     coarsePoints.forEach((coarsept, idx) => {
-      let distSq = vec2.distSq(coarsept, pt);
+      let distSq = vec2.distSq(coarsept, ipoint);
       coarsev.push(distSq);
       if(distSq < mindistsq) {
         mindistsq = distSq;
@@ -130,7 +141,7 @@ class CubicBezier extends Bezier {
 
       tmid = (tleft+tright)/2;
 
-      vmid = vec2.distSq(this.evaluate(tmid), pt);
+      vmid = vec2.distSq(this.evaluate(tmid), ipoint);
 
       gapleft = Math.abs(vleft-vmid);
       gapright = Math.abs(vright-vmid);
