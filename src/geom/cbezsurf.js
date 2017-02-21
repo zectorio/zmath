@@ -12,6 +12,65 @@ function hermiteBlendingFunctions(t) {
   return [ f1, f2, f3, f4 ];
 }
 
+/*
+ * Coons patch is defined by its boundary.
+ * A mesh gradient coons patch is defined by 4 cubic bezier curves.
+ * Hence there are expected to be 12 points on its boundaries. This routine
+ * computes the 4 inside control points for such coons patch
+ *
+ *             j ->
+ *      b00  b01  b02  b03
+ *
+ *    i b10            b13
+ *    |      b[i][j]
+ *    v b20            b23
+ *
+ *      b30  b31  b32  b33
+ *
+ *  b[i][j] =
+ *    (1-i/3) * b[0][j] + (i/3) * b[3][j] +
+ *    (1-j/3) * b[i][0] + (j/3) * b[i][3]
+ *    - b[0][0] * (1-j/3) * (1-i/3)
+ *    - b[3][0] * (j/3) * (1-i/3)
+ *    - b[0][3] * (1-j/3) * (i/3)
+ *    - b[3][3] * (j/3) * (i/3)
+ *
+ *  Ref: CAGD - Farid - 15.2
+ *
+ */
+function interpolateCoons(coons) {
+  if(coons.length !== 12) {
+    console.error("Coons boundary of unexpected length ", coons.length);
+  }
+  let b = [
+    [ coons[0], coons[1], coons[2], coons[3] ],
+    [ coons[11], [0,0], [0,0], coons[4] ],
+    [ coons[10], [0,0], [0,0], coons[5] ],
+    [ coons[9], coons[8], coons[7], coons[6] ]
+  ];
+
+  for(let i=1; i<=2; i++) {
+    for(let j=1; j<=2; j++) {
+      b[i][j][0] =
+        (1-i/3) * b[0][j][0] + (i/3) * b[3][j][0] +
+        (1-j/3) * b[i][0][0] + (j/3) * b[i][3][0]
+        - b[0][0][0] * (1-j/3) * (1-i/3)
+        - b[3][0][0] * (j/3) * (1-i/3)
+        - b[0][3][0] * (1-j/3) * (i/3)
+        - b[3][3][0] * (j/3) * (i/3);
+
+      b[i][j][1] =
+        (1-i/3) * b[0][j][1] + (i/3) * b[3][j][1] +
+        (1-j/3) * b[i][0][1] + (j/3) * b[i][3][1]
+        - b[0][0][1] * (1-j/3) * (1-i/3)
+        - b[3][0][1] * (j/3) * (1-i/3)
+        - b[0][3][1] * (1-j/3) * (i/3)
+        - b[3][3][1] * (j/3) * (i/3);
+    }
+  }
+  return b;
+}
+
 /**
  *
  *  Puv
@@ -31,8 +90,14 @@ function hermiteBlendingFunctions(t) {
 
 export default class CubicBezierSurface {
 
-  constructor(pointgrid) {
-    this.pointgrid = pointgrid;
+  constructor({grid,coons}) {
+    if(grid) {
+      this.pointgrid = grid;
+    } else if(coons) {
+      this.pointgrid = interpolateCoons(coons);
+    } else {
+      throw new Error('Invalid constructor input');
+    }
 
     console.assert(this.pointgrid.length === 4);
     this.pointgrid.forEach(row => {
@@ -249,6 +314,49 @@ export default class CubicBezierSurface {
    */
   splitUV(u,v) {
 
+    /**
+                   v0left                              v0right
+
+           0      1        2      3             0      1        2      3
+
+        0  +----------------------+  0       0  +----------------------+  0
+           |                      |             |                      |
+           |                      |             |                      |
+    u      |                      |      u      |                      |      u
+    0   1  |                      |  1   m   1  |                      |  1   1
+    t      |                      |      t      |                      |      t
+    o      |                      |      o      |                      |      o
+    p   2  |                      |  2   p   2  |                      |  2   p
+           |                      |             |                      |
+           |                      |             |                      |
+           |                      |             |                      |
+        3  +----------------------+  3       3  +----------------------+  3
+
+           0      1        2      3             0      1        2      3
+
+                  vmleft                               vmright
+
+           0      1        2      3             0      1        2      3
+
+        0  +----------------------+  0       0  +----------------------+  0
+           |                      |             |                      |
+    u      |                      |      u      |                      |      u
+    0      |                      |      m      |                      |      1
+    b   1  |                      |  1   b   1  |                      |  1   b
+    o      |                      |      o      |                      |      o
+    t      |                      |      t      |                      |      t
+    t   2  |                      |  2   t   2  |                      |  2   t
+    o      |                      |      o      |                      |      o
+    m      |                      |      m      |                      |      m
+           |                      |             |                      |
+        3  +----------------------+  3       3  +----------------------+  3
+
+           0      1        2      3             0      1        2      3
+
+                  v1left                                v1right
+
+     */
+
     let [v0LeftCrv, v0RightCrv] = this.getTopCurve().split(u);
     let [vmLeftCrv, vmRightCrv] = this._computeUCurve(v).split(u);
     let [v1LeftCrv, v1RightCrv] = this.getBottomCurve().split(u);
@@ -257,24 +365,67 @@ export default class CubicBezierSurface {
     let [umTopCrv, umBottomCrv] = this._computeVCurve(u).split(v);
     let [u1TopCrv, u1BottomCrv] = this.getRightCurve().split(v);
 
-    // let topLeft = new CubicBezierSurface([
-    //
-    // ]);
-    // let topRight = new CubicBezierSurface([
-    //
-    // ]);
-    // let bottomLeft = new CubicBezierSurface([
-    //
-    // ]);
-    // let bottomRight = new CubicBezierSurface([
-    //
-    // ]);
-    //
-    // return [
-    //   [topLeft, topRight],
-    //   [bottomLeft, bottomRight]
-    // ];
-    return [];
+    let topLeft = new CubicBezierSurface({coons : [
+      v0LeftCrv.cpoints[0],
+      v0LeftCrv.cpoints[1],
+      v0LeftCrv.cpoints[2],
+      v0LeftCrv.cpoints[3],
+      umTopCrv.cpoints[1],
+      umTopCrv.cpoints[2],
+      umTopCrv.cpoints[3],
+      vmLeftCrv.cpoints[2],
+      vmLeftCrv.cpoints[1],
+      vmLeftCrv.cpoints[0],
+      u0TopCrv.cpoints[2],
+      u0TopCrv.cpoints[1]
+    ]});
+    let topRight = new CubicBezierSurface({coons : [
+      v0RightCrv.cpoints[0],
+      v0RightCrv.cpoints[1],
+      v0RightCrv.cpoints[2],
+      v0RightCrv.cpoints[3],
+      u1TopCrv.cpoints[1],
+      u1TopCrv.cpoints[2],
+      u1TopCrv.cpoints[3],
+      vmRightCrv.cpoints[2],
+      vmRightCrv.cpoints[1],
+      vmRightCrv.cpoints[0],
+      umTopCrv.cpoints[2],
+      umTopCrv.cpoints[1]
+    ]});
+    let bottomLeft = new CubicBezierSurface({coons : [
+      vmLeftCrv.cpoints[0],
+      vmLeftCrv.cpoints[1],
+      vmLeftCrv.cpoints[2],
+      vmLeftCrv.cpoints[3],
+      umBottomCrv.cpoints[1],
+      umBottomCrv.cpoints[2],
+      umBottomCrv.cpoints[3],
+      v1LeftCrv.cpoints[2],
+      v1LeftCrv.cpoints[1],
+      v1LeftCrv.cpoints[0],
+      u0BottomCrv.cpoints[2],
+      u0BottomCrv.cpoints[1]
+    ]});
+    let bottomRight = new CubicBezierSurface({coons : [
+      vmRightCrv.cpoints[0],
+      vmRightCrv.cpoints[1],
+      vmRightCrv.cpoints[2],
+      vmRightCrv.cpoints[3],
+      u1BottomCrv.cpoints[1],
+      u1BottomCrv.cpoints[2],
+      u1BottomCrv.cpoints[3],
+      v1RightCrv.cpoints[2],
+      v1RightCrv.cpoints[1],
+      v1RightCrv.cpoints[0],
+      umBottomCrv.cpoints[2],
+      umBottomCrv.cpoints[1]
+    ]});
+
+    return [
+      [topLeft, topRight],
+      [bottomLeft, bottomRight]
+    ];
   }
 
 }

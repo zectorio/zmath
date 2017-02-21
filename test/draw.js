@@ -6,18 +6,18 @@ let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
 let cbez2 = new geom.CubicBezier([[100,210],[0,300],[210,105],[400,300]]);
 let cbez3 = new geom.CubicBezier([[400,100],[450,50],[400,300],[300,400]]);
 
-let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface([
+let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
   [ [100,50], [200,100], [300,100], [310,50] ],
-  [ [100,150], [200,150], [300,150], [400,150] ],
-  [ [100,300], [200,350], [300,350], [450,300] ],
+  [ [120,150], [200,150], [300,150], [400,150] ],
+  [ [70,300], [200,350], [300,350], [450,300] ],
   [ [100,450], [200,400], [300,400], [400,450] ]
-])]]);
+]})]]);
 
 let boundaryCurves = [];
+surfgrid.subdivide([225,281]);
 for(let surf of surfgrid.getBezierSurfaces()) {
   boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
 }
-surfgrid.subdivide([325,380]);
 
 let points = [];
 points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
