@@ -1,5 +1,6 @@
 
 const {geom} = require('..');
+const Color = require('color');
 
 let line = new geom.Line([10,10],[200,300]);
 let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
@@ -13,11 +14,13 @@ let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({gr
   [ [100,450], [200,400], [300,400], [400,450] ]
 ]})]]);
 
-let boundaryCurves = [];
+// let boundaryCurves = [];
 surfgrid.subdivide([225,281]);
 surfgrid.subdivide([305,350]);
+let boundaryCurveData = [];
 for(let surf of surfgrid.getBezierSurfaces()) {
-  boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
+  // boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
+  boundaryCurveData.push(surf.toSVGPathData());
 }
 
 let points = [];
@@ -55,7 +58,10 @@ require('fs').writeFileSync('out.svg', `
     ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
     -->
     
-    ${boundaryCurves.map(crv => `<path d="${crv.toSVGPathData()}" style="stroke:#000;fill:none"></path>`).join('\n')}
+    ${boundaryCurveData.map((data,idx) => `
+      <path d="${data}"
+        style="stroke:none;fill:${Color({h:Math.round((idx/boundaryCurveData.length)*360),s:100,l:50}).rgb().string()}">
+      </path>`).join('\n')}
     
   </g>
 </svg>
