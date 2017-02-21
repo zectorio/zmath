@@ -296,7 +296,66 @@ export default class CubicBezierSurface {
    * @param u
    */
   splitU(u) {
+    /**
+                   v0left                              v0right
 
+           0      1        2      3             0      1        2      3
+
+        0  +----------------------+  0       0  +----------------------+  0
+           |                      |             |                      |
+           |                      |             |                      |
+           |                      |      u      |                      |
+    l   1  |                      |  1   m   1  |                      |  1   r
+    e      |                      |      i      |                      |      i
+    f      |                      |      d      |                      |      g
+    t   2  |                      |  2       2  |                      |  2   h
+           |                      |             |                      |      t
+           |                      |             |                      |
+           |                      |             |                      |
+        3  +----------------------+  3       3  +----------------------+  3
+
+           0      1        2      3             0      1        2      3
+
+                  v1left                                v1right
+
+     */
+
+    let [v0LeftCrv, v0RightCrv] = this.getTopCurve().split(u);
+    let umidCrv = this._computeVCurve(u);
+    let leftCrv = this.getLeftCurve();
+    let rightCrv = this.getRightCurve();
+    let [v1LeftCrv, v1RightCrv] = this.getBottomCurve().split(u);
+
+    let left = new CubicBezierSurface({coons : [
+      v0LeftCrv.cpoints[0],
+      v0LeftCrv.cpoints[1],
+      v0LeftCrv.cpoints[2],
+      v0LeftCrv.cpoints[3],
+      umidCrv.cpoints[1],
+      umidCrv.cpoints[2],
+      umidCrv.cpoints[3],
+      v1LeftCrv.cpoints[2],
+      v1LeftCrv.cpoints[1],
+      v1LeftCrv.cpoints[0],
+      leftCrv.cpoints[2],
+      leftCrv.cpoints[1]
+    ]});
+
+    let right = new CubicBezierSurface({coons : [
+      v0RightCrv.cpoints[0],
+      v0RightCrv.cpoints[1],
+      v0RightCrv.cpoints[2],
+      v0RightCrv.cpoints[3],
+      rightCrv.cpoints[1],
+      rightCrv.cpoints[2],
+      rightCrv.cpoints[3],
+      v1RightCrv.cpoints[2],
+      v1RightCrv.cpoints[1],
+      v1RightCrv.cpoints[0],
+      umidCrv.cpoints[2],
+      umidCrv.cpoints[1]
+    ]});
+    return [left,right];
   }
 
   /**
@@ -304,7 +363,84 @@ export default class CubicBezierSurface {
    * @param v
    */
   splitV(v) {
+    /**
+                   top
 
+           0      1        2      3        
+
+        0  +----------------------+  0     
+           |                      |        
+           |                      |        
+    u      |                      |      u 
+    0   1  |                      |  1   1 
+    t      |                      |      t 
+    o      |                      |      o 
+    p   2  |                      |  2   p 
+           |                      |        
+           |                      |        
+           |                      |        
+        3  +----------------------+  3     
+
+           0      1        2      3       
+
+                  vmid
+
+           0      1        2      3     
+
+        0  +----------------------+  0  
+           |                      |        
+    u      |                      |      u 
+    0      |                      |      1 
+    b   1  |                      |  1   b 
+    o      |                      |      o 
+    t      |                      |      t 
+    t   2  |                      |  2   t 
+    o      |                      |      o 
+    m      |                      |      m 
+           |                      |        
+        3  +----------------------+  3     
+
+           0      1        2      3          
+
+                 bottom
+
+     */
+    let [u0TopCrv, u0BottomCrv] = this.getLeftCurve().split(v);
+    let vmidCrv = this._computeUCurve(v);
+    let topCrv = this.getTopCurve();
+    let bottomCrv = this.getBottomCurve();
+    let [u1TopCrv, u1BottomCrv] = this.getRightCurve().split(v);
+
+    let top = new CubicBezierSurface({coons : [
+      topCrv.cpoints[0],
+      topCrv.cpoints[1],
+      topCrv.cpoints[2],
+      topCrv.cpoints[3],
+      u1TopCrv.cpoints[1],
+      u1TopCrv.cpoints[2],
+      u1TopCrv.cpoints[3],
+      vmidCrv.cpoints[2],
+      vmidCrv.cpoints[1],
+      vmidCrv.cpoints[0],
+      u0TopCrv.cpoints[2],
+      u0TopCrv.cpoints[1]
+    ]});
+
+    let bottom = new CubicBezierSurface({coons : [
+      vmidCrv.cpoints[0],
+      vmidCrv.cpoints[1],
+      vmidCrv.cpoints[2],
+      vmidCrv.cpoints[3],
+      u1BottomCrv.cpoints[1],
+      u1BottomCrv.cpoints[2],
+      u1BottomCrv.cpoints[3],
+      bottomCrv.cpoints[2],
+      bottomCrv.cpoints[1],
+      bottomCrv.cpoints[0],
+      u0BottomCrv.cpoints[2],
+      u0BottomCrv.cpoints[1]
+    ]});
+    return [top,bottom];
   }
 
   /**

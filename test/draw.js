@@ -15,6 +15,7 @@ let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({gr
 
 let boundaryCurves = [];
 surfgrid.subdivide([225,281]);
+surfgrid.subdivide([305,350]);
 for(let surf of surfgrid.getBezierSurfaces()) {
   boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
 }

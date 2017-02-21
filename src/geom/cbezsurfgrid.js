@@ -20,10 +20,13 @@ export default class CubicBezierSurfaceGrid {
       newgrid[i] = new Array(ncols+1);
     }
 
+    let isplit = -1;
+    let jsplit = -1;
 
     for (let i = 0; i < this.grid.length; i++) {
       let row = this.grid[i];
       for (let j = 0; j < row.length; j++) {
+        jsplit = -1;
         let surf = row[j];
         let [up, vp] = surf.projectParam(point);
         let uInRange = up > 0 && up < 1;
@@ -34,12 +37,31 @@ export default class CubicBezierSurfaceGrid {
           newgrid[i+1][j] = split[1][0];
           newgrid[i][j+1] = split[0][1];
           newgrid[i+1][j+1] = split[1][1];
+          isplit = i;
+          jsplit = j;
         } else if(uInRange && !vInRange) {
-          surf.splitU(up);
+          let [left,right] = surf.splitU(up);
+          newgrid[i][j] = left;
+          newgrid[i][j+1] = right;
+          jsplit = j;
         } else if(!uInRange && vInRange) {
-          surf.splitV(vp);
+          let [top,bottom] = surf.splitV(vp);
+          newgrid[i][j] = top;
+          newgrid[i+1][j] = bottom;
+          isplit = i;
         } else {
           // Point is outside this surface. This surface won't split
+          if(isplit < 0 && jsplit < 0) {
+            newgrid[i][j] = surf;
+          } else if(isplit < 0 && jsplit >= 0) {
+            newgrid[i][j+1] = surf;
+          } else if(isplit >= 0 && jsplit < 0) {
+            newgrid[i+1][j] = surf;
+          } else if(isplit >= 0 && jsplit >= 0) {
+            newgrid[i+1][j+1] = surf;
+          } else {
+            console.assert(false);
+          }
         }
 
       }
