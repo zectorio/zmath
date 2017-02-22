@@ -57,17 +57,18 @@ function testBezSurfSubdivision() {
   ]})]]);
 
   let divPt1 = [200,200];
-  let divPt2 = [250,250];
-// let boundaryCurves = [];
+  let divPt2 = [150,150];
+  let divPt3 = [280,100];
   surfgrid.subdivide(divPt1);
   surfgrid.subdivide(divPt2);
+  surfgrid.subdivide(divPt3);
 
   points.push(divPt1);
   points.push(divPt2);
+  points.push(divPt3);
 
   let boundaryCurveData = [];
   for(let surf of surfgrid.getBezierSurfaces()) {
-    // boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
     boundaryCurveData.push(surf.toSVGPathData());
   }
 
