@@ -1,49 +1,51 @@
 
-const {geom} = require('..');
-const Color = require('color');
+import {geom} from '..';
+import Color from 'color';
 
-let line = new geom.Line([10,10],[200,300]);
-let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
-let cbez2 = new geom.CubicBezier([[100,210],[0,300],[210,105],[400,300]]);
-let cbez3 = new geom.CubicBezier([[400,100],[450,50],[400,300],[300,400]]);
+window.onload = () => {
 
-let points = [];
+  let line = new geom.Line([10,10],[200,300]);
+  let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
+  let cbez2 = new geom.CubicBezier([[100,210],[0,300],[210,105],[400,300]]);
+  let cbez3 = new geom.CubicBezier([[400,100],[450,50],[400,300],[300,400]]);
 
-let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
-  [ [100,50], [200,100], [300,100], [310,50] ],
-  [ [120,150], [200,150], [300,150], [400,150] ],
-  [ [70,300], [200,350], [300,350], [450,300] ],
-  [ [100,450], [200,400], [300,400], [400,450] ]
-]})]]);
+  let points = [];
 
-let divPt1 = [225,281];
-let divPt2 = [175,150];
+  let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
+    [ [100,50], [200,100], [300,100], [310,50] ],
+    [ [120,150], [200,150], [300,150], [400,150] ],
+    [ [70,300], [200,350], [300,350], [450,300] ],
+    [ [100,450], [200,400], [300,400], [400,450] ]
+  ]})]]);
+
+  let divPt1 = [225,281];
+  let divPt2 = [175,150];
 // let boundaryCurves = [];
-surfgrid.subdivide(divPt1);
-surfgrid.subdivide(divPt2);
+  surfgrid.subdivide(divPt1);
+  surfgrid.subdivide(divPt2);
 
-points.push(divPt1);
-points.push(divPt2);
+  points.push(divPt1);
+  points.push(divPt2);
 
-let boundaryCurveData = [];
-for(let surf of surfgrid.getBezierSurfaces()) {
-  // boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
-  boundaryCurveData.push(surf.toSVGPathData());
-}
+  let boundaryCurveData = [];
+  for(let surf of surfgrid.getBezierSurfaces()) {
+    // boundaryCurves = boundaryCurves.concat(surf.getBoundaryCurves());
+    boundaryCurveData.push(surf.toSVGPathData());
+  }
 
-/*
-points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
-points = points.concat(cbez3._getExtremes().map(t => cbez3.evaluate(t)));
+  /*
+   points = points.concat(cbez2._getExtremes().map(t => cbez2.evaluate(t)));
+   points = points.concat(cbez3._getExtremes().map(t => cbez3.evaluate(t)));
 
-let offpoint = [150,212];
-let projection = cbez1.project(offpoint);
-points.push(projection);
-points.push(offpoint);
-*/
+   let offpoint = [150,212];
+   let projection = cbez1.project(offpoint);
+   points.push(projection);
+   points.push(offpoint);
+   */
 
-let [cbez3a,cbez3b] = cbez3.split(0.76);
+  let [cbez3a,cbez3b] = cbez3.split(0.76);
 
-require('fs').writeFileSync('out.svg', `
+  let svgmarkup = `
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
   <g>
     <!--
@@ -74,4 +76,9 @@ require('fs').writeFileSync('out.svg', `
     ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
   </g>
 </svg>
-`);
+`;
+
+  document.body.innerHTML = svgmarkup;
+
+};
+

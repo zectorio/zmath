@@ -19,7 +19,7 @@ var testConfig = {
 
 var drawConfig = {
   entry : "./test/draw",
-  target : 'node',
+  devtool : "inline-source-map",
   output : {
     path : path.resolve(__dirname, "build"),
     filename : "zmath-draw.js"
