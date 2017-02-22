@@ -46,7 +46,7 @@ function testBBox() {
 `;
 }
 
-function testBezSurfSubdivision() {
+function testBezSurfSubdivision(ipoint) {
   let points = [];
 
   let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
@@ -58,14 +58,15 @@ function testBezSurfSubdivision() {
 
   let divPt1 = [200,200];
   let divPt2 = [150,150];
-  let divPt3 = [280,100];
   surfgrid.subdivide(divPt1);
   surfgrid.subdivide(divPt2);
-  surfgrid.subdivide(divPt3);
 
   points.push(divPt1);
   points.push(divPt2);
-  points.push(divPt3);
+  if(ipoint) {
+    surfgrid.subdivide(ipoint);
+    points.push(ipoint);
+  }
 
   let boundaryCurveData = [];
   for(let surf of surfgrid.getBezierSurfaces()) {
@@ -90,5 +91,9 @@ function testBezSurfSubdivision() {
 window.onload = () => {
   // document.body.innerHTML = testBBox();
   document.body.innerHTML = testBezSurfSubdivision();
+
+  document.addEventListener('mousemove', ev => {
+    document.body.innerHTML = testBezSurfSubdivision([ev.offsetX, ev.offsetY]);
+  });
 };
 

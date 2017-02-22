@@ -46,8 +46,6 @@ export default class CubicBezierSurfaceGrid {
       return; // No split
     }
 
-    console.log('split', isplit, jsplit, usplit, vsplit);
-
     for (let i = 0; i < this.grid.length; i++) {
       let row = this.grid[i];
       for (let j = 0; j < row.length; j++) {
