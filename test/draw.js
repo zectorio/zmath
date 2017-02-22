@@ -18,8 +18,8 @@ window.onload = () => {
     [ [100,450], [200,400], [300,400], [400,450] ]
   ]})]]);
 
-  let divPt1 = [225,281];
-  let divPt2 = [175,150];
+  let divPt1 = [200,200];
+  let divPt2 = [250,250];
 // let boundaryCurves = [];
   surfgrid.subdivide(divPt1);
   surfgrid.subdivide(divPt2);

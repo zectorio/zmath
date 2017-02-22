@@ -1,4 +1,6 @@
 
+const EPSILON = 0.001;
+
 export default class CubicBezierSurfaceGrid {
 
   constructor(surfgrid) {
@@ -25,13 +27,14 @@ export default class CubicBezierSurfaceGrid {
 
     for (let i = 0; i < this.grid.length; i++) {
       let row = this.grid[i];
+      jsplit = -1;
       for (let j = 0; j < row.length; j++) {
-        jsplit = -1;
         let surf = row[j];
         let [up, vp] = surf.projectParam(point);
-        let uInRange = up > 0 && up < 1;
-        let vInRange = vp > 0 && vp < 1;
+        let uInRange = up > EPSILON && up < 1-EPSILON;
+        let vInRange = vp > EPSILON && vp < 1-EPSILON;
         if(uInRange && vInRange) {
+          console.log('splitUV',i,j,up,vp);
           let split = surf.splitUV(up, vp);
           newgrid[i][j] = split[0][0];
           newgrid[i+1][j] = split[1][0];
@@ -40,28 +43,26 @@ export default class CubicBezierSurfaceGrid {
           isplit = i;
           jsplit = j;
         } else if(uInRange && !vInRange) {
+          console.log('splitU',i,j,up);
           let [left,right] = surf.splitU(up);
-          newgrid[i][j] = left;
-          newgrid[i][j+1] = right;
+          let iidx = (isplit >= 0 && i > isplit) ? i+1 : i;
+          let jidx = (jsplit >= 0 && j > jsplit) ? j+1 : j;
+          newgrid[iidx][jidx] = left;
+          newgrid[iidx][jidx+1] = right;
           jsplit = j;
         } else if(!uInRange && vInRange) {
+          console.log('splitV',i,j,vp);
           let [top,bottom] = surf.splitV(vp);
-          newgrid[i][j] = top;
-          newgrid[i+1][j] = bottom;
+          let iidx = (isplit >= 0 && i > isplit) ? i+1 : i;
+          let jidx = (jsplit >= 0 && j > jsplit) ? j+1 : j;
+          newgrid[iidx][jidx] = top;
+          newgrid[iidx+1][jidx] = bottom;
           isplit = i;
         } else {
           // Point is outside this surface. This surface won't split
-          if(isplit < 0 && jsplit < 0) {
-            newgrid[i][j] = surf;
-          } else if(isplit < 0 && jsplit >= 0) {
-            newgrid[i][j+1] = surf;
-          } else if(isplit >= 0 && jsplit < 0) {
-            newgrid[i+1][j] = surf;
-          } else if(isplit >= 0 && jsplit >= 0) {
-            newgrid[i+1][j+1] = surf;
-          } else {
-            console.assert(false);
-          }
+          let iidx = (isplit >= 0 && i > isplit) ? i+1 : i;
+          let jidx = (jsplit >= 0 && j > jsplit) ? j+1 : j;
+          newgrid[iidx][jidx] = surf;
         }
 
       }
