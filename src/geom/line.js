@@ -1,6 +1,6 @@
 
-import {vec2} from '../..'
-import {AABB} from '../..'
+import vec2 from '../vec2'
+import AABB from '../aabb'
 import Curve from './curve'
 
 class Line extends Curve {
