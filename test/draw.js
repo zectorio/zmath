@@ -49,7 +49,7 @@ function testBBox() {
 function testBezSurfSubdivision(ipoint) {
   let points = [];
 
-  let surfgrid = new geom.CubicBezierSurfaceGrid([[new geom.CubicBezierSurface({grid:[
+  let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({points:[
     [ [100,50], [200,100], [300,100], [310,50] ],
     [ [120,150], [200,150], [300,150], [400,150] ],
     [ [70,300], [200,350], [300,350], [450,300] ],

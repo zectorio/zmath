@@ -90,17 +90,17 @@ function interpolateCoons(coons) {
 
 export default class CubicBezierSurface {
 
-  constructor({grid,coons}) {
-    if(grid) {
-      this.pointgrid = grid;
+  constructor({points,coons}) {
+    if(points) {
+      this.points = points;
     } else if(coons) {
-      this.pointgrid = interpolateCoons(coons);
+      this.points = interpolateCoons(coons);
     } else {
       throw new Error('Invalid constructor input');
     }
 
-    console.assert(this.pointgrid.length === 4);
-    this.pointgrid.forEach(row => {
+    console.assert(this.points.length === 4);
+    this.points.forEach(row => {
       console.assert(row.length === 4);
     });
   }
@@ -119,7 +119,7 @@ export default class CubicBezierSurface {
    * @returns {CubicBezier}
    */
   getTopCurve() {
-    return new CubicBezier(this.pointgrid[0].slice(0, 4));
+    return new CubicBezier(this.points[0].slice(0, 4));
   }
 
   /**
@@ -127,7 +127,7 @@ export default class CubicBezierSurface {
    * @returns {CubicBezier}
    */
   getBottomCurve() {
-    return new CubicBezier(this.pointgrid[3].slice(0, 4));
+    return new CubicBezier(this.points[3].slice(0, 4));
   }
 
   /**
@@ -136,10 +136,10 @@ export default class CubicBezierSurface {
    */
   getLeftCurve() {
     return new CubicBezier([
-      this.pointgrid[0][0],
-      this.pointgrid[1][0],
-      this.pointgrid[2][0],
-      this.pointgrid[3][0]
+      this.points[0][0],
+      this.points[1][0],
+      this.points[2][0],
+      this.points[3][0]
     ]);
   }
 
@@ -149,16 +149,16 @@ export default class CubicBezierSurface {
    */
   getRightCurve() {
     return new CubicBezier([
-      this.pointgrid[0][3],
-      this.pointgrid[1][3],
-      this.pointgrid[2][3],
-      this.pointgrid[3][3]
+      this.points[0][3],
+      this.points[1][3],
+      this.points[2][3],
+      this.points[3][3]
     ]);
   }
 
   _computeVCurve(U) {
 
-    let P = this.pointgrid;
+    let P = this.points;
 
     let [f1,f2,f3,f4] = hermiteBlendingFunctions(U);
 
@@ -190,7 +190,7 @@ export default class CubicBezierSurface {
   }
 
   _computeUCurve(V) {
-    let P = this.pointgrid;
+    let P = this.points;
 
     let [f1,f2,f3,f4] = hermiteBlendingFunctions(V);
 
@@ -566,7 +566,7 @@ export default class CubicBezierSurface {
 
   toSVGPathData(precision=2) {
     let d = '';
-    let P = this.pointgrid;
+    let P = this.points;
     let cpx0 = P[0][0][0].toFixed(precision);
     let cpy0 = P[0][0][1].toFixed(precision);
     d += `M ${cpx0},${cpy0} `;

@@ -1,22 +1,22 @@
 
 const EPSILON = 0.001;
 
-export default class CubicBezierSurfaceGrid {
+export default class CubicBezierSurfacePatch {
 
   constructor(surfgrid) {
-    this.grid = surfgrid;
+    this.surfaces = surfgrid;
   }
 
   /**
    * Subdivide the Surface Grid at a give point
-   * If the grid had m*n surfaces before subdivision, then it will have
+   * If this patch had m*n surfaces before subdivision, then it will have
    * (m+1)*(n+1) surfaces after subdivision
    * @param point
    */
   subdivide(point) {
 
-    let nrows = this.grid.length;
-    let ncols = this.grid[0].length;
+    let nrows = this.surfaces.length;
+    let ncols = this.surfaces[0].length;
     let newgrid = new Array(nrows+1);
     for(let i=0; i<nrows+1; i++) {
       newgrid[i] = new Array(ncols+1);
@@ -26,8 +26,8 @@ export default class CubicBezierSurfaceGrid {
     let jsplit = -1;
     let usplit, vsplit;
 
-    for (let i = 0; i < this.grid.length; i++) {
-      let row = this.grid[i];
+    for (let i = 0; i < this.surfaces.length; i++) {
+      let row = this.surfaces[i];
       for (let j = 0; j < row.length; j++) {
         let surf = row[j];
         let [up, vp] = surf.projectParam(point);
@@ -46,8 +46,8 @@ export default class CubicBezierSurfaceGrid {
       return; // No split
     }
 
-    for (let i = 0; i < this.grid.length; i++) {
-      let row = this.grid[i];
+    for (let i = 0; i < this.surfaces.length; i++) {
+      let row = this.surfaces[i];
       for (let j = 0; j < row.length; j++) {
         let surf = row[j];
         if(i === isplit && j === jsplit) {
@@ -76,12 +76,12 @@ export default class CubicBezierSurfaceGrid {
       }
     }
 
-    this.grid = newgrid;
+    this.surfaces = newgrid;
   }
 
   * getBezierSurfaces() {
-    for (let i = 0; i < this.grid.length; i++) {
-      let row = this.grid[i];
+    for (let i = 0; i < this.surfaces.length; i++) {
+      let row = this.surfaces[i];
       for (let j = 0; j < row.length; j++) {
         yield row[j];
       }
