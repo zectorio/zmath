@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
-    "test": "mocha build/zmath-test.js"
+    "test": "mocha build/zmath-test.js",
+    "builddocs": "esdoc"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0",
     "color": "^1.0.3",
+    "esdoc": "^0.5.2",
     "mocha": "^3.2.0",
     "webpack": "^1.14.0"
   },
@@ -30,5 +32,9 @@
     "plugins": [
       "transform-es2015-modules-commonjs"
     ]
+  },
+  "esdoc" : {
+    "source" : "./src",
+    "destination" : "./docs"
   }
 }
