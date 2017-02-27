@@ -79,6 +79,18 @@ export default class CubicBezierSurfacePatch {
     this.surfaces = newgrid;
   }
 
+  getNumRows() {
+    return this.surfaces.length;
+  }
+
+  getNumColumns() {
+    return this.surfaces[0].length;
+  }
+
+  getSurface(row, column) {
+    return this.surfaces[row][column];
+  }
+
   * getBezierSurfaces() {
     for (let i = 0; i < this.surfaces.length; i++) {
       let row = this.surfaces[i];
