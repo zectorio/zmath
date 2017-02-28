@@ -7,6 +7,10 @@ export default class CubicBezierSurfacePatch {
     this.surfaces = surfgrid;
   }
 
+  containsPoint(point) {
+    return this.surfaces.some(surf => surf.containsPoint(point));
+  }
+
   /**
    * Subdivide the Surface Grid at a give point
    * If this patch had m*n surfaces before subdivision, then it will have

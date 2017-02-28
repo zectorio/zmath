@@ -2,6 +2,7 @@
 import CubicBezier from './cbezier'
 import vec2 from '../vec2'
 
+const EPSILON = 0.001;
 const MAX_INTERSECTION_PARAM_ITERS = 15;
 
 function hermiteBlendingFunctions(t) {
@@ -112,6 +113,13 @@ export default class CubicBezierSurface {
       this.getBottomCurve(),
       this.getLeftCurve()
     ];
+  }
+
+  containsPoint(ipoint) {
+    return this.getBoundaryCurves().every(boundaryCurve => {
+      let t = boundaryCurve.projectParam(ipoint);
+      return t > EPSILON && t < (1-EPSILON);
+    });
   }
 
   /**

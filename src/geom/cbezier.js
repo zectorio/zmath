@@ -103,11 +103,11 @@ class CubicBezier extends Bezier {
   }
 
   /**
-   * Find a point on this curve that's closest to input point
+   * Find parametric value on this curve that's closest to input point
    * @param ipoint
    * @returns {*}
    */
-  project(ipoint) {
+  projectParam(ipoint) {
     const COARSE_ITERS = 8;
     let tarr = [];
     for (let i = 0; i <= COARSE_ITERS; i++) {
@@ -165,7 +165,16 @@ class CubicBezier extends Bezier {
       }
     }
 
-    return this.evaluate(tmid);
+    return tmid;
+  }
+
+  /**
+   * Find a point on this curve that's closest to input point
+   * @param ipoint
+   * @returns {*}
+   */
+  project(ipoint) {
+    return this.evaluate(this.projectParam(ipoint));
   }
 
   toSVGPathData(precision=2) {

@@ -816,11 +816,11 @@ module.exports =
 	  }
 
 	  /**
-	   * Find a point on this curve that's closest to input point
+	   * Find parametric value on this curve that's closest to input point
 	   * @param ipoint
 	   * @returns {*}
 	   */
-	  project(ipoint) {
+	  projectParam(ipoint) {
 	    const COARSE_ITERS = 8;
 	    let tarr = [];
 	    for (let i = 0; i <= COARSE_ITERS; i++) {
@@ -878,7 +878,16 @@ module.exports =
 	      }
 	    }
 
-	    return this.evaluate(tmid);
+	    return tmid;
+	  }
+
+	  /**
+	   * Find a point on this curve that's closest to input point
+	   * @param ipoint
+	   * @returns {*}
+	   */
+	  project(ipoint) {
+	    return this.evaluate(this.projectParam(ipoint));
 	  }
 
 	  toSVGPathData(precision = 2) {
@@ -909,6 +918,7 @@ module.exports =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	const EPSILON = 0.001;
 	const MAX_INTERSECTION_PARAM_ITERS = 15;
 
 	function hermiteBlendingFunctions(t) {
@@ -997,6 +1007,13 @@ module.exports =
 
 	  getBoundaryCurves() {
 	    return [this.getTopCurve(), this.getRightCurve(), this.getBottomCurve(), this.getLeftCurve()];
+	  }
+
+	  containsPoint(ipoint) {
+	    return this.getBoundaryCurves().every(boundaryCurve => {
+	      let t = boundaryCurve.projectParam(ipoint);
+	      return t > EPSILON && t < 1 - EPSILON;
+	    });
 	  }
 
 	  /**
@@ -1343,6 +1360,10 @@ module.exports =
 
 	  constructor(surfgrid) {
 	    this.surfaces = surfgrid;
+	  }
+
+	  containsPoint(point) {
+	    return this.surfaces.some(surf => surf.containsPoint(point));
 	  }
 
 	  /**
