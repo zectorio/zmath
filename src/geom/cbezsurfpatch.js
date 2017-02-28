@@ -92,10 +92,18 @@ export default class CubicBezierSurfacePatch {
   }
 
   * getBezierSurfaces() {
-    for (let i = 0; i < this.surfaces.length; i++) {
+    for(let i=0; i<this.surfaces.length; i++) {
       let row = this.surfaces[i];
-      for (let j = 0; j < row.length; j++) {
+      for(let j=0; j<row.length; j++) {
         yield row[j];
+      }
+    }
+  }
+
+  forEachSurface(callback) {
+    for(let i=0; i<this.surfaces.length; i++) {
+      for(let j=0; j<this.surfaces[i].length; j++) {
+        callback(this.surfaces[i][j], i, j);
       }
     }
   }

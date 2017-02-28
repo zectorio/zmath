@@ -1437,6 +1437,14 @@ module.exports =
 	      }
 	    }
 	  }
+
+	  forEachSurface(callback) {
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      for (let j = 0; j < this.surfaces[i].length; j++) {
+	        callback(this.surfaces[i][j], i, j);
+	      }
+	    }
+	  }
 	}
 	exports.default = CubicBezierSurfacePatch;
 
