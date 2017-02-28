@@ -1363,7 +1363,15 @@ module.exports =
 	  }
 
 	  containsPoint(point) {
-	    return this.surfaces.some(surf => surf.containsPoint(point));
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      for (let j = 0; j < this.surfaces[i].length; j++) {
+	        let surface = this.surfaces[i][j];
+	        if (surface.containsPoint(point)) {
+	          return true;
+	        }
+	      }
+	    }
+	    return false;
 	  }
 
 	  /**
