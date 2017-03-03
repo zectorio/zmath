@@ -3,8 +3,8 @@ const EPSILON = 0.001;
 
 export default class CubicBezierSurfacePatch {
 
-  constructor(surfgrid) {
-    this.surfaces = surfgrid;
+  constructor(surfaces) {
+    this.surfaces = surfaces;
   }
 
   containsPoint(point) {
@@ -24,6 +24,7 @@ export default class CubicBezierSurfacePatch {
    * If this patch had m*n surfaces before subdivision, then it will have
    * (m+1)*(n+1) surfaces after subdivision
    * @param point
+   * @returns {*} null if no split, [row,col] indices in original grid if split
    */
   subdivide(point) {
 
@@ -55,7 +56,7 @@ export default class CubicBezierSurfacePatch {
       }
     }
     if(isplit < 0 && jsplit < 0) {
-      return; // No split
+      return null; // No split
     }
 
     for (let i = 0; i < this.surfaces.length; i++) {
@@ -89,6 +90,8 @@ export default class CubicBezierSurfacePatch {
     }
 
     this.surfaces = newgrid;
+
+    return [isplit, jsplit];
   }
 
   getNumRows() {
@@ -118,5 +121,16 @@ export default class CubicBezierSurfacePatch {
         callback(this.surfaces[i][j], i, j);
       }
     }
+  }
+
+  clone() {
+    let surfaces = new Array(this.surfaces.length);
+    for(let i=0; i<this.surfaces.length; i++) {
+      surfaces[i] = new Array(this.surfaces[i].length);
+      for(let j=0; j<this.surfaces[i].length; j++) {
+        surfaces[i][j] = this.surfaces[i][j].clone();
+      }
+    }
+    return new CubicBezierSurfacePatch(surfaces);
   }
 }

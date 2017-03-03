@@ -572,6 +572,10 @@ export default class CubicBezierSurface {
     ];
   }
 
+  clone() {
+    return new CubicBezierSurface({points:JSON.parse(JSON.stringify(this.points))});
+  }
+
   toSVGPathData(precision=2) {
     let d = '';
     let P = this.points;
