@@ -1,1 +1,1499 @@
-var _Mathsin=Math.sin,_Mathcos=Math.cos,_Mathmax=Math.max,_Mathmin=Math.min,_Mathround=Math.round,_Mathsqrt=Math.sqrt,_Mathabs=Math.abs;module.exports=function(g){function h(n){if(l[n])return l[n].exports;var o=l[n]={exports:{},id:n,loaded:!1};return g[n].call(o.exports,o,o.exports,h),o.loaded=!0,o.exports}var l={};return h.m=g,h.c=l,h.p="",h(0)}([function(g,h,l){"use strict";function n(D){return D&&D.__esModule?D:{default:D}}Object.defineProperty(h,"__esModule",{value:!0}),h.geom=h.AABB=h.Rotation=h.Translation=h.Transform=h.vec2=void 0;var o=l(1),q=n(o),r=l(3),w=n(r),z=l(4),A=n(z),B=l(7),C=n(B);h.vec2=q.default,h.Transform=w.default,h.Translation=r.Translation,h.Rotation=r.Rotation,h.AABB=C.default,h.geom=A.default},function(g,h,l){"use strict";Object.defineProperty(h,"__esModule",{value:!0});var n=l(2);const o={add:function(...q){let r=[0,0];for(let w of q)r[0]+=w[0],r[1]+=w[1];return r},sub:function(q,r){return[q[0]-r[0],q[1]-r[1]]},mul:function(q,r){return[q[0]*r,q[1]*r]},isNonZero:function(q,r=n.EPSILON){return _Mathabs(q[0])>r||_Mathabs(q[1])>r},isZero:function(q,r=n.EPSILON){return!o.isNonZero(q,r)},lenSq:function(q){return q[0]*q[0]+q[1]*q[1]},len:function(q){return _Mathsqrt(o.lenSq(q))},unit:function(q){let r=o.len(q);return 0===r?[0,0]:o.mul(q,1/o.len(q))},distSq:function(q,r){return o.lenSq(o.sub(q,r))},dist:function(q,r){return _Mathsqrt(o.distSq(q,r))},dot:function(q,r){return q[0]*r[0]+q[1]*r[1]},cross:function(q,r){return q[0]*r[1]-q[1]*r[0]},toInt:function(q){return[_Mathround(q[0]),_Mathround(q[1])]},equal:function(q,r,w=n.EPSILON){return _Mathabs(q[0]-r[0])<w&&_Mathabs(q[1]-r[1])<w},low:function(...q){let r=Infinity,w=Infinity;for(let z of q)r=_Mathmin(z[0],r),w=_Mathmin(z[1],w);return[r,w]},high:function(...q){let r=-Infinity,w=-Infinity;for(let z of q)r=_Mathmax(z[0],r),w=_Mathmax(z[1],w);return[r,w]},format:function(q){return"["+q[0].toFixed(2)+","+q[1].toFixed(2)+"]"},dir:function(q,r){return o.unit(o.sub(r,q))},orthogonal:function([q,r]){return[r,-q]}};h.default=o},function(g,h){"use strict";Object.defineProperty(h,"__esModule",{value:!0});h.EPSILON=1e-6},function(g,h){"use strict";Object.defineProperty(h,"__esModule",{value:!0});class l{constructor(q){q?this.fromArray(q):(this.a=1,this.b=0,this.c=0,this.d=1,this.e=0,this.f=0),this._cachedInverse=null}isIdentity(){return 1===this.a&&0===this.b&&0===this.c&&1===this.d&&1===this.e&&0===this.f}translate(){return Array.isArray(arguments[0])?(this.e+=arguments[0][0],this.f+=arguments[0][1]):(this.e+=arguments[0],this.f+=arguments[1]),this._cachedInverse=null,this}rotate(q){let r=_Mathcos(q),w=_Mathsin(q);return this.a=r,this.b=w,this.c=-w,this.d=r,this._cachedInverse=null,this}rotateDeg(q){return this.rotate(q*Math.PI/180)}static rotateAround(q,r){let w=new l().translate(...r),z=new l().rotate(q),A=new l().translate(-r[0],-r[1]);return w.mul(z).mul(A)}static scaleAround([q,r],w){let z=new l().translate(...w),A=new l().scale(q,r),B=new l().translate(-w[0],-w[1]);return z.mul(A).mul(B)}scale(q,r){return this.a=q,this.d=r,this._cachedInverse=null,this}getScale(){return[this.a,this.d]}getTranslation(){return[this.e,this.f]}toArray(){return[this.a,this.b,this.c,this.d,this.e,this.f]}toAttributeString(q=2){return`matrix(${this.toArray().map((r)=>r.toFixed(q)).join(",")})`}fromArray([q,r,w,z,A,B]){this.a=q,this.b=r,this.c=w,this.d=z,this.e=A,this.f=B,this._cachedInverse=null}inverse(){if(!this._cachedInverse){let{a:q,b:r,c:w,d:z,e:A,f:B}=this,C=q*z-r*w;this._cachedInverse=new l([z/C,-r/C,-w/C,q/C,(w*B-z*A)/C,(r*A-q*B)/C])}return this._cachedInverse}mul(q){let{a:r,b:w,c:z,d:A,e:B,f:C}=this,{a:D,b:E,c:F,d:G,e:H,f:I}=q;return new l([r*D+z*E,w*D+A*E,r*F+z*G,w*F+A*G,r*H+z*I+B,w*H+A*I+C])}transformPoint([q,r]){let{a:w,b:z,c:A,d:B,e:C,f:D}=this;return[w*q+A*r+C,z*q+B*r+D]}clone(){return new l(this.toArray())}generateMemento(){return this.toArray()}toString(){return`a:${this.a},b:${this.b},c:${this.c},`+`d:${this.d},e:${this.e},f:${this.f}`}}h.default=l,l.revive=function(q){return new l(q)},l.IDENTITY=new l;h.Translation=class extends l{constructor(q,r){let w;w=Array.isArray(q)?[1,0,0,1,q[0],q[1]]:[1,0,0,1,q,r],super(w)}};h.Rotation=class extends l{constructor(q){let r=_Mathcos(q),w=_Mathsin(q);super([r,w,-w,r,0,0])}}},function(g,h,l){"use strict";function n(I){return I&&I.__esModule?I:{default:I}}Object.defineProperty(h,"__esModule",{value:!0});var o=l(5),q=n(o),r=l(6),w=n(r),z=l(8),A=n(z),B=l(9),C=n(B),D=l(10),E=n(D),F=l(11),G=n(F);const H={Curve:q.default,Line:w.default,Bezier:A.default,CubicBezier:C.default,CubicBezierSurface:E.default,CubicBezierSurfacePatch:G.default};h.default=H},function(g,h){"use strict";Object.defineProperty(h,"__esModule",{value:!0});h.default=class{evaluate(){throw new Error("Not implemented")}generateMemento(){throw new Error("Not implemented")}toString(){throw new Error("Not implemented")}}},function(g,h,l){"use strict";function n(C){return C&&C.__esModule?C:{default:C}}Object.defineProperty(h,"__esModule",{value:!0});var o=l(1),q=n(o),r=l(7),w=n(r),z=l(5),A=n(z);class B extends A.default{constructor(C,D){super(),this.start=C,this.end=D}evaluate(C){return q.default.add(this.start,q.default.mul(q.default.sub(this.end,this.start),C))}aabb(){return new w.default({min:[_Mathmin(this.start[0],this.end[0]),_Mathmin(this.start[1],this.end[1])],max:[_Mathmax(this.start[0],this.end[0]),_Mathmax(this.start[1],this.end[1])]})}toString(){let C="Line: ",[D,E]=this.start,[F,G]=this.end;if(D===F)C+="x = "+D;else if(E===G)C+="y = "+E;else{C+="y = "+((G-E)/(F-D)).toFixed(2)+" x + "+((F*E-G*D)/(F-D)).toFixed(2)}return C}toSVGPathData(){let[C,D]=this.start,[E,F]=this.end;return`M ${C},${D} L ${E},${F}`}generateMemento(){return{type:B.TYPEID,start:this.start,end:this.end}}}B.TYPEID="line",h.default=B},function(g,h){"use strict";Object.defineProperty(h,"__esModule",{value:!0});h.default=class{constructor({min:n,max:o}){this.min=n||[Infinity,Infinity],this.max=o||[-Infinity,-Infinity]}transform(n){this.min=n.transformPoint(this.min),this.max=n.transformPoint(this.max)}overlaps(n){let o=this,q=n,r=vec2.mul(vec2.sub(o.max,o.min),0.5),w=vec2.mul(vec2.sub(q.max,q.min),0.5),z=vec2.add(o.min,r),A=vec2.add(q.min,w),B=vec2.sub(z,A).map(Math.abs),C=vec2.add(r,w);return B[0]<=C[0]&&B[1]<=C[1]}width(){return this.max[0]-this.min[0]}height(){return this.max[1]-this.min[1]}size(){return vec2.dist(this.min,this.max)}center(){return vec2.mul(vec2.add(this.min,this.max),0.5)}merge(n){this.min=vec2.low(this.min,n.min),this.max=vec2.high(this.max,n.max)}toString(){let n="Center "+vec2.format(this.center());return n+=" [min:"+vec2.format(this.min)+" -> max:"+vec2.format(this.max)+"]",n}toSVGRect(){return`<rect x="${this.min[0]}" y="${this.min[1]}" `+`width="${this.width()}" height="${this.height()}" `+`style="fill:none;stroke:#888"></rect>`}}},function(g,h,l){"use strict";Object.defineProperty(h,"__esModule",{value:!0});var o=l(5),q=function(w){return w&&w.__esModule?w:{default:w}}(o);class r extends q.default{constructor(w){super(),this.degree=w.length-1,this.cpoints=w}}h.default=r},function(g,h,l){"use strict";function n(C){return C&&C.__esModule?C:{default:C}}Object.defineProperty(h,"__esModule",{value:!0});var o=l(8),q=n(o),r=l(1),w=n(r),z=l(7),A=n(z);class B extends q.default{evaluate(C){let D=this.cpoints,E=C*C,F=C*E,G=(1-C)*(1-C),H=(1-C)*G,I=H*D[0][0]+3*C*G*D[1][0]+3*E*(1-C)*D[2][0]+F*D[3][0],J=H*D[0][1]+3*C*G*D[1][1]+3*E*(1-C)*D[2][1]+F*D[3][1];return[I,J]}_getExtremes(){let M,N,O,Q,R,[C,D,E,F]=this.cpoints,[G,H]=w.default.mul(w.default.add(w.default.mul(C,-1),w.default.mul(D,3),w.default.mul(E,-3),F),3),[I,J]=w.default.mul(w.default.add(C,w.default.mul(D,-2),E),6),[K,L]=w.default.mul(w.default.sub(D,C),3);if(M=I*I-4*G*K,0<=M){let S=-I/(2*G),T=_Mathsqrt(M)/(2*G);N=S-T,O=S+T}else N=0,O=1;if(M=J*J-4*H*L,0<=M){let S=-J/(2*H),T=_Mathsqrt(M)/(2*H);Q=S-T,R=S+T}else Q=0,R=1;return[N,O,Q,R].filter((S)=>0<=S&&1>=S)}aabb(){let C=this._getExtremes().map((D)=>this.evaluate(D));return new A.default({min:w.default.low(...C),max:w.default.high(...C)})}split(C){let[D,E,F,G]=this.cpoints,H=w.default.add(w.default.mul(D,1-C),w.default.mul(E,C)),I=w.default.add(w.default.mul(E,1-C),w.default.mul(F,C)),J=w.default.add(w.default.mul(F,1-C),w.default.mul(G,C)),K=w.default.add(w.default.mul(H,1-C),w.default.mul(I,C)),L=w.default.add(w.default.mul(I,1-C),w.default.mul(J,C)),M=w.default.add(w.default.mul(K,1-C),w.default.mul(L,C));return[new B([D,H,K,M]),new B([M,L,J,G])]}projectParam(C){const D=8;let E=[];for(let Y=0;Y<=D;Y++)E.push(Y/D);let F=E.map((Y)=>this.evaluate(Y)),G=0,H=Infinity,I=[];F.forEach((Y,Z)=>{let $=w.default.distSq(Y,C);I.push($),$<H&&(H=$,G=Z)});let J=_Mathmax(G-1,0),K=_Mathmin(G+1,F.length-1),L=J/D,M=K/D,N=I[J],O=I[K],Q,R,S,T;let X;for(X=0;X<15;X++){if(R=(L+M)/2,Q=w.default.distSq(this.evaluate(R),C),S=_Mathabs(N-Q),T=_Mathabs(O-Q),1>S){R=L;break}if(1>T){R=M;break}S<T?(M=R,O=Q):(L=R,N=Q)}return R}project(C){return this.evaluate(this.projectParam(C))}toSVGPathData(C=2){let D=this.cpoints;return`M ${D[0][0].toFixed(C)},${D[0][1].toFixed(C)} `+`C ${D[1][0].toFixed(C)},${D[1][1].toFixed(C)}`+` ${D[2][0].toFixed(C)},${D[2][1].toFixed(C)}`+` ${D[3][0].toFixed(C)},${D[3][1].toFixed(C)}`}}h.default=B},function(g,h,l){"use strict";function n(E){return E&&E.__esModule?E:{default:E}}function o(E){let F=2*E*E*E-3*E*E+1;return[F,1-F,E*E*E-2*E*E+E,E*E*E-E*E]}function q(E){12!==E.length&&console.error("Coons boundary of unexpected length ",E.length);let F=[[E[0],E[1],E[2],E[3]],[E[11],[0,0],[0,0],E[4]],[E[10],[0,0],[0,0],E[5]],[E[9],E[8],E[7],E[6]]];for(let G=1;2>=G;G++)for(let H=1;2>=H;H++)F[G][H][0]=(1-G/3)*F[0][H][0]+G/3*F[3][H][0]+(1-H/3)*F[G][0][0]+H/3*F[G][3][0]-F[0][0][0]*(1-H/3)*(1-G/3)-F[0][3][0]*(H/3)*(1-G/3)-F[3][0][0]*(1-H/3)*(G/3)-F[3][3][0]*(H/3)*(G/3),F[G][H][1]=(1-G/3)*F[0][H][1]+G/3*F[3][H][1]+(1-H/3)*F[G][0][1]+H/3*F[G][3][1]-F[0][0][1]*(1-H/3)*(1-G/3)-F[0][3][1]*(H/3)*(1-G/3)-F[3][0][1]*(1-H/3)*(G/3)-F[3][3][1]*(H/3)*(G/3);return F}Object.defineProperty(h,"__esModule",{value:!0});var r=l(9),w=n(r),z=l(1),A=n(z);const B=1e-3,C=15;class D{constructor({points:E,coons:F}){if(E)this.points=E;else if(F)this.points=q(F);else throw new Error("Invalid constructor input");console.assert(4===this.points.length),this.points.forEach((G)=>{console.assert(4===G.length)})}getBoundaryCurves(){return[this.getTopCurve(),this.getRightCurve(),this.getBottomCurve(),this.getLeftCurve()]}containsPoint(E){return this.getBoundaryCurves().every((F)=>{let G=F.projectParam(E);return G>B&&G<1-B})}getTopCurve(){return new w.default(this.points[0].slice(0,4))}getBottomCurve(){return new w.default(this.points[3].slice(0,4))}getLeftCurve(){return new w.default([this.points[0][0],this.points[1][0],this.points[2][0],this.points[3][0]])}getRightCurve(){return new w.default([this.points[0][3],this.points[1][3],this.points[2][3],this.points[3][3]])}_computeVCurve(E){let F=this.points,[G,H,I,J]=o(E),K=A.default.sub(F[1][0],F[0][0]),L=A.default.sub(F[3][0],F[2][0]),M=A.default.sub(F[1][3],F[0][3]),N=A.default.sub(F[3][3],F[2][3]),O=A.default.add(A.default.mul(K,G),A.default.mul(M,H)),Q=A.default.add(A.default.mul(L,G),A.default.mul(N,H)),R=new w.default(F[0]),S=R.evaluate(E),T=new w.default(F[3]),W=T.evaluate(E);return new w.default([S,A.default.add(S,O),A.default.sub(W,Q),W])}_computeUCurve(E){let F=this.points,[G,H,I,J]=o(E),K=A.default.sub(F[0][1],F[0][0]),L=A.default.sub(F[0][3],F[0][2]),M=A.default.sub(F[3][1],F[3][0]),N=A.default.sub(F[3][3],F[3][2]),O=A.default.add(A.default.mul(K,G),A.default.mul(M,H)),Q=A.default.add(A.default.mul(L,G),A.default.mul(N,H)),R=new w.default([F[0][0],F[1][0],F[2][0],F[3][0]]),S=R.evaluate(E),T=new w.default([F[0][3],F[1][3],F[2][3],F[3][3]]),W=T.evaluate(E);return new w.default([S,A.default.add(S,O),A.default.sub(W,Q),W])}_estimateU(E){let F=0,G=1,H,I=this.getLeftCurve(),J=this.getRightCurve(),K,L;for(let M=0;M<C&&(H=(F+G)/2,K=A.default.distSq(I.project(E),E),L=A.default.distSq(J.project(E),E),!(1>_Mathabs(K-L)));M++)K<L?(G=H,J=this._computeVCurve(H)):(F=H,I=this._computeVCurve(H));return H}_estimateV(E){let F=0,G=1,H,I=this.getTopCurve(),J=this.getBottomCurve();for(let K=0;K<C;K++){H=(F+G)/2;let L=A.default.distSq(I.project(E),E),M=A.default.distSq(J.project(E),E);if(1>_Mathabs(L-M))break;L<M?(G=H,J=this._computeUCurve(H)):(F=H,I=this._computeUCurve(H))}return H}projectParam(E){return[this._estimateU(E),this._estimateV(E)]}splitU(E){let[F,G]=this.getTopCurve().split(E),H=this._computeVCurve(E),I=this.getLeftCurve(),J=this.getRightCurve(),[K,L]=this.getBottomCurve().split(E),M=new D({coons:[F.cpoints[0],F.cpoints[1],F.cpoints[2],F.cpoints[3],H.cpoints[1],H.cpoints[2],H.cpoints[3],K.cpoints[2],K.cpoints[1],K.cpoints[0],I.cpoints[2],I.cpoints[1]]}),N=new D({coons:[G.cpoints[0],G.cpoints[1],G.cpoints[2],G.cpoints[3],J.cpoints[1],J.cpoints[2],J.cpoints[3],L.cpoints[2],L.cpoints[1],L.cpoints[0],H.cpoints[2],H.cpoints[1]]});return[M,N]}splitV(E){let[F,G]=this.getLeftCurve().split(E),H=this._computeUCurve(E),I=this.getTopCurve(),J=this.getBottomCurve(),[K,L]=this.getRightCurve().split(E),M=new D({coons:[I.cpoints[0],I.cpoints[1],I.cpoints[2],I.cpoints[3],K.cpoints[1],K.cpoints[2],K.cpoints[3],H.cpoints[2],H.cpoints[1],H.cpoints[0],F.cpoints[2],F.cpoints[1]]}),N=new D({coons:[H.cpoints[0],H.cpoints[1],H.cpoints[2],H.cpoints[3],L.cpoints[1],L.cpoints[2],L.cpoints[3],J.cpoints[2],J.cpoints[1],J.cpoints[0],G.cpoints[2],G.cpoints[1]]});return[M,N]}splitUV(E,F){let[G,H]=this.getTopCurve().split(E),[I,J]=this._computeUCurve(F).split(E),[K,L]=this.getBottomCurve().split(E),[M,N]=this.getLeftCurve().split(F),[O,Q]=this._computeVCurve(E).split(F),[R,S]=this.getRightCurve().split(F),T=new D({coons:[G.cpoints[0],G.cpoints[1],G.cpoints[2],G.cpoints[3],O.cpoints[1],O.cpoints[2],O.cpoints[3],I.cpoints[2],I.cpoints[1],I.cpoints[0],M.cpoints[2],M.cpoints[1]]}),W=new D({coons:[H.cpoints[0],H.cpoints[1],H.cpoints[2],H.cpoints[3],R.cpoints[1],R.cpoints[2],R.cpoints[3],J.cpoints[2],J.cpoints[1],J.cpoints[0],O.cpoints[2],O.cpoints[1]]}),X=new D({coons:[I.cpoints[0],I.cpoints[1],I.cpoints[2],I.cpoints[3],Q.cpoints[1],Q.cpoints[2],Q.cpoints[3],K.cpoints[2],K.cpoints[1],K.cpoints[0],N.cpoints[2],N.cpoints[1]]}),Y=new D({coons:[J.cpoints[0],J.cpoints[1],J.cpoints[2],J.cpoints[3],S.cpoints[1],S.cpoints[2],S.cpoints[3],L.cpoints[2],L.cpoints[1],L.cpoints[0],Q.cpoints[2],Q.cpoints[1]]});return[[T,W],[X,Y]]}clone(){return new D({points:JSON.parse(JSON.stringify(this.points))})}toSVGPathData(E=2){let F="",G=this.points,H=G[0][0][0].toFixed(E),I=G[0][0][1].toFixed(E);F+=`M ${H},${I} `;let J=G[0][1][0].toFixed(E),K=G[0][1][1].toFixed(E),L=G[0][2][0].toFixed(E),M=G[0][2][1].toFixed(E),N=G[0][3][0].toFixed(E),O=G[0][3][1].toFixed(E);return F+=`C ${J},${K} ${L},${M} ${N},${O} `,J=G[1][3][0].toFixed(E),K=G[1][3][1].toFixed(E),L=G[2][3][0].toFixed(E),M=G[2][3][1].toFixed(E),N=G[3][3][0].toFixed(E),O=G[3][3][1].toFixed(E),F+=`C ${J},${K} ${L},${M} ${N},${O} `,J=G[3][2][0].toFixed(E),K=G[3][2][1].toFixed(E),L=G[3][1][0].toFixed(E),M=G[3][1][1].toFixed(E),N=G[3][0][0].toFixed(E),O=G[3][0][1].toFixed(E),F+=`C ${J},${K} ${L},${M} ${N},${O} `,J=G[2][0][0].toFixed(E),K=G[2][0][1].toFixed(E),L=G[1][0][0].toFixed(E),M=G[1][0][1].toFixed(E),N=G[0][0][0].toFixed(E),O=G[0][0][1].toFixed(E),F+=`C ${J},${K} ${L},${M} ${N},${O}`,F}}h.default=D},function(g,h){"use strict";Object.defineProperty(h,"__esModule",{value:!0});const l=1e-3;class n{constructor(o){this.surfaces=o}containsPoint(o){for(let q=0;q<this.surfaces.length;q++)for(let w,r=0;r<this.surfaces[q].length;r++)if(w=this.surfaces[q][r],w.containsPoint(o))return!0;return!1}subdivide(o){let q=this.surfaces.length,r=this.surfaces[0].length,w=Array(q+1);for(let D=0;D<q+1;D++)w[D]=Array(r+1);let B,C,z=-1,A=-1;for(let E,D=0;D<this.surfaces.length;D++){E=this.surfaces[D];for(let F=0;F<E.length;F++){let G=E[F],[H,I]=G.projectParam(o);if(H>l&&H<1-l&&I>l&&I<1-l){z=D,A=F,B=H,C=I;break}}}if(0>z&&0>A)return null;for(let E,D=0;D<this.surfaces.length;D++){E=this.surfaces[D];for(let G,F=0;F<E.length;F++)if(G=E[F],D===z&&F===A){let H=G.splitUV(B,C);w[D][F]=H[0][0],w[D+1][F]=H[1][0],w[D][F+1]=H[0][1],w[D+1][F+1]=H[1][1]}else if(D===z&&F!==A){let[H,I]=G.splitV(C),J=0<=z&&D>z?D+1:D,K=0<=A&&F>A?F+1:F;w[J][K]=H,w[J+1][K]=I}else if(D!==z&&F===A){let[H,I]=G.splitU(B),J=0<=z&&D>z?D+1:D,K=0<=A&&F>A?F+1:F;w[J][K]=H,w[J][K+1]=I}else{let H=0<=z&&D>z?D+1:D,I=0<=A&&F>A?F+1:F;w[H][I]=G}}return this.surfaces=w,[z,A]}getNumRows(){return this.surfaces.length}getNumColumns(){return this.surfaces[0].length}getSurface(o,q){return this.surfaces[o][q]}*getBezierSurfaces(){for(let q,o=0;o<this.surfaces.length;o++){q=this.surfaces[o];for(let r=0;r<q.length;r++)yield q[r]}}forEachSurface(o){for(let q=0;q<this.surfaces.length;q++)for(let r=0;r<this.surfaces[q].length;r++)o(this.surfaces[q][r],q,r)}clone(){let o=Array(this.surfaces.length);for(let q=0;q<this.surfaces.length;q++){o[q]=Array(this.surfaces[q].length);for(let r=0;r<this.surfaces[q].length;r++)o[q][r]=this.surfaces[q][r].clone()}return new n(o)}}h.default=n}]);
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.geom = exports.AABB = exports.Rotation = exports.Translation = exports.Transform = exports.vec2 = undefined;
+
+	var _vec = __webpack_require__(1);
+
+	var _vec2 = _interopRequireDefault(_vec);
+
+	var _transform = __webpack_require__(3);
+
+	var _transform2 = _interopRequireDefault(_transform);
+
+	var _geom = __webpack_require__(4);
+
+	var _geom2 = _interopRequireDefault(_geom);
+
+	var _aabb = __webpack_require__(7);
+
+	var _aabb2 = _interopRequireDefault(_aabb);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.vec2 = _vec2.default;
+	exports.Transform = _transform2.default;
+	exports.Translation = _transform.Translation;
+	exports.Rotation = _transform.Rotation;
+	exports.AABB = _aabb2.default;
+	exports.geom = _geom2.default;
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _constants = __webpack_require__(2);
+
+	const vec2 = {
+	  add: function (...varr) {
+	    let answer = [0, 0];
+	    for (let v of varr) {
+	      answer[0] += v[0];
+	      answer[1] += v[1];
+	    }
+	    return answer;
+	  },
+
+	  sub: function (va, vb) {
+	    return [va[0] - vb[0], va[1] - vb[1]];
+	  },
+
+	  mul: function (va, k) {
+	    return [va[0] * k, va[1] * k];
+	  },
+
+	  isNonZero: function (v, tolerance = _constants.EPSILON) {
+	    return Math.abs(v[0]) > tolerance || Math.abs(v[1]) > tolerance;
+	  },
+
+	  isZero: function (v, tolerance = _constants.EPSILON) {
+	    return !vec2.isNonZero(v, tolerance);
+	  },
+
+	  lenSq: function (v) {
+	    return v[0] * v[0] + v[1] * v[1];
+	  },
+
+	  len: function (v) {
+	    return Math.sqrt(vec2.lenSq(v));
+	  },
+
+	  unit: function (v) {
+	    let len = vec2.len(v);
+	    if (len !== 0) {
+	      return vec2.mul(v, 1 / vec2.len(v));
+	    } else {
+	      return [0, 0];
+	    }
+	  },
+
+	  distSq: function (va, vb) {
+	    return vec2.lenSq(vec2.sub(va, vb));
+	  },
+
+	  dist: function (va, vb) {
+	    return Math.sqrt(vec2.distSq(va, vb));
+	  },
+
+	  dot: function (va, vb) {
+	    return va[0] * vb[0] + va[1] * vb[1];
+	  },
+
+	  cross: function (va, vb) {
+	    return va[0] * vb[1] - va[1] * vb[0];
+	  },
+
+	  toInt: function (v) {
+	    return [Math.round(v[0]), Math.round(v[1])];
+	  },
+
+	  equal: function (va, vb, tolerance = _constants.EPSILON) {
+	    return Math.abs(va[0] - vb[0]) < tolerance && Math.abs(va[1] - vb[1]) < tolerance;
+	  },
+
+	  low: function (...points) {
+	    let xlow = Infinity,
+	        ylow = Infinity;
+	    for (let point of points) {
+	      xlow = Math.min(point[0], xlow);
+	      ylow = Math.min(point[1], ylow);
+	    }
+	    return [xlow, ylow];
+	  },
+
+	  high: function (...points) {
+	    let xhigh = -Infinity,
+	        yhigh = -Infinity;
+	    for (let point of points) {
+	      xhigh = Math.max(point[0], xhigh);
+	      yhigh = Math.max(point[1], yhigh);
+	    }
+	    return [xhigh, yhigh];
+	  },
+
+	  format: function (v) {
+	    return '[' + v[0].toFixed(2) + ',' + v[1].toFixed(2) + ']';
+	  },
+
+	  dir: function (vfrom, vto) {
+	    return vec2.unit(vec2.sub(vto, vfrom));
+	  },
+
+	  orthogonal: function ([x, y]) {
+	    return [y, -x];
+	  }
+
+	};
+
+	exports.default = vec2;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	const EPSILON = 1e-6;
+
+	exports.EPSILON = EPSILON;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	class Transform {
+	  constructor(array) {
+	    if (array) {
+	      this.fromArray(array);
+	    } else {
+	      // Identity transform
+	      this.a = 1;
+	      this.b = 0;
+	      this.c = 0;
+	      this.d = 1;
+	      this.e = 0;
+	      this.f = 0;
+	    }
+	    this._cachedInverse = null;
+	  }
+
+	  isIdentity() {
+	    return this.a === 1 && this.b === 0 && this.c === 0 && this.d === 1 && this.e === 1 && this.f === 0;
+	  }
+
+	  /**
+	   * @param {number[]|number} coord|dx
+	   * @param number dy
+	   * @returns {Transform}
+	   */
+	  translate() {
+	    if (Array.isArray(arguments[0])) {
+	      this.e += arguments[0][0];
+	      this.f += arguments[0][1];
+	    } else {
+	      this.e += arguments[0];
+	      this.f += arguments[1];
+	    }
+	    this._cachedInverse = null;
+	    return this;
+	  }
+
+	  rotate(angle) {
+	    let c = Math.cos(angle);
+	    let s = Math.sin(angle);
+	    this.a = c;
+	    this.b = s;
+	    this.c = -s;
+	    this.d = c;
+	    this._cachedInverse = null;
+	    return this;
+	  }
+
+	  rotateDeg(angle) {
+	    return this.rotate(angle * Math.PI / 180);
+	  }
+
+	  static rotateAround(angle, point) {
+	    // Ref: http://www.euclideanspace.com/maths/geometry/affine/aroundPoint/matrix2d/
+	    let pre = new Transform().translate(...point);
+	    let rotation = new Transform().rotate(angle);
+	    let post = new Transform().translate(-point[0], -point[1]);
+	    return pre.mul(rotation).mul(post);
+	  }
+
+	  static scaleAround([sx, sy], point) {
+	    let pre = new Transform().translate(...point);
+	    let scale = new Transform().scale(sx, sy);
+	    let post = new Transform().translate(-point[0], -point[1]);
+	    return pre.mul(scale).mul(post);
+	  }
+
+	  scale(sx, sy) {
+	    this.a = sx;
+	    this.d = sy;
+	    this._cachedInverse = null;
+	    return this;
+	  }
+
+	  getScale() {
+	    return [this.a, this.d];
+	  }
+
+	  getTranslation() {
+	    return [this.e, this.f];
+	  }
+
+	  toArray() {
+	    return [this.a, this.b, this.c, this.d, this.e, this.f];
+	  }
+
+	  toAttributeString(precision = 2) {
+	    return `matrix(${this.toArray().map(x => x.toFixed(precision)).join(',')})`;
+	  }
+
+	  fromArray([a, b, c, d, e, f]) {
+	    this.a = a;
+	    this.b = b;
+	    this.c = c;
+	    this.d = d;
+	    this.e = e;
+	    this.f = f;
+	    this._cachedInverse = null;
+	  }
+
+	  /**
+	   * The transformation matrix is
+	   *     -           -
+	   *     |  a  c  e  |
+	   * M = |  b  d  f  |
+	   *     |  0  0  1  |
+	   *     -           -
+	   * Det(M) = ad - bc
+	   *              -           - T
+	   *              |  A  C  E  |
+	   * Inverse(M) = |  B  D  F  |   * (1/Det(M))
+	   *              |  G  H  I  |
+	   *              -           -
+	   * A = d
+	   * B = -c
+	   * G = cf-de
+	   * C = -b
+	   * D = a
+	   * H = be-af
+	   * E = 0
+	   * F = 0
+	   * I = ad-bc
+	   * =>
+	   *              -                 -
+	   *              |   d  -c  cf-de  |
+	   * Inverse(M) = |  -b   a  be-af  |  * (1/Det(M))
+	   *              |   0   0  ad-bc  |
+	   *              -                 -
+	   * =>
+	   *              -              -
+	   *              |  ai  ci  ei  |
+	   * Inverse(M) = |  bi  di  fi  |
+	   *              |  0   0   1   |
+	   *              -              -
+	   */
+	  inverse() {
+	    if (!this._cachedInverse) {
+	      let { a, b, c, d, e, f } = this;
+	      let det = a * d - b * c;
+	      let ai = d / det;
+	      let bi = -b / det;
+	      let ci = -c / det;
+	      let di = a / det;
+	      let ei = (c * f - d * e) / det;
+	      let fi = (b * e - a * f) / det;
+	      this._cachedInverse = new Transform([ai, bi, ci, di, ei, fi]);
+	    }
+	    return this._cachedInverse;
+	  }
+
+	  /**
+	   *      -              -
+	   *      |  a1  c1  e1  |
+	   * m1 = |  b1  d1  f1  |
+	   *      |  0   0   1   |
+	   *      -              -
+	   *      -              -
+	   *      |  a2  c2  e2  |
+	   * m2 = |  b2  d2  f2  |
+	   *      |  0   0   1   |
+	   *      -              -
+	   *
+	   *         -                                          -
+	   *         | a1*a2+c1*b2  a1*c2+c1*d2  a1*e2+c1*f2+e1 |
+	   * m1*m2 = | b1*a2+d1*b2  b1*c2+d1*d2  b1*e2+d1*f2+f1 |
+	   *         | 0            0            1              |
+	   *         -                                          -
+	   *
+	   */
+	  mul(other) {
+	    let { a: a1, b: b1, c: c1, d: d1, e: e1, f: f1 } = this;
+	    let { a: a2, b: b2, c: c2, d: d2, e: e2, f: f2 } = other;
+
+	    return new Transform([a1 * a2 + c1 * b2, b1 * a2 + d1 * b2, a1 * c2 + c1 * d2, b1 * c2 + d1 * d2, a1 * e2 + c1 * f2 + e1, b1 * e2 + d1 * f2 + f1]);
+	  }
+
+	  transformPoint([x, y]) {
+	    let { a, b, c, d, e, f } = this;
+	    return [a * x + c * y + e, b * x + d * y + f];
+	  }
+
+	  clone() {
+	    return new Transform(this.toArray());
+	  }
+
+	  generateMemento() {
+	    return this.toArray();
+	  }
+
+	  toString() {
+	    return `a:${this.a},b:${this.b},c:${this.c},` + `d:${this.d},e:${this.e},f:${this.f}`;
+	  }
+	}
+
+	exports.default = Transform;
+	Transform.revive = function (m) {
+	  return new Transform(m);
+	};
+
+	Transform.IDENTITY = new Transform();
+
+	class Translation extends Transform {
+	  constructor(arg0, arg1) {
+	    let arr;
+	    if (Array.isArray(arg0)) {
+	      arr = [1, 0, 0, 1, arg0[0], arg0[1]];
+	    } else {
+	      arr = [1, 0, 0, 1, arg0, arg1];
+	    }
+	    super(arr);
+	  }
+	}
+
+	exports.Translation = Translation;
+	class Rotation extends Transform {
+	  constructor(angle) {
+	    let cos = Math.cos(angle);
+	    let sin = Math.sin(angle);
+	    super([cos, sin, -sin, cos, 0, 0]);
+	  }
+	}
+	exports.Rotation = Rotation;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _curve = __webpack_require__(5);
+
+	var _curve2 = _interopRequireDefault(_curve);
+
+	var _line = __webpack_require__(6);
+
+	var _line2 = _interopRequireDefault(_line);
+
+	var _bezier = __webpack_require__(8);
+
+	var _bezier2 = _interopRequireDefault(_bezier);
+
+	var _cbezier = __webpack_require__(9);
+
+	var _cbezier2 = _interopRequireDefault(_cbezier);
+
+	var _cbezsurf = __webpack_require__(10);
+
+	var _cbezsurf2 = _interopRequireDefault(_cbezsurf);
+
+	var _cbezsurfpatch = __webpack_require__(11);
+
+	var _cbezsurfpatch2 = _interopRequireDefault(_cbezsurfpatch);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const geom = {
+	  Curve: _curve2.default, Line: _line2.default, Bezier: _bezier2.default, CubicBezier: _cbezier2.default,
+	  CubicBezierSurface: _cbezsurf2.default, CubicBezierSurfacePatch: _cbezsurfpatch2.default
+	};
+
+	exports.default = geom;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	/**
+	 * Parametric Curve
+	 */
+	class Curve {
+
+	  /**
+	   * Evaluate the curve at parameter value `t`.
+	   * Abstract method - Sub-classes should implement it
+	   * @param t Number or array of numbers for multiple point evaluations
+	   */
+	  evaluate(t) {
+	    throw new Error('Not implemented');
+	  }
+
+	  /**
+	   * Generate persistent representation of the Curve object
+	   * Abstract method - Sub-classes should implement it
+	   */
+	  generateMemento() {
+	    throw new Error('Not implemented');
+	  }
+
+	  /**
+	   * Generate string representation
+	   * Abstract method - Sub-classes should implement it
+	   */
+	  toString() {
+	    throw new Error('Not implemented');
+	  }
+	}
+
+	exports.default = Curve;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _vec = __webpack_require__(1);
+
+	var _vec2 = _interopRequireDefault(_vec);
+
+	var _aabb = __webpack_require__(7);
+
+	var _aabb2 = _interopRequireDefault(_aabb);
+
+	var _curve = __webpack_require__(5);
+
+	var _curve2 = _interopRequireDefault(_curve);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Line extends _curve2.default {
+
+	  constructor(start, end) {
+	    super();
+	    this.start = start;
+	    this.end = end;
+	  }
+
+	  evaluate(t) {
+	    return _vec2.default.add(this.start, _vec2.default.mul(_vec2.default.sub(this.end, this.start), t));
+	  }
+
+	  aabb() {
+	    return new _aabb2.default({
+	      min: [Math.min(this.start[0], this.end[0]), Math.min(this.start[1], this.end[1])],
+	      max: [Math.max(this.start[0], this.end[0]), Math.max(this.start[1], this.end[1])]
+	    });
+	  }
+
+	  toString() {
+	    let s = 'Line: ';
+	    let [x0, y0] = this.start;
+	    let [x1, y1] = this.end;
+	    if (x0 === x1) {
+	      s += 'x = ' + x0;
+	    } else if (y0 === y1) {
+	      s += 'y = ' + y0;
+	    } else {
+	      let m = (y1 - y0) / (x1 - x0);
+	      let c = (x1 * y0 - y1 * x0) / (x1 - x0);
+	      s += 'y = ' + m.toFixed(2) + ' x + ' + c.toFixed(2);
+	    }
+	    return s;
+	  }
+
+	  toSVGPathData() {
+	    let [x0, y0] = this.start;
+	    let [x1, y1] = this.end;
+	    return `M ${x0},${y0} L ${x1},${y1}`;
+	  }
+
+	  generateMemento() {
+	    return {
+	      type: Line.TYPEID,
+	      start: this.start,
+	      end: this.end
+	    };
+	  }
+	}
+
+	Line.TYPEID = 'line';
+
+	exports.default = Line;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+
+	class AABB {
+
+	  constructor({ min, max }) {
+	    this.min = min || [Infinity, Infinity];
+	    this.max = max || [-Infinity, -Infinity];
+	  }
+
+	  transform(xform) {
+	    this.min = xform.transformPoint(this.min);
+	    this.max = xform.transformPoint(this.max);
+	  }
+
+	  overlaps(other) {
+	    let aabb1 = this;
+	    let aabb2 = other;
+	    let half1 = vec2.mul(vec2.sub(aabb1.max, aabb1.min), 0.5);
+	    let half2 = vec2.mul(vec2.sub(aabb2.max, aabb2.min), 0.5);
+	    let center1 = vec2.add(aabb1.min, half1);
+	    let center2 = vec2.add(aabb2.min, half2);
+	    let dist = vec2.sub(center1, center2).map(Math.abs);
+	    let separation = vec2.add(half1, half2);
+	    return dist[0] <= separation[0] && dist[1] <= separation[1];
+	  }
+
+	  width() {
+	    return this.max[0] - this.min[0];
+	  }
+
+	  height() {
+	    return this.max[1] - this.min[1];
+	  }
+
+	  size() {
+	    return vec2.dist(this.min, this.max);
+	  }
+
+	  center() {
+	    return vec2.mul(vec2.add(this.min, this.max), 0.5);
+	  }
+
+	  merge(other) {
+	    this.min = vec2.low(this.min, other.min);
+	    this.max = vec2.high(this.max, other.max);
+	  }
+
+	  toString() {
+	    let s = 'Center ' + vec2.format(this.center());
+	    s += ' [min:' + vec2.format(this.min) + ' -> max:' + vec2.format(this.max) + ']';
+	    return s;
+	  }
+
+	  toSVGRect() {
+	    return `<rect x="${this.min[0]}" y="${this.min[1]}" ` + `width="${this.width()}" height="${this.height()}" ` + `style="fill:none;stroke:#888"></rect>`;
+	  }
+	}
+
+	exports.default = AABB;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _curve = __webpack_require__(5);
+
+	var _curve2 = _interopRequireDefault(_curve);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Bezier extends _curve2.default {
+	  constructor(cpoints) {
+	    super();
+	    this.degree = cpoints.length - 1;
+	    this.cpoints = cpoints;
+	  }
+	}
+
+	exports.default = Bezier;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _bezier = __webpack_require__(8);
+
+	var _bezier2 = _interopRequireDefault(_bezier);
+
+	var _vec = __webpack_require__(1);
+
+	var _vec2 = _interopRequireDefault(_vec);
+
+	var _aabb = __webpack_require__(7);
+
+	var _aabb2 = _interopRequireDefault(_aabb);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class CubicBezier extends _bezier2.default {
+
+	  evaluate(t) {
+	    let p = this.cpoints;
+	    let t2 = t * t;
+	    let t3 = t * t2;
+	    let one_t2 = (1 - t) * (1 - t);
+	    let one_t3 = (1 - t) * one_t2;
+	    let x = one_t3 * p[0][0] + 3 * t * one_t2 * p[1][0] + 3 * t2 * (1 - t) * p[2][0] + t3 * p[3][0];
+	    let y = one_t3 * p[0][1] + 3 * t * one_t2 * p[1][1] + 3 * t2 * (1 - t) * p[2][1] + t3 * p[3][1];
+	    return [x, y];
+	  }
+
+	  /**
+	   * Return parameter values at which either x or y coords are at extremes
+	   * It means that some of the values might represent curve's extremeties,
+	   * but not all of them.
+	   * @returns {Array.<*>}
+	   * @private
+	   */
+	  _getExtremes() {
+	    let [p1, p2, p3, p4] = this.cpoints;
+	    //
+	    // Ref: https://pomax.github.io/bezierinfo/#extremities
+	    // a = 3(-p1 + 3p2 - 3p3 + p4);
+	    // b = 6(p1 - 2p2 + p3);
+	    // c = 3(p2 - p1)
+	    //
+	    let [ax, ay] = _vec2.default.mul(_vec2.default.add(_vec2.default.mul(p1, -1), _vec2.default.mul(p2, 3), _vec2.default.mul(p3, -3), p4), 3);
+	    let [bx, by] = _vec2.default.mul(_vec2.default.add(p1, _vec2.default.mul(p2, -2), p3), 6);
+	    let [cx, cy] = _vec2.default.mul(_vec2.default.sub(p2, p1), 3);
+
+	    //
+	    // Quadratic root formula
+	    // t = (-b + sqrt(b*b - 4*a*c))/(2*a) and (-b - sqrt(b*b - 4*a*c))/(2*a)
+	    //
+	    // To be solved separately for X and Y dimensions
+	    let sqterm, tx0, tx1, ty0, ty1;
+
+	    // For x
+	    sqterm = bx * bx - 4 * ax * cx;
+	    if (sqterm >= 0) {
+	      let Ax = -bx / (2 * ax);
+	      let Bx = Math.sqrt(sqterm) / (2 * ax);
+	      tx0 = Ax - Bx;
+	      tx1 = Ax + Bx;
+	    } else {
+	      tx0 = 0.0;
+	      tx1 = 1.0;
+	    }
+
+	    // For y
+	    sqterm = by * by - 4 * ay * cy;
+	    if (sqterm >= 0) {
+	      let Ay = -by / (2 * ay);
+	      let By = Math.sqrt(sqterm) / (2 * ay);
+	      ty0 = Ay - By;
+	      ty1 = Ay + By;
+	    } else {
+	      ty0 = 0.0;
+	      ty1 = 1.0;
+	    }
+
+	    return [tx0, tx1, ty0, ty1].filter(t => t >= 0.0 && t <= 1.0);
+	  }
+
+	  aabb() {
+	    let extremes = this._getExtremes().map(t => this.evaluate(t));
+	    return new _aabb2.default({
+	      min: _vec2.default.low(...extremes),
+	      max: _vec2.default.high(...extremes)
+	    });
+	  }
+
+	  /**
+	   * Split the curve at given u value and return two Cubic Bezier curves that
+	   * are identical to this curve when put together
+	   * @param u
+	   * @returns {[*,*]}
+	   */
+	  split(u) {
+	    let [p0, p1, p2, p3] = this.cpoints;
+	    let p01 = _vec2.default.add(_vec2.default.mul(p0, 1 - u), _vec2.default.mul(p1, u));
+	    let p12 = _vec2.default.add(_vec2.default.mul(p1, 1 - u), _vec2.default.mul(p2, u));
+	    let p23 = _vec2.default.add(_vec2.default.mul(p2, 1 - u), _vec2.default.mul(p3, u));
+
+	    let p012 = _vec2.default.add(_vec2.default.mul(p01, 1 - u), _vec2.default.mul(p12, u));
+	    let p123 = _vec2.default.add(_vec2.default.mul(p12, 1 - u), _vec2.default.mul(p23, u));
+
+	    let p0123 = _vec2.default.add(_vec2.default.mul(p012, 1 - u), _vec2.default.mul(p123, u));
+
+	    return [new CubicBezier([p0, p01, p012, p0123]), new CubicBezier([p0123, p123, p23, p3])];
+	  }
+
+	  /**
+	   * Find parametric value on this curve that's closest to input point
+	   * @param ipoint
+	   * @returns {*}
+	   */
+	  projectParam(ipoint) {
+	    const COARSE_ITERS = 8;
+	    let tarr = [];
+	    for (let i = 0; i <= COARSE_ITERS; i++) {
+	      tarr.push(i / COARSE_ITERS);
+	    }
+	    let coarsePoints = tarr.map(t => this.evaluate(t));
+	    let minidx = 0;
+	    let mindistsq = Infinity;
+	    let coarsev = [];
+	    coarsePoints.forEach((coarsept, idx) => {
+	      let distSq = _vec2.default.distSq(coarsept, ipoint);
+	      coarsev.push(distSq);
+	      if (distSq < mindistsq) {
+	        mindistsq = distSq;
+	        minidx = idx;
+	      }
+	    });
+
+	    let idxleft = Math.max(minidx - 1, 0);
+	    let idxright = Math.min(minidx + 1, coarsePoints.length - 1);
+	    let tleft = idxleft / COARSE_ITERS;
+	    let tright = idxright / COARSE_ITERS;
+	    let vleft = coarsev[idxleft];
+	    let vright = coarsev[idxright];
+	    let vmid;
+	    let tmid;
+	    let gapleft, gapright;
+
+	    const MAX_ITERS = 15;
+	    let i;
+	    for (i = 0; i < MAX_ITERS; i++) {
+
+	      tmid = (tleft + tright) / 2;
+
+	      vmid = _vec2.default.distSq(this.evaluate(tmid), ipoint);
+
+	      gapleft = Math.abs(vleft - vmid);
+	      gapright = Math.abs(vright - vmid);
+
+	      if (gapleft < 1) {
+	        tmid = tleft;
+	        break;
+	      }
+	      if (gapright < 1) {
+	        tmid = tright;
+	        break;
+	      }
+
+	      if (gapleft < gapright) {
+	        tright = tmid;
+	        vright = vmid;
+	      } else {
+	        tleft = tmid;
+	        vleft = vmid;
+	      }
+	    }
+
+	    return tmid;
+	  }
+
+	  /**
+	   * Find a point on this curve that's closest to input point
+	   * @param ipoint
+	   * @returns {*}
+	   */
+	  project(ipoint) {
+	    return this.evaluate(this.projectParam(ipoint));
+	  }
+
+	  toSVGPathData(precision = 2) {
+	    let p = this.cpoints;
+	    return `M ${p[0][0].toFixed(precision)},${p[0][1].toFixed(precision)} ` + `C ${p[1][0].toFixed(precision)},${p[1][1].toFixed(precision)}` + ` ${p[2][0].toFixed(precision)},${p[2][1].toFixed(precision)}` + ` ${p[3][0].toFixed(precision)},${p[3][1].toFixed(precision)}`;
+	  }
+	}
+
+	exports.default = CubicBezier;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _cbezier = __webpack_require__(9);
+
+	var _cbezier2 = _interopRequireDefault(_cbezier);
+
+	var _vec = __webpack_require__(1);
+
+	var _vec2 = _interopRequireDefault(_vec);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const EPSILON = 0.001;
+	const MAX_INTERSECTION_PARAM_ITERS = 15;
+
+	function hermiteBlendingFunctions(t) {
+	  let f1 = 2 * t * t * t - 3 * t * t + 1;
+	  let f2 = 1 - f1;
+	  let f3 = t * t * t - 2 * t * t + t;
+	  let f4 = t * t * t - t * t;
+	  return [f1, f2, f3, f4];
+	}
+
+	/*
+	 * Coons patch is defined by its boundary.
+	 * A mesh gradient coons patch is defined by 4 cubic bezier curves.
+	 * Hence there are expected to be 12 points on its boundaries. This routine
+	 * computes the 4 inside control points for such coons patch
+	 *
+	 *             j ->
+	 *      b00  b01  b02  b03
+	 *
+	 *    i b10            b13
+	 *    |      b[i][j]
+	 *    v b20            b23
+	 *
+	 *      b30  b31  b32  b33
+	 *
+	 *  b[i][j] =
+	 *    (1-i/3) * b[0][j] + (i/3) * b[3][j] +
+	 *    (1-j/3) * b[i][0] + (j/3) * b[i][3]
+	 *    - b[0][0] * (1-j/3) * (1-i/3)
+	 *    - b[3][0] * (j/3) * (1-i/3)
+	 *    - b[0][3] * (1-j/3) * (i/3)
+	 *    - b[3][3] * (j/3) * (i/3)
+	 *
+	 *  Ref: CAGD - Farid - 15.2
+	 *
+	 */
+	function interpolateCoons(coons) {
+	  if (coons.length !== 12) {
+	    console.error("Coons boundary of unexpected length ", coons.length);
+	  }
+	  let b = [[coons[0], coons[1], coons[2], coons[3]], [coons[11], [0, 0], [0, 0], coons[4]], [coons[10], [0, 0], [0, 0], coons[5]], [coons[9], coons[8], coons[7], coons[6]]];
+
+	  for (let i = 1; i <= 2; i++) {
+	    for (let j = 1; j <= 2; j++) {
+	      b[i][j][0] = (1 - i / 3) * b[0][j][0] + i / 3 * b[3][j][0] + (1 - j / 3) * b[i][0][0] + j / 3 * b[i][3][0] - b[0][0][0] * (1 - j / 3) * (1 - i / 3) - b[0][3][0] * (j / 3) * (1 - i / 3) - b[3][0][0] * (1 - j / 3) * (i / 3) - b[3][3][0] * (j / 3) * (i / 3);
+
+	      b[i][j][1] = (1 - i / 3) * b[0][j][1] + i / 3 * b[3][j][1] + (1 - j / 3) * b[i][0][1] + j / 3 * b[i][3][1] - b[0][0][1] * (1 - j / 3) * (1 - i / 3) - b[0][3][1] * (j / 3) * (1 - i / 3) - b[3][0][1] * (1 - j / 3) * (i / 3) - b[3][3][1] * (j / 3) * (i / 3);
+	    }
+	  }
+	  return b;
+	}
+
+	/**
+	 *
+	 *  Puv
+	 *                u
+	 *              --->
+	 *     P00                           P10
+	 *        0,0     0,1     0,2     0,3
+	 *
+	 *   |    1,0     1,1     1,2     1,3
+	 * v |
+	 *   |    2,0     2,1     2,2     2,3
+	 *   v
+	 *        3,0     3,1     3,2     3,3
+	 *     P01                           P11
+	 *
+	 */
+
+	class CubicBezierSurface {
+
+	  constructor({ points, coons }) {
+	    if (points) {
+	      this.points = points;
+	    } else if (coons) {
+	      this.points = interpolateCoons(coons);
+	    } else {
+	      throw new Error('Invalid constructor input');
+	    }
+
+	    console.assert(this.points.length === 4);
+	    this.points.forEach(row => {
+	      console.assert(row.length === 4);
+	    });
+	  }
+
+	  getBoundaryCurves() {
+	    return [this.getTopCurve(), this.getRightCurve(), this.getBottomCurve(), this.getLeftCurve()];
+	  }
+
+	  containsPoint(ipoint) {
+	    return this.getBoundaryCurves().every(boundaryCurve => {
+	      let t = boundaryCurve.projectParam(ipoint);
+	      return t > EPSILON && t < 1 - EPSILON;
+	    });
+	  }
+
+	  /**
+	   * Top curve corresponds to v = 0, curve from P00 to P10
+	   * @returns {CubicBezier}
+	   */
+	  getTopCurve() {
+	    return new _cbezier2.default(this.points[0].slice(0, 4));
+	  }
+
+	  /**
+	   * Bottom curve corresponds to v = 1, curve from P01 to P11
+	   * @returns {CubicBezier}
+	   */
+	  getBottomCurve() {
+	    return new _cbezier2.default(this.points[3].slice(0, 4));
+	  }
+
+	  /**
+	   * Left curve corresponds to u = 0, curve from P00 to P01
+	   * @returns {CubicBezier}
+	   */
+	  getLeftCurve() {
+	    return new _cbezier2.default([this.points[0][0], this.points[1][0], this.points[2][0], this.points[3][0]]);
+	  }
+
+	  /**
+	   * Right curve corresponds to u = 1, curve from P10 to P11
+	   * @returns {CubicBezier}
+	   */
+	  getRightCurve() {
+	    return new _cbezier2.default([this.points[0][3], this.points[1][3], this.points[2][3], this.points[3][3]]);
+	  }
+
+	  _computeVCurve(U) {
+
+	    let P = this.points;
+
+	    let [f1, f2, f3, f4] = hermiteBlendingFunctions(U);
+
+	    let Pv00 = _vec2.default.sub(P[1][0], P[0][0]);
+	    let Pv01 = _vec2.default.sub(P[3][0], P[2][0]);
+	    let Pv10 = _vec2.default.sub(P[1][3], P[0][3]);
+	    let Pv11 = _vec2.default.sub(P[3][3], P[2][3]);
+
+	    let PvU0 = _vec2.default.add(_vec2.default.mul(Pv00, f1), _vec2.default.mul(Pv10, f2));
+	    let PvU1 = _vec2.default.add(_vec2.default.mul(Pv01, f1), _vec2.default.mul(Pv11, f2));
+
+	    let Pu0 = new _cbezier2.default(P[0]);
+	    let PU0 = Pu0.evaluate(U);
+	    let Pu1 = new _cbezier2.default(P[3]);
+	    let PU1 = Pu1.evaluate(U);
+
+	    return new _cbezier2.default([PU0, _vec2.default.add(PU0, PvU0), _vec2.default.sub(PU1, PvU1), PU1]);
+	  }
+
+	  _computeUCurve(V) {
+	    let P = this.points;
+
+	    let [f1, f2, f3, f4] = hermiteBlendingFunctions(V);
+
+	    let Pu00 = _vec2.default.sub(P[0][1], P[0][0]);
+	    let Pu10 = _vec2.default.sub(P[0][3], P[0][2]);
+	    let Pu01 = _vec2.default.sub(P[3][1], P[3][0]);
+	    let Pu11 = _vec2.default.sub(P[3][3], P[3][2]);
+
+	    let Pu0V = _vec2.default.add(_vec2.default.mul(Pu00, f1), _vec2.default.mul(Pu01, f2));
+
+	    let Pu1V = _vec2.default.add(_vec2.default.mul(Pu10, f1), _vec2.default.mul(Pu11, f2));
+
+	    let P0v = new _cbezier2.default([P[0][0], P[1][0], P[2][0], P[3][0]]);
+	    let P0V = P0v.evaluate(V);
+	    let P1v = new _cbezier2.default([P[0][3], P[1][3], P[2][3], P[3][3]]);
+	    let P1V = P1v.evaluate(V);
+
+	    return new _cbezier2.default([P0V, _vec2.default.add(P0V, Pu0V), _vec2.default.sub(P1V, Pu1V), P1V]);
+	  }
+
+	  _estimateU(point) {
+
+	    let uleft = 0.0;
+	    let uright = 1.0;
+	    let umid;
+
+	    let curveLeft = this.getLeftCurve();
+	    let curveRight = this.getRightCurve();
+	    let valLeft, valRight;
+
+	    for (let i = 0; i < MAX_INTERSECTION_PARAM_ITERS; i++) {
+	      umid = (uleft + uright) / 2;
+
+	      valLeft = _vec2.default.distSq(curveLeft.project(point), point);
+	      valRight = _vec2.default.distSq(curveRight.project(point), point);
+
+	      if (Math.abs(valLeft - valRight) < 1) {
+	        break;
+	      }
+
+	      if (valLeft < valRight) {
+	        uright = umid;
+	        curveRight = this._computeVCurve(umid);
+	      } else {
+	        uleft = umid;
+	        curveLeft = this._computeVCurve(umid);
+	      }
+	    }
+	    return umid;
+	  }
+
+	  _estimateV(point) {
+
+	    let vleft = 0.0;
+	    let vright = 1.0;
+	    let vmid;
+
+	    let curveLeft = this.getTopCurve();
+	    let curveRight = this.getBottomCurve();
+	    for (let i = 0; i < MAX_INTERSECTION_PARAM_ITERS; i++) {
+	      vmid = (vleft + vright) / 2;
+	      let valLeft = _vec2.default.distSq(curveLeft.project(point), point);
+	      let valRight = _vec2.default.distSq(curveRight.project(point), point);
+
+	      if (Math.abs(valLeft - valRight) < 1) {
+	        break;
+	      }
+
+	      if (valLeft < valRight) {
+	        vright = vmid;
+	        curveRight = this._computeUCurve(vmid);
+	      } else {
+	        vleft = vmid;
+	        curveLeft = this._computeUCurve(vmid);
+	      }
+	    }
+	    return vmid;
+	  }
+
+	  /**
+	   * Compute u and v parameter values that represent a point of this surface
+	   * that is closest to input point
+	   * @param ipoint
+	   * @returns {[*,*]}
+	   */
+	  projectParam(ipoint) {
+	    return [this._estimateU(ipoint), this._estimateV(ipoint)];
+	  }
+
+	  /**
+	   * Split into two surfaces around u parameter at given value
+	   * @param u
+	   */
+	  splitU(u) {
+	    /**
+	                   v0left                              v0right
+	            0      1        2      3             0      1        2      3
+	         0  +----------------------+  0       0  +----------------------+  0
+	           |                      |             |                      |
+	           |                      |             |                      |
+	           |                      |      u      |                      |
+	    l   1  |                      |  1   m   1  |                      |  1   r
+	    e      |                      |      i      |                      |      i
+	    f      |                      |      d      |                      |      g
+	    t   2  |                      |  2       2  |                      |  2   h
+	           |                      |             |                      |      t
+	           |                      |             |                      |
+	           |                      |             |                      |
+	        3  +----------------------+  3       3  +----------------------+  3
+	            0      1        2      3             0      1        2      3
+	                   v1left                                v1right
+	      */
+
+	    let [v0LeftCrv, v0RightCrv] = this.getTopCurve().split(u);
+	    let umidCrv = this._computeVCurve(u);
+	    let leftCrv = this.getLeftCurve();
+	    let rightCrv = this.getRightCurve();
+	    let [v1LeftCrv, v1RightCrv] = this.getBottomCurve().split(u);
+
+	    let left = new CubicBezierSurface({ coons: [v0LeftCrv.cpoints[0], v0LeftCrv.cpoints[1], v0LeftCrv.cpoints[2], v0LeftCrv.cpoints[3], umidCrv.cpoints[1], umidCrv.cpoints[2], umidCrv.cpoints[3], v1LeftCrv.cpoints[2], v1LeftCrv.cpoints[1], v1LeftCrv.cpoints[0], leftCrv.cpoints[2], leftCrv.cpoints[1]] });
+
+	    let right = new CubicBezierSurface({ coons: [v0RightCrv.cpoints[0], v0RightCrv.cpoints[1], v0RightCrv.cpoints[2], v0RightCrv.cpoints[3], rightCrv.cpoints[1], rightCrv.cpoints[2], rightCrv.cpoints[3], v1RightCrv.cpoints[2], v1RightCrv.cpoints[1], v1RightCrv.cpoints[0], umidCrv.cpoints[2], umidCrv.cpoints[1]] });
+	    return [left, right];
+	  }
+
+	  /**
+	   * Split into two surfaces around v parameter at given value
+	   * @param v
+	   */
+	  splitV(v) {
+	    /**
+	                   top
+	            0      1        2      3        
+	         0  +----------------------+  0     
+	           |                      |        
+	           |                      |        
+	    u      |                      |      u 
+	    0   1  |                      |  1   1 
+	    t      |                      |      t 
+	    o      |                      |      o 
+	    p   2  |                      |  2   p 
+	           |                      |        
+	           |                      |        
+	           |                      |        
+	        3  +----------------------+  3     
+	            0      1        2      3       
+	                   vmid
+	            0      1        2      3     
+	         0  +----------------------+  0  
+	           |                      |        
+	    u      |                      |      u 
+	    0      |                      |      1 
+	    b   1  |                      |  1   b 
+	    o      |                      |      o 
+	    t      |                      |      t 
+	    t   2  |                      |  2   t 
+	    o      |                      |      o 
+	    m      |                      |      m 
+	           |                      |        
+	        3  +----------------------+  3     
+	            0      1        2      3          
+	                  bottom
+	      */
+	    let [u0TopCrv, u0BottomCrv] = this.getLeftCurve().split(v);
+	    let vmidCrv = this._computeUCurve(v);
+	    let topCrv = this.getTopCurve();
+	    let bottomCrv = this.getBottomCurve();
+	    let [u1TopCrv, u1BottomCrv] = this.getRightCurve().split(v);
+
+	    let top = new CubicBezierSurface({ coons: [topCrv.cpoints[0], topCrv.cpoints[1], topCrv.cpoints[2], topCrv.cpoints[3], u1TopCrv.cpoints[1], u1TopCrv.cpoints[2], u1TopCrv.cpoints[3], vmidCrv.cpoints[2], vmidCrv.cpoints[1], vmidCrv.cpoints[0], u0TopCrv.cpoints[2], u0TopCrv.cpoints[1]] });
+
+	    let bottom = new CubicBezierSurface({ coons: [vmidCrv.cpoints[0], vmidCrv.cpoints[1], vmidCrv.cpoints[2], vmidCrv.cpoints[3], u1BottomCrv.cpoints[1], u1BottomCrv.cpoints[2], u1BottomCrv.cpoints[3], bottomCrv.cpoints[2], bottomCrv.cpoints[1], bottomCrv.cpoints[0], u0BottomCrv.cpoints[2], u0BottomCrv.cpoints[1]] });
+	    return [top, bottom];
+	  }
+
+	  /**
+	   * Split into four surfaces around u and v parameters at given values
+	   * @param u
+	   * @param v
+	   */
+	  splitUV(u, v) {
+
+	    /**
+	                   v0left                              v0right
+	            0      1        2      3             0      1        2      3
+	         0  +----------------------+  0       0  +----------------------+  0
+	           |                      |             |                      |
+	           |                      |             |                      |
+	    u      |                      |      u      |                      |      u
+	    0   1  |                      |  1   m   1  |                      |  1   1
+	    t      |                      |      t      |                      |      t
+	    o      |                      |      o      |                      |      o
+	    p   2  |                      |  2   p   2  |                      |  2   p
+	           |                      |             |                      |
+	           |                      |             |                      |
+	           |                      |             |                      |
+	        3  +----------------------+  3       3  +----------------------+  3
+	            0      1        2      3             0      1        2      3
+	                   vmleft                               vmright
+	            0      1        2      3             0      1        2      3
+	         0  +----------------------+  0       0  +----------------------+  0
+	           |                      |             |                      |
+	    u      |                      |      u      |                      |      u
+	    0      |                      |      m      |                      |      1
+	    b   1  |                      |  1   b   1  |                      |  1   b
+	    o      |                      |      o      |                      |      o
+	    t      |                      |      t      |                      |      t
+	    t   2  |                      |  2   t   2  |                      |  2   t
+	    o      |                      |      o      |                      |      o
+	    m      |                      |      m      |                      |      m
+	           |                      |             |                      |
+	        3  +----------------------+  3       3  +----------------------+  3
+	            0      1        2      3             0      1        2      3
+	                   v1left                                v1right
+	      */
+
+	    let [v0LeftCrv, v0RightCrv] = this.getTopCurve().split(u);
+	    let [vmLeftCrv, vmRightCrv] = this._computeUCurve(v).split(u);
+	    let [v1LeftCrv, v1RightCrv] = this.getBottomCurve().split(u);
+
+	    let [u0TopCrv, u0BottomCrv] = this.getLeftCurve().split(v);
+	    let [umTopCrv, umBottomCrv] = this._computeVCurve(u).split(v);
+	    let [u1TopCrv, u1BottomCrv] = this.getRightCurve().split(v);
+
+	    let topLeft = new CubicBezierSurface({ coons: [v0LeftCrv.cpoints[0], v0LeftCrv.cpoints[1], v0LeftCrv.cpoints[2], v0LeftCrv.cpoints[3], umTopCrv.cpoints[1], umTopCrv.cpoints[2], umTopCrv.cpoints[3], vmLeftCrv.cpoints[2], vmLeftCrv.cpoints[1], vmLeftCrv.cpoints[0], u0TopCrv.cpoints[2], u0TopCrv.cpoints[1]] });
+	    let topRight = new CubicBezierSurface({ coons: [v0RightCrv.cpoints[0], v0RightCrv.cpoints[1], v0RightCrv.cpoints[2], v0RightCrv.cpoints[3], u1TopCrv.cpoints[1], u1TopCrv.cpoints[2], u1TopCrv.cpoints[3], vmRightCrv.cpoints[2], vmRightCrv.cpoints[1], vmRightCrv.cpoints[0], umTopCrv.cpoints[2], umTopCrv.cpoints[1]] });
+	    let bottomLeft = new CubicBezierSurface({ coons: [vmLeftCrv.cpoints[0], vmLeftCrv.cpoints[1], vmLeftCrv.cpoints[2], vmLeftCrv.cpoints[3], umBottomCrv.cpoints[1], umBottomCrv.cpoints[2], umBottomCrv.cpoints[3], v1LeftCrv.cpoints[2], v1LeftCrv.cpoints[1], v1LeftCrv.cpoints[0], u0BottomCrv.cpoints[2], u0BottomCrv.cpoints[1]] });
+	    let bottomRight = new CubicBezierSurface({ coons: [vmRightCrv.cpoints[0], vmRightCrv.cpoints[1], vmRightCrv.cpoints[2], vmRightCrv.cpoints[3], u1BottomCrv.cpoints[1], u1BottomCrv.cpoints[2], u1BottomCrv.cpoints[3], v1RightCrv.cpoints[2], v1RightCrv.cpoints[1], v1RightCrv.cpoints[0], umBottomCrv.cpoints[2], umBottomCrv.cpoints[1]] });
+
+	    return [[topLeft, topRight], [bottomLeft, bottomRight]];
+	  }
+
+	  clone() {
+	    return new CubicBezierSurface({ points: JSON.parse(JSON.stringify(this.points)) });
+	  }
+
+	  toSVGPathData(precision = 2) {
+	    let d = '';
+	    let P = this.points;
+	    let cpx0 = P[0][0][0].toFixed(precision);
+	    let cpy0 = P[0][0][1].toFixed(precision);
+	    d += `M ${cpx0},${cpy0} `;
+	    let cpx1 = P[0][1][0].toFixed(precision);
+	    let cpy1 = P[0][1][1].toFixed(precision);
+	    let cpx2 = P[0][2][0].toFixed(precision);
+	    let cpy2 = P[0][2][1].toFixed(precision);
+	    let cpx3 = P[0][3][0].toFixed(precision);
+	    let cpy3 = P[0][3][1].toFixed(precision);
+	    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+	    cpx1 = P[1][3][0].toFixed(precision);
+	    cpy1 = P[1][3][1].toFixed(precision);
+	    cpx2 = P[2][3][0].toFixed(precision);
+	    cpy2 = P[2][3][1].toFixed(precision);
+	    cpx3 = P[3][3][0].toFixed(precision);
+	    cpy3 = P[3][3][1].toFixed(precision);
+	    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+	    cpx1 = P[3][2][0].toFixed(precision);
+	    cpy1 = P[3][2][1].toFixed(precision);
+	    cpx2 = P[3][1][0].toFixed(precision);
+	    cpy2 = P[3][1][1].toFixed(precision);
+	    cpx3 = P[3][0][0].toFixed(precision);
+	    cpy3 = P[3][0][1].toFixed(precision);
+	    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3} `;
+	    cpx1 = P[2][0][0].toFixed(precision);
+	    cpy1 = P[2][0][1].toFixed(precision);
+	    cpx2 = P[1][0][0].toFixed(precision);
+	    cpy2 = P[1][0][1].toFixed(precision);
+	    cpx3 = P[0][0][0].toFixed(precision);
+	    cpy3 = P[0][0][1].toFixed(precision);
+	    d += `C ${cpx1},${cpy1} ${cpx2},${cpy2} ${cpx3},${cpy3}`;
+	    return d;
+	  }
+
+	}
+	exports.default = CubicBezierSurface;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	const EPSILON = 0.001;
+
+	class CubicBezierSurfacePatch {
+
+	  constructor(surfaces) {
+	    this.surfaces = surfaces;
+	  }
+
+	  containsPoint(point) {
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      for (let j = 0; j < this.surfaces[i].length; j++) {
+	        let surface = this.surfaces[i][j];
+	        if (surface.containsPoint(point)) {
+	          return true;
+	        }
+	      }
+	    }
+	    return false;
+	  }
+
+	  /**
+	   * Subdivide the Surface Grid at a give point
+	   * If this patch had m*n surfaces before subdivision, then it will have
+	   * (m+1)*(n+1) surfaces after subdivision
+	   * @param point
+	   * @returns {*} null if no split, [row,col] indices in original grid if split
+	   */
+	  subdivide(point) {
+
+	    let nrows = this.surfaces.length;
+	    let ncols = this.surfaces[0].length;
+	    let newgrid = new Array(nrows + 1);
+	    for (let i = 0; i < nrows + 1; i++) {
+	      newgrid[i] = new Array(ncols + 1);
+	    }
+
+	    let isplit = -1;
+	    let jsplit = -1;
+	    let usplit, vsplit;
+
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      let row = this.surfaces[i];
+	      for (let j = 0; j < row.length; j++) {
+	        let surf = row[j];
+	        let [up, vp] = surf.projectParam(point);
+	        let uInRange = up > EPSILON && up < 1 - EPSILON;
+	        let vInRange = vp > EPSILON && vp < 1 - EPSILON;
+	        if (uInRange && vInRange) {
+	          isplit = i;
+	          jsplit = j;
+	          usplit = up;
+	          vsplit = vp;
+	          break;
+	        }
+	      }
+	    }
+	    if (isplit < 0 && jsplit < 0) {
+	      return null; // No split
+	    }
+
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      let row = this.surfaces[i];
+	      for (let j = 0; j < row.length; j++) {
+	        let surf = row[j];
+	        if (i === isplit && j === jsplit) {
+	          let split = surf.splitUV(usplit, vsplit);
+	          newgrid[i][j] = split[0][0];
+	          newgrid[i + 1][j] = split[1][0];
+	          newgrid[i][j + 1] = split[0][1];
+	          newgrid[i + 1][j + 1] = split[1][1];
+	        } else if (i === isplit && j !== jsplit) {
+	          let [top, bottom] = surf.splitV(vsplit);
+	          let iidx = isplit >= 0 && i > isplit ? i + 1 : i;
+	          let jidx = jsplit >= 0 && j > jsplit ? j + 1 : j;
+	          newgrid[iidx][jidx] = top;
+	          newgrid[iidx + 1][jidx] = bottom;
+	        } else if (i !== isplit && j === jsplit) {
+	          let [left, right] = surf.splitU(usplit);
+	          let iidx = isplit >= 0 && i > isplit ? i + 1 : i;
+	          let jidx = jsplit >= 0 && j > jsplit ? j + 1 : j;
+	          newgrid[iidx][jidx] = left;
+	          newgrid[iidx][jidx + 1] = right;
+	        } else {
+	          let iidx = isplit >= 0 && i > isplit ? i + 1 : i;
+	          let jidx = jsplit >= 0 && j > jsplit ? j + 1 : j;
+	          newgrid[iidx][jidx] = surf;
+	        }
+	      }
+	    }
+
+	    this.surfaces = newgrid;
+
+	    return [isplit, jsplit];
+	  }
+
+	  getNumRows() {
+	    return this.surfaces.length;
+	  }
+
+	  getNumColumns() {
+	    return this.surfaces[0].length;
+	  }
+
+	  getSurface(row, column) {
+	    return this.surfaces[row][column];
+	  }
+
+	  *getBezierSurfaces() {
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      let row = this.surfaces[i];
+	      for (let j = 0; j < row.length; j++) {
+	        yield row[j];
+	      }
+	    }
+	  }
+
+	  forEachSurface(callback) {
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      for (let j = 0; j < this.surfaces[i].length; j++) {
+	        callback(this.surfaces[i][j], i, j);
+	      }
+	    }
+	  }
+
+	  clone() {
+	    let surfaces = new Array(this.surfaces.length);
+	    for (let i = 0; i < this.surfaces.length; i++) {
+	      surfaces[i] = new Array(this.surfaces[i].length);
+	      for (let j = 0; j < this.surfaces[i].length; j++) {
+	        surfaces[i][j] = this.surfaces[i][j].clone();
+	      }
+	    }
+	    return new CubicBezierSurfacePatch(surfaces);
+	  }
+	}
+	exports.default = CubicBezierSurfacePatch;
+
+/***/ }
+/******/ ]);
