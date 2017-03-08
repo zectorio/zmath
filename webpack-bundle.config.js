@@ -1,5 +1,6 @@
 
 var path = require('path');
+var BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = {
   entry : "./index",
@@ -10,6 +11,9 @@ module.exports = {
     library : 'zmath',
     libraryTarget : 'commonjs2'
   },
+  plugins : [
+    new BabiliPlugin()
+  ],
   module: {
     loaders: [
       {
