@@ -37,6 +37,18 @@ export default class Transform {
     return this;
   }
 
+  setTranslation() {
+    if(Array.isArray(arguments[0])) {
+      this.e = arguments[0][0];
+      this.f = arguments[0][1];
+    } else {
+      this.e = arguments[0];
+      this.f = arguments[1];
+    }
+    this._cachedInverse = null;
+    return this;
+  }
+
   rotate(angle) {
     let c = Math.cos(angle);
     let s = Math.sin(angle);
@@ -68,6 +80,13 @@ export default class Transform {
   }
 
   scale(sx, sy) {
+    this.a *= sx;
+    this.d *= sy;
+    this._cachedInverse = null;
+    return this;
+  }
+
+  setScale(sx, sy) {
     this.a = sx;
     this.d = sy;
     this._cachedInverse = null;
