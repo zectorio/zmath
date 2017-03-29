@@ -3,7 +3,7 @@
  */
 import vec2 from './vec2'
 import {Transform, Translation, Rotation} from './transform'
-import geom from './src/geom'
+import geom from './geom'
 import AABB from './aabb'
 
 export {
