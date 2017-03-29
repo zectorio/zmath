@@ -72,7 +72,7 @@ function interpolateCoons(coons) {
   return b;
 }
 
-/**
+/*
  *
  *  Puv
  *                u
@@ -89,7 +89,10 @@ function interpolateCoons(coons) {
  *
  */
 
-export default class CubicBezierSurface {
+/**
+ * @class
+ */
+class CubicBezierSurface {
 
   constructor({points,coons}) {
     if(points) {
@@ -124,7 +127,7 @@ export default class CubicBezierSurface {
 
   /**
    * Top curve corresponds to v = 0, curve from P00 to P10
-   * @returns {CubicBezier}
+   * @return {CubicBezier}
    */
   getTopCurve() {
     return new CubicBezier(this.points[0].slice(0, 4));
@@ -132,7 +135,7 @@ export default class CubicBezierSurface {
 
   /**
    * Bottom curve corresponds to v = 1, curve from P01 to P11
-   * @returns {CubicBezier}
+   * @return {CubicBezier}
    */
   getBottomCurve() {
     return new CubicBezier(this.points[3].slice(0, 4));
@@ -140,7 +143,7 @@ export default class CubicBezierSurface {
 
   /**
    * Left curve corresponds to u = 0, curve from P00 to P01
-   * @returns {CubicBezier}
+   * @return {CubicBezier}
    */
   getLeftCurve() {
     return new CubicBezier([
@@ -153,7 +156,7 @@ export default class CubicBezierSurface {
 
   /**
    * Right curve corresponds to u = 1, curve from P10 to P11
-   * @returns {CubicBezier}
+   * @return {CubicBezier}
    */
   getRightCurve() {
     return new CubicBezier([
@@ -292,8 +295,8 @@ export default class CubicBezierSurface {
   /**
    * Compute u and v parameter values that represent a point of this surface
    * that is closest to input point
-   * @param ipoint
-   * @returns {[*,*]}
+   * @param {number[]} ipoint
+   * @returns {number[]}
    */
   projectParam(ipoint) {
     return [this._estimateU(ipoint), this._estimateV(ipoint)];
@@ -301,7 +304,7 @@ export default class CubicBezierSurface {
 
   /**
    * Split into two surfaces around u parameter at given value
-   * @param u
+   * @param {number} u
    */
   splitU(u) {
     /**
@@ -368,7 +371,7 @@ export default class CubicBezierSurface {
 
   /**
    * Split into two surfaces around v parameter at given value
-   * @param v
+   * @param {number} v
    */
   splitV(v) {
     /**
@@ -453,8 +456,8 @@ export default class CubicBezierSurface {
 
   /**
    * Split into four surfaces around u and v parameters at given values
-   * @param u
-   * @param v
+   * @param {number} u
+   * @param {number} v
    */
   splitUV(u,v) {
 
@@ -576,6 +579,11 @@ export default class CubicBezierSurface {
     return new CubicBezierSurface({points:JSON.parse(JSON.stringify(this.points))});
   }
 
+  /**
+   * SVG Path data string
+   * @param {number=} precision
+   * @returns {string}
+   */
   toSVGPathData(precision=2) {
     let d = '';
     let P = this.points;
@@ -614,3 +622,5 @@ export default class CubicBezierSurface {
   }
 
 }
+
+export default CubicBezierSurface;

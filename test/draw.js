@@ -49,21 +49,38 @@ function testBBox() {
 function testBezSurfSubdivision(ipoint) {
   let points = [];
 
-  let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({points:[
-    [ [100,50], [200,100], [300,100], [310,50] ],
-    [ [120,150], [200,150], [300,150], [400,150] ],
-    [ [70,300], [200,350], [300,350], [450,300] ],
-    [ [100,450], [200,400], [300,400], [400,450] ]
-  ]})]]);
+  // let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({points:[
+  //   [ [100,50], [200,100], [300,100], [310,50] ],
+  //   [ [120,150], [200,150], [300,150], [400,150] ],
+  //   [ [70,300], [200,350], [300,350], [450,300] ],
+  //   [ [100,450], [200,400], [300,400], [400,450] ]
+  // ]})]]);
 
-  let divPt1 = [200,200];
-  let divPt2 = [150,150];
-  surfgrid.subdivide(divPt1);
-  surfgrid.subdivide(divPt2);
+  let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({
+    coons : [
+      [100,100], [100,100],
+      [400,100], [400,100], [400,100],
+      [400,400], [400,400], [400,400],
+      [100,400], [100,400], [100,400],
+      [100,100]
+    ]
+  })]]);
 
-  points.push(divPt1);
-  points.push(divPt2);
+
+  // let divPt1 = [200,200];
+  // let divPt2 = [150,150];
+  // surfgrid.subdivide(divPt1);
+  // surfgrid.subdivide(divPt2);
+  //
+  // points.push(divPt1);
+  // points.push(divPt2);
+
   if(ipoint) {
+
+    surfgrid.surfaces[0][0].getBoundaryCurves().forEach(crv => {
+      points.push(crv.project(ipoint));
+    });
+
     surfgrid.subdivide(ipoint);
     points.push(ipoint);
   }

@@ -3,6 +3,9 @@ import Bezier from './bezier'
 import vec2 from '../vec2'
 import AABB from '../aabb'
 
+/**
+ * @class
+ */
 class CubicBezier extends Bezier {
 
   evaluate(t) {
@@ -20,7 +23,7 @@ class CubicBezier extends Bezier {
    * Return parameter values at which either x or y coords are at extremes
    * It means that some of the values might represent curve's extremeties,
    * but not all of them.
-   * @returns {Array.<*>}
+   * @returns {number[]}
    * @private
    */
   _getExtremes() {
@@ -82,8 +85,8 @@ class CubicBezier extends Bezier {
   /**
    * Split the curve at given u value and return two Cubic Bezier curves that
    * are identical to this curve when put together
-   * @param u
-   * @returns {[*,*]}
+   * @param {number} u
+   * @returns {CubicBezier[]}
    */
   split(u) {
     let [p0,p1,p2,p3] = this.cpoints;
@@ -104,8 +107,8 @@ class CubicBezier extends Bezier {
 
   /**
    * Find parametric value on this curve that's closest to input point
-   * @param ipoint
-   * @returns {*}
+   * @param {!number[]} ipoint
+   * @returns {number}
    */
   projectParam(ipoint) {
     const COARSE_ITERS = 8;

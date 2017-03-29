@@ -1,4 +1,6 @@
-
+/**
+ * @module zmath/geom
+ */
 import Curve from './curve'
 import Line from './line'
 import Bezier from './bezier'

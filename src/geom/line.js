@@ -3,14 +3,26 @@ import vec2 from '../vec2'
 import AABB from '../aabb'
 import Curve from './curve'
 
+/**
+ * @class
+ */
 class Line extends Curve {
 
+  /**
+   * @param {!number[]} start
+   * @param {!number[]} end
+   */
   constructor(start, end) {
     super();
     this.start = start;
     this.end = end;
   }
 
+  /**
+   * Evaluate line at given parameter value
+   * @param {number} t
+   * @returns {number[]} point
+   */
   evaluate(t) {
     return vec2.add(
       this.start,
@@ -18,6 +30,10 @@ class Line extends Curve {
     );
   }
 
+  /**
+   * Return AABB of this line
+   * @returns {AABB}
+   */
   aabb() {
     return new AABB({
       min: [
@@ -31,6 +47,10 @@ class Line extends Curve {
     });
   }
 
+  /**
+   * String representation
+   * @returns {string}
+   */
   toString() {
     let s = 'Line: ';
     let [x0,y0] = this.start;
@@ -47,21 +67,33 @@ class Line extends Curve {
     return s;
   }
 
+  /**
+   * Return SVG Path Data that to draw this line
+   * @returns {string}
+   */
   toSVGPathData() {
     let [x0,y0] = this.start;
     let [x1,y1] = this.end;
     return `M ${x0},${y0} L ${x1},${y1}`;
   }
 
+  /**
+   * Generate memento
+   * @returns {Object} Memento
+   */
   generateMemento() {
     return {
       type : Line.TYPEID,
-      start : this.start,
-      end : this.end
+      start : this.start.slice(),
+      end : this.end.slice()
     };
   }
 }
 
+/**
+ * Type Id for internal use
+ * @type {string}
+ */
 Line.TYPEID = 'line';
 
 export default Line;
