@@ -10,8 +10,7 @@
     "watch-draw": "webpack --watch --config webpack-draw.config.js",
     "build-bundle": "webpack --config webpack-bundle.config.js",
     "watch-bundle": "webpack --watch --config webpack-bundle.config.js",
-    "test": "mocha build/zmath-test.js",
-    "builddocs": "esdoc"
+    "test": "mocha build/zmath-test.js"
   },
   "repository": {
     "type": "git",
@@ -28,19 +27,15 @@
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0",
     "babili-webpack-plugin": "0.0.11",
-    "color": "^1.0.3",
-    "esdoc": "^0.5.2",
     "mocha": "^3.2.0",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "zbits": "github:jay3sh/zbits",
+    "zcanvas": "github:jay3sh/zcanvas",
+    "zdom": "github:zectorio/zdom"
   },
   "babel": {
     "plugins": [
       "transform-es2015-modules-commonjs"
     ]
-  },
-  "esdoc": {
-    "source": "./src",
-    "destination": "./docs",
-    "includeSource" : false
   }
 }

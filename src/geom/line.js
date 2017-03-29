@@ -88,6 +88,20 @@ class Line extends Curve {
       end : this.end.slice()
     };
   }
+
+  /**
+   * Returns Canvas PathDefinition object
+   * @returns {ZCanvas~PathDefinition}
+   */
+  toCanvasPathDef() {
+    return {
+      type : 'line',
+      x1 : this.start[0],
+      y1 : this.start[1],
+      x2 : this.end[0],
+      y2 : this.end[1]
+    };
+  }
 }
 
 /**

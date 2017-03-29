@@ -1,6 +1,6 @@
 
 import {geom} from '..';
-import Color from 'color';
+import {Kolor} from 'zbits'
 
 function testBBox() {
 
@@ -96,7 +96,7 @@ function testBezSurfSubdivision(ipoint) {
     
     ${boundaryCurveData.map((data,idx) => `
       <path d="${data}"
-        style="stroke:none;fill:${Color({h:Math.round((idx/boundaryCurveData.length)*360),s:100,l:50}).rgb().string()}">
+        style="stroke:none;fill:${new Kolor({h:Math.round((idx/boundaryCurveData.length)*360),s:1.0,v:1.0}).toCSSHex()}">
       </path>`).join('\n')}
     
     ${points.map(([x,y])=> `<circle r="3" cx="${x}" cy="${y}" style="fill:#fff;stroke:#000"></circle>`).join('\n')}
@@ -105,12 +105,37 @@ function testBezSurfSubdivision(ipoint) {
 `;
 }
 
-window.onload = () => {
-  // document.body.innerHTML = testBBox();
-  document.body.innerHTML = testBezSurfSubdivision();
+import ZCanvas from 'zcanvas'
+import zdom from 'zdom'
 
-  document.addEventListener('mousemove', ev => {
-    document.body.innerHTML = testBezSurfSubdivision([ev.offsetX, ev.offsetY]);
-  });
+function drawGeometries() {
+
+  let zc = new ZCanvas('svg',640,480);
+
+  let line = new geom.Line([100,100],[150,455]);
+  let cbez = new geom.CubicBezier([[100,100],[200,255],[300,30],[500,100]]);
+
+  zc.root().add(new ZCanvas.Shape(
+    line.toCanvasPathDef(), {stroke:'#000',strokeWidth:4}));
+  zc.root().add(new ZCanvas.Shape(
+    cbez.toCanvasPathDef(), {stroke:'#f00',strokeWidth:2,fill:'none'}));
+
+  zc.render();
+
+  zdom.add(document.body, zc.getDOMElement());
+
+}
+
+window.onload = () => {
+  // -- test bbox
+  // document.body.innerHTML = testBBox();
+
+  // --- test bezsurf subdiv
+  // document.body.innerHTML = testBezSurfSubdivision();
+  // document.addEventListener('mousemove', ev => {
+  //   document.body.innerHTML = testBezSurfSubdivision([ev.offsetX, ev.offsetY]);
+  // });
+
+  drawGeometries();
 };
 

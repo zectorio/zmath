@@ -4,7 +4,6 @@
 class Curve {
 
   /**
-   * Evaluate the curve at parameter value `t`.
    * **Abstract method - Sub-classes should implement it**
    * @param {number} t
    */
@@ -13,7 +12,6 @@ class Curve {
   }
 
   /**
-   * Generate persistent representation of the Curve object
    * **Abstract method - Sub-classes should implement it**
    */
   generateMemento() {
@@ -21,7 +19,14 @@ class Curve {
   }
 
   /**
-   * String representation
+   * **Abstract method - Sub-classes should implement it**
+   * @returns {ZCanvas~PathDefinition}
+   */
+  toCanvasPathDef() {
+    throw new Error('Not implemented');
+  }
+
+  /**
    * **Abstract method - Sub-classes should implement it**
    */
   toString() {

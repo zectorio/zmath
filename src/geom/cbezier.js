@@ -180,6 +180,11 @@ class CubicBezier extends Bezier {
     return this.evaluate(this.projectParam(ipoint));
   }
 
+  /**
+   * Return SVG Path data
+   * @param {number} precision
+   * @returns {string}
+   */
   toSVGPathData(precision=2) {
     let p = this.cpoints;
     return `M ${p[0][0].toFixed(precision)},${p[0][1].toFixed(precision)} `+
@@ -187,6 +192,17 @@ class CubicBezier extends Bezier {
       ` ${p[2][0].toFixed(precision)},${p[2][1].toFixed(precision)}`+
       ` ${p[3][0].toFixed(precision)},${p[3][1].toFixed(precision)}`
       ;
+  }
+
+  /**
+   * Returns Canvas PathDefinition object
+   * @returns {ZCanvas~PathDefinition}
+   */
+  toCanvasPathDef() {
+    return {
+      type : 'cbez',
+      cpoints : JSON.parse(JSON.stringify(this.cpoints))
+    };
   }
 }
 
