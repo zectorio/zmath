@@ -5,6 +5,7 @@ import Curve from './curve'
 
 /**
  * @class
+ * @memberof zmath.geom
  */
 class Line extends Curve {
 

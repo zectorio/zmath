@@ -3,6 +3,7 @@ import Curve from './curve'
 
 /**
  * @class
+ * @memberof zmath.geom
  */
 class Bezier extends Curve {
 

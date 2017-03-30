@@ -1,5 +1,6 @@
 /**
- * @module zmath/geom
+ * @namespace {Object} geom
+ * @memberof zmath
  */
 import Curve from './curve'
 import Line from './line'

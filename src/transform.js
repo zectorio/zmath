@@ -1,5 +1,6 @@
 /**
  * @class
+ * @memberof zmath
  */
 class Transform {
   /**

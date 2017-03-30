@@ -5,6 +5,7 @@ import AABB from '../aabb'
 
 /**
  * @class
+ * @memberof zmath.geom
  */
 class CubicBezier extends Bezier {
 
