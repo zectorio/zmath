@@ -1,10 +1,6 @@
 
 import vec2 from './vec2'
 
-/**
- * @class
- * @memberof zmath
- */
 class AABB {
 
   /**

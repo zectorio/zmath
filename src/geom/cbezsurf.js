@@ -89,10 +89,6 @@ function interpolateCoons(coons) {
  *
  */
 
-/**
- * @class
- * @memberof zmath.geom
- */
 class CubicBezierSurface {
 
   constructor({points,coons}) {

@@ -1,10 +1,6 @@
 
 import {EPSILON} from './constants';
 
-/**
- * @class
- * @memberof zmath
- */
 class vec2 {
 
   /**

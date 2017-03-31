@@ -15,13 +15,13 @@ class Bezier extends Curve {
 
     /**
      * Degree of Bezier curve
-     * @type {number}
+     * @member {number} Bezier#degree
      */
     this.degree = cpoints.length-1;
 
     /**
      * Array of control points
-     * @type {number[][]}
+     * @member {number[][]} Bezier#cpoints
      */
     this.cpoints = cpoints;
   }

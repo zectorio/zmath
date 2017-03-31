@@ -3,10 +3,6 @@ import vec2 from '../vec2'
 import AABB from '../aabb'
 import Curve from './curve'
 
-/**
- * @class
- * @memberof zmath.geom
- */
 class Line extends Curve {
 
   /**

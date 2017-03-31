@@ -3,10 +3,6 @@ import Bezier from './bezier'
 import vec2 from '../vec2'
 import AABB from '../aabb'
 
-/**
- * @class
- * @memberof zmath.geom
- */
 class CubicBezier extends Bezier {
 
   evaluate(t) {

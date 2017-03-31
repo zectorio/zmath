@@ -1,7 +1,3 @@
-/**
- * @namespace {Object} geom
- * @memberof zmath
- */
 import Curve from './curve'
 import Line from './line'
 import Bezier from './bezier'

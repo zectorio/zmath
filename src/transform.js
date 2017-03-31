@@ -1,7 +1,4 @@
-/**
- * @class
- * @memberof zmath
- */
+
 class Transform {
   /**
    * @param {number[]} [array]
