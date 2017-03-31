@@ -1,9 +1,16 @@
 
 const EPSILON = 0.001;
 
-export default class CubicBezierSurfacePatch {
+class CubicBezierSurfacePatch {
 
+  /**
+   * @param {Array} surfaces
+   */
   constructor(surfaces) {
+    /**
+     * @readonly
+     * @type {Array}
+     */
     this.surfaces = surfaces;
   }
 
@@ -134,3 +141,5 @@ export default class CubicBezierSurfacePatch {
     return new CubicBezierSurfacePatch(surfaces);
   }
 }
+
+export default CubicBezierSurfacePatch

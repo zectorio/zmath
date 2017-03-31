@@ -2,30 +2,28 @@
 class Curve {
 
   /**
-   * **Abstract method - Sub-classes should implement it**
-   * @param {number} t
+   * @abstract
    */
   evaluate(t) {
     throw new Error('Not implemented');
   }
 
   /**
-   * **Abstract method - Sub-classes should implement it**
+   * @abstract
    */
   generateMemento() {
     throw new Error('Not implemented');
   }
 
   /**
-   * **Abstract method - Sub-classes should implement it**
-   * @returns {ZCanvas~PathDefinition}
+   * @abstract
    */
   toCanvasPathDef() {
     throw new Error('Not implemented');
   }
 
   /**
-   * **Abstract method - Sub-classes should implement it**
+   * @abstract
    */
   toString() {
     throw new Error('Not implemented');

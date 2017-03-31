@@ -115,9 +115,9 @@ function drawGeometries() {
   let line = new geom.Line([100,100],[150,455]);
   let cbez = new geom.CubicBezier([[100,100],[200,255],[300,30],[500,100]]);
 
-  zc.root().add(new ZCanvas.Shape(
+  zc.root().add(new ZCanvas.RenderShape(
     line.toCanvasPathDef(), {stroke:'#000',strokeWidth:4}));
-  zc.root().add(new ZCanvas.Shape(
+  zc.root().add(new ZCanvas.RenderShape(
     cbez.toCanvasPathDef(), {stroke:'#f00',strokeWidth:2,fill:'none'}));
 
   zc.render();

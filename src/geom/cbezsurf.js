@@ -91,6 +91,11 @@ function interpolateCoons(coons) {
 
 class CubicBezierSurface {
 
+  /**
+   *
+   * @param points
+   * @param coons
+   */
   constructor({points,coons}) {
     if(points) {
       this.points = points;

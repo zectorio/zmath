@@ -1,14 +1,10 @@
 
 import Curve from './curve'
 
-/**
- * @class
- * @memberof zmath.geom
- */
 class Bezier extends Curve {
 
   /**
-   * @param {number[][]} cpoints
+   * @param {Point2D[]} cpoints
    */
   constructor(cpoints) {
     super();

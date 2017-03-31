@@ -1,12 +1,23 @@
 
 import {EPSILON} from './constants';
 
+/**
+ * @typedef {Array.<number>} Point2D - Contains x,y coordinates of 2D point
+ */
+
+/**
+ * @typedef {Array.<number>} Vector2D - Contains x,y components of 2D vector
+ */
+
+/**
+ * @class
+ */
 class vec2 {
 
   /**
    * Add one or many input vectors
-   * @param {...number[]} varr
-   * @returns {number[]}
+   * @param {...Point2D} varr
+   * @returns {Point2D}
    */
   static add(...varr) {
     let answer = [0,0];
@@ -19,9 +30,9 @@ class vec2 {
 
   /**
    * Subtract vb from va
-   * @param {number[]} va
-   * @param {number[]} vb
-   * @returns {number[]}
+   * @param {Point2D|Vector2D} va
+   * @param {Point2D|Vector2D} vb
+   * @returns {Vector2D}
    */
   static sub(va, vb) {
     return [ va[0]-vb[0], va[1]-vb[1] ];
@@ -29,9 +40,9 @@ class vec2 {
 
   /**
    * Multiply va by constant k
-   * @param {number[]} va
+   * @param {Point2D|Vector2D} va
    * @param {number} k
-   * @returns {number[]}
+   * @returns {Point2D|Vector2D}
    */
   static mul(va, k) {
     return [ va[0]*k, va[1]*k ];
@@ -39,7 +50,7 @@ class vec2 {
 
   /**
    * Is input vector non-zero, within given tolerance
-   * @param {number[]} v
+   * @param {Point2D|Vector2D} v
    * @param {number=} tolerance
    * @returns {boolean}
    */
@@ -49,7 +60,7 @@ class vec2 {
 
   /**
    * Is input vector zero, withing given tolerance
-   * @param {number[]} v
+   * @param {Point2D} v
    * @param  {number=} tolerance
    * @returns {boolean}
    */
@@ -59,7 +70,7 @@ class vec2 {
 
   /**
    * Squared length of input vector
-   * @param v
+   * @param {Vector2D} v
    * @returns {number}
    */
   static lenSq(v) {
@@ -68,7 +79,7 @@ class vec2 {
 
   /**
    * Length of input vector
-   * @param v
+   * @param {Vector2D} v
    * @returns {number}
    */
   static len(v) {
@@ -78,8 +89,8 @@ class vec2 {
   /**
    * Unit vector along input vector
    * If input vector is zero length, return [0,0]
-   * @param {number[]} v
-   * @returns {number[]}
+   * @param {Vector2D} v
+   * @returns {Vector2D}
    */
   static unit(v) {
     let len = vec2.len(v);
@@ -92,8 +103,8 @@ class vec2 {
 
   /**
    * Square distance between input point vectors
-   * @param {number[]} va
-   * @param {number[]} vb
+   * @param {Point2D} va
+   * @param {Point2D} vb
    * @returns {number}
    */
   static distSq(va, vb) {
@@ -102,8 +113,8 @@ class vec2 {
 
   /**
    * Distance between input point vectors
-   * @param {number[]} va
-   * @param {number[]} vb
+   * @param {Point2D} va
+   * @param {Point2D} vb
    * @returns {number}
    */
   static dist(va, vb) {
@@ -112,8 +123,8 @@ class vec2 {
 
   /**
    * Dot product of input vectors
-   * @param {number[]} va
-   * @param {number[]} vb
+   * @param {Vector2D} va
+   * @param {Vector2D} vb
    * @returns {number}
    */
   static dot(va, vb) {
@@ -122,8 +133,8 @@ class vec2 {
 
   /**
    * Cross product of input vectors
-   * @param {number[]} va
-   * @param {number[]} vb
+   * @param {Vector2D} va
+   * @param {Vector2D} vb
    * @returns {number}
    */
   static cross(va, vb) {
@@ -132,8 +143,8 @@ class vec2 {
 
   /**
    * Round the input vector
-   * @param {number[]} v
-   * @returns {number[]}
+   * @param {Vector2D|Point2D} v
+   * @returns {Vector2D|Point2D}
    */
   static toInt(v) {
     return [Math.round(v[0]), Math.round(v[1])];
@@ -141,8 +152,8 @@ class vec2 {
 
   /**
    * Are two input vectors equal, within given tolerance
-   * @param {number[]} va
-   * @param {number[]} vb
+   * @param {Point2D|Vector2D} va
+   * @param {Point2D|Vector2D} vb
    * @param {number=} tolerance
    * @returns {boolean}
    */
@@ -153,8 +164,8 @@ class vec2 {
 
   /**
    * Return the min-x and min-y values for variable number of input point vectors
-   * @param {...number[]} points
-   * @returns {number[]}
+   * @param {...Point2D} points
+   * @returns {Point2D}
    */
   static low(...points) {
     let xlow = Infinity, ylow = Infinity;
@@ -167,8 +178,8 @@ class vec2 {
 
   /**
    * Return the max-x and max-y values for variable number of input point vectors
-   * @param {...number[]} points
-   * @returns {number[]}
+   * @param {...Point2D} points
+   * @returns {Point2D}
    */
   static high(...points) {
     let xhigh = -Infinity, yhigh = -Infinity;
@@ -181,7 +192,7 @@ class vec2 {
 
   /**
    * Concise string representation
-   * @param {number[]} v
+   * @param {Point2D|Vector2D} v
    * @returns {string}
    */
   static format(v) {
@@ -190,9 +201,9 @@ class vec2 {
 
   /**
    * Direction vector from vfrom to vto
-   * @param {number[]} vfrom
-   * @param {number[]} vto
-   * @returns {number[]}
+   * @param {Point2D} vfrom
+   * @param {Point2D} vto
+   * @returns {Vector2D}
    */
   static dir(vfrom, vto) {
     return vec2.unit(vec2.sub(vto, vfrom));
@@ -200,11 +211,11 @@ class vec2 {
 
   /**
    * Orthogonal vector of input vector
-   * @param {number} x
-   * @param {number} y
-   * @returns {number[]}
+   * @param {Vector2D} v
+   * @returns {Vector2D}
    */
-  static orthogonal([x,y]) {
+  static orthogonal(v) {
+    let [x,y] = v;
     return [y,-x];
   }
 
