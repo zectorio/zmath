@@ -58,6 +58,10 @@ class EllipseArc extends Curve {
     ];
   }
 
+  toCanvasPathDef() {
+
+  }
+
   /**
    * Create circular arc that starts from pA, ends at pB and passes through pC
    * @param {number[]} pA
