@@ -63,11 +63,11 @@ class EllipseArc extends Curve {
   }
 
   /**
-   * Create circular arc that starts from pA, ends at pB and passes through pC
-   * @param {number[]} pA
-   * @param {number[]} pB
-   * @param {number[]} pC
-   * @returns {EllipseArc}
+   * Create circular arc that starts from pA, ends at pC and passes through pB
+   * @param {number[]} pA Start point
+   * @param {number[]} pB Through point
+   * @param {number[]} pC End point
+   * @returns {EllipseArc|null}
    */
   static circularArcFrom3Points(pA,pB,pC) {
     let ax = pA[0], ay = pA[1];
@@ -77,10 +77,7 @@ class EllipseArc extends Curve {
     // Ref: https://en.wikipedia.org/wiki/Circumscribed_circle#Circumcenter_coordinates
     let D = 2 * (ax * (by-cy) + bx * (cy-ay) + cx * (ay-by));
     if(Math.abs(D) < EPSILON) {
-      return {
-        center : [Infinity, Infinity],
-        radius : Infinity
-      };
+      return null;
     }
     let x = ((ax * ax + ay * ay) * (by - cy) +
       (bx * bx + by * by) * (cy - ay) +
