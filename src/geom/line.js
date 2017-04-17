@@ -99,15 +99,6 @@ class Line extends Curve {
       y2 : this.end[1]
     };
   }
-
-  /**
-   * Return canvas curve command which can be inserted into a PathDefinition
-   * object of type 'path'
-   * @returns ZCanvas~CurveCommand
-   */
-  toCanvasCurveCommand() {
-    return [ 'L', ...this.end ]
-  }
 }
 
 /**

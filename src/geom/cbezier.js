@@ -201,16 +201,6 @@ class CubicBezier extends Bezier {
       cpoints : JSON.parse(JSON.stringify(this.cpoints))
     };
   }
-
-  /**
-   * Return canvas curve command which can be inserted into a PathDefinition
-   * object of type 'path'
-   * @returns ZCanvas~CurveCommand
-   */
-  toCanvasCurveCommand() {
-    let p = this.cpoints;
-    return ['C', ...p[1], ...p[2], ...p[3] ];
-  }
 }
 
 export default CubicBezier;
