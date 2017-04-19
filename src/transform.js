@@ -96,7 +96,7 @@ class Transform {
   static rotateAround(angle, point) {
     // Ref: http://www.euclideanspace.com/maths/geometry/affine/aroundPoint/matrix2d/
     let pre = new Transform().translate(...point);
-    let rotation = new Transform().rotate(angle);
+    let rotation = new Transform().setRotation(angle);
     let post = new Transform().translate(-point[0], -point[1]);
     return pre.mul(rotation).mul(post);
   }
@@ -111,7 +111,7 @@ class Transform {
    */
   static scaleAround([sx,sy], point) {
     let pre = new Transform().translate(...point);
-    let scale = new Transform().scale(sx,sy);
+    let scale = new Transform().setScale(sx,sy);
     let post = new Transform().translate(-point[0], -point[1]);
     return pre.mul(scale).mul(post);
   }
