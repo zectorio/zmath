@@ -1,6 +1,7 @@
 
 import vec2 from '../vec2'
 import Curve from './curve'
+import AABB from '../aabb'
 import {EPSILON} from '../constants'
 
 class EllipseArc extends Curve {
@@ -43,6 +44,13 @@ class EllipseArc extends Curve {
      */
     this.ccw = ccw;
 
+  }
+  
+  aabb() {
+    return new AABB({
+      min : vec2.sub(this.center, [this.rx,this.ry]),
+      max : vec2.add(this.center, [this.rx,this.ry])
+    });
   }
 
   /**

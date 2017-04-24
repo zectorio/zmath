@@ -1,5 +1,7 @@
 
 import Curve from './curve'
+import vec2 from '../vec2'
+import AABB from '../aabb'
 
 class Bezier extends Curve {
 
@@ -20,6 +22,16 @@ class Bezier extends Curve {
      * @member {number[][]} Bezier#cpoints
      */
     this.cpoints = cpoints;
+  }
+
+  /**
+   * @returns {AABB}
+   */
+  aabb() {
+    return new AABB({
+      min : vec2.low(...this.cpoints),
+      max : vec2.high(...this.cpoints)
+    });
   }
 }
 
