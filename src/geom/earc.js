@@ -107,6 +107,14 @@ class EllipseArc extends Curve {
     let reversed = (minAngle !== startAngle);
 
     let radius = vec2.dist(pA, center);
+    
+    // Is this correct?
+    if(reversed) {
+      let tmp = minAngle;
+      minAngle = maxAngle;
+      maxAngle = tmp;
+      ccw = !ccw;
+    }
 
     return new EllipseArc(center, radius, radius, minAngle, maxAngle, ccw);
   }
