@@ -117,6 +117,22 @@ class Transform {
   }
 
   /**
+   * Creates a transform that will rotate and scale a point around a given point
+   * @param angle
+   * @param sx
+   * @param sy
+   * @param point
+   * @returns {Transform}
+   */
+  static rotateAndScaleAround(angle, [sx,sy], point) {
+    let pre = new Transform().translate(...point);
+    let rotation = new Transform().rotate(angle);
+    let scale = new Transform().scale(sx,sy);
+    let post = new Transform().translate(-point[0], -point[1]);
+    return pre.mul(rotation).mul(scale).mul(post);
+  }
+
+  /**
    * Multiples current scale of this transform by input scale values
    * @param {number} sx
    * @param {number} sy
