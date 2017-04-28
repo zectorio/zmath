@@ -233,30 +233,30 @@ function drawCircleArcs() {
     svgDraw(svg, earc);
   }
   
-  let W = 400, H=400;
+  let WIDTH = 400, HEIGHT=400;
   let r = 8;
   let step = 30;
   let cx,cy;
   
   // make canvas
-  let canvas = zdom.createCanvas(W,H);
+  let canvas = zdom.createCanvas(WIDTH,HEIGHT);
   zdom.add(document.body, canvas);
   let ctx = canvas.getContext('2d');
   
   // make svg
-  let svg = zdom.createSVG(W,H);
+  let svg = zdom.createSVG(WIDTH,HEIGHT);
   zdom.add(document.body, svg);
   
   cx = 10; cy = 10;
 
   /**
-   *                   B
+   *                   B V
    *              P        Q 
-   *                   
+   *            U      
    *           A       O       C
-   *             
+   *                          W 
    *              S         R
-   *                   D
+   *                X  D
    *                   
    *             O = [cx,cy]
    */
@@ -264,11 +264,37 @@ function drawCircleArcs() {
   let B = () => [cx,cy-r];
   let C = () => [cx+r,cy];
   let D = () => [cx,cy+r];
+  
   let P = () => [cx-r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
   let Q = () => [cx+r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
   let R = () => [cx+r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
   let S = () => [cx-r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
+  
+  let U = () => [cx-r*Math.cos(Math.PI/6), cy-r*Math.sin(Math.PI/6)];
+  let V = () => [cx+r*Math.sin(Math.PI/6), cy-r*Math.cos(Math.PI/6)];
+  let W = () => [cx+r*Math.cos(Math.PI/6), cy+r*Math.sin(Math.PI/6)];
+  let X = () => [cx-r*Math.sin(Math.PI/6), cy+r*Math.cos(Math.PI/6)];
+  
+  // 1/8 Pie
+  draw(circularArcFrom3Points(A(),U(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),V(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),W(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),X(),S()));
 
+  cx += 2*step;
+  draw(circularArcFrom3Points(P(),U(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),V(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),W(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),X(),D()));
+
+  // Quarter Pie
+  cx = 10; cy += step;
   draw(circularArcFrom3Points(A(),P(),B()));
   cx += step;
   draw(circularArcFrom3Points(B(),Q(),C()));
@@ -277,6 +303,34 @@ function drawCircleArcs() {
   cx += step;
   draw(circularArcFrom3Points(D(),S(),A()));
   
+  cx += 2*step;
+  draw(circularArcFrom3Points(B(),P(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),Q(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),R(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(A(),S(),D()));
+  
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(P(),B(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),C(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),D(),S()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),A(),P()));
+  
+  cx += 2*step;
+  draw(circularArcFrom3Points(Q(),B(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),C(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),D(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(P(),A(),S()));
+  
+  // Half Pie
   cx = 10; cy += step;
   draw(circularArcFrom3Points(A(),B(),C()));
   cx += step;
@@ -295,6 +349,25 @@ function drawCircleArcs() {
   cx += step;
   draw(circularArcFrom3Points(B(),A(),D()));
 
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(P(),Q(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),R(),S()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),S(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),P(),Q()));
+
+  cx += 2*step;
+  draw(circularArcFrom3Points(R(),Q(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),R(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(P(),S(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),P(),S()));
+  
+  // Three Quarters Pie
   cx = 10; cy+= step;
   draw(circularArcFrom3Points(C(),A(),B()));
   cx += step;
@@ -303,6 +376,71 @@ function drawCircleArcs() {
   draw(circularArcFrom3Points(A(),C(),D()));
   cx += step;
   draw(circularArcFrom3Points(B(),D(),A()));
+
+  cx += 2*step;
+  draw(circularArcFrom3Points(B(),A(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),B(),D()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),C(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(A(),D(),B()));
+  
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(P(),B(),S()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),C(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),D(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),A(),R()));
+
+  cx += 2*step;
+  draw(circularArcFrom3Points(S(),B(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(P(),C(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),D(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),A(),S()));
+  
+  // 7/8 Pie
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(P(),S(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),P(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),Q(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),R(),D()));
+
+  cx += 2*step;
+  draw(circularArcFrom3Points(A(),S(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),P(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),Q(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),R(),S()));
+  
+  // > 7/8 Pie
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(P(),A(),U()));
+  cx += step;
+  draw(circularArcFrom3Points(Q(),B(),V()));
+  cx += step;
+  draw(circularArcFrom3Points(R(),C(),W()));
+  cx += step;
+  draw(circularArcFrom3Points(S(),D(),X()));
+  
+  cx += 2*step;
+  draw(circularArcFrom3Points(U(),A(),P()));
+  cx += step;
+  draw(circularArcFrom3Points(V(),B(),Q()));
+  cx += step;
+  draw(circularArcFrom3Points(W(),C(),R()));
+  cx += step;
+  draw(circularArcFrom3Points(X(),D(),S()));
 }
 
 window.onload = () => {
