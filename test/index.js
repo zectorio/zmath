@@ -126,6 +126,127 @@ function drawGeometries() {
 
 }
 
+import {vec2} from '../src'
+
+
+function drawCircleArcs() {
+  
+  function getCircleAngle(center, pt) {
+    let dot = vec2.dot([1,0], vec2.unit(vec2.sub(pt, center)));
+    if(pt[1] > center[1]) {
+      return wrapAngle(Math.acos(dot));
+    } else {
+      return wrapAngle(2*Math.PI - Math.acos(dot));
+    }
+  }
+
+  function wrapAngle(angle) {
+    while(angle < 0) {
+      angle = angle + 2*Math.PI;
+    }
+    while(angle > 2*Math.PI) {
+      angle = angle - 2*Math.PI;
+    }
+    return angle;
+  }
+
+  function  circularArcFrom3Points(pA,pB,pC) {
+    let EPSILON = 1e-6;
+    let ax = pA[0], ay = pA[1];
+    let bx = pB[0], by = pB[1];
+    let cx = pC[0], cy = pC[1];
+
+    // Ref: https://en.wikipedia.org/wiki/Circumscribed_circle#Circumcenter_coordinates
+    let D = 2 * (ax * (by-cy) + bx * (cy-ay) + cx * (ay-by));
+    if(Math.abs(D) < EPSILON) {
+      return null;
+    }
+    let x = ((ax * ax + ay * ay) * (by - cy) +
+      (bx * bx + by * by) * (cy - ay) +
+      (cx * cx + cy * cy) * (ay - by))/D;
+    let y = ((ax * ax + ay * ay) * (cx - bx) +
+      (bx * bx + by * by) * (ax - cx) +
+      (cx * cx + cy * cy) * (bx - ax))/D;
+    let center = [x,y];
+
+    let startAngle = getCircleAngle(center, pA),
+      throughAngle = getCircleAngle(center, pB),
+      endAngle = getCircleAngle(center, pC);
+
+    let minAngle = Math.min(startAngle, endAngle);
+    let maxAngle = Math.max(startAngle, endAngle);
+
+    let ccw = minAngle > throughAngle || throughAngle > maxAngle;
+
+    let reversed = (minAngle !== startAngle);
+
+    let radius = vec2.dist(pA, center);
+
+    // Is this correct?
+    // if(reversed) {
+    //   let tmp = minAngle;
+    //   minAngle = maxAngle;
+    //   maxAngle = tmp;
+    //   ccw = !ccw;
+    // }
+
+    return {center, radius, minAngle, maxAngle, ccw, reversed};
+  }
+
+  function canvasDraw(ctx, {center,radius, minAngle, maxAngle, ccw, reversed}) {
+
+    let [cx,cy] = center;
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius,minAngle,maxAngle,ccw);
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function svgDraw(svg, {center,radius, minAngle, maxAngle, ccw, reversed}) {
+    let [cx,cy] = center;
+
+    let path = zdom.createPath();
+
+    let x1 = cx + radius * Math.cos(minAngle);
+    let y1 = cy + radius * Math.sin(minAngle);
+
+    let x2 = cx + radius * Math.cos(maxAngle);
+    let y2 = cy + radius * Math.sin(maxAngle);
+
+    let fA = (Math.abs(maxAngle-minAngle) > Math.PI) ? 1 : 0;
+    let fS = (maxAngle-minAngle > 0) ? 1 : 0;
+
+    zdom.set(path, 'd', `M ${x1},${y1} A ${radius},${radius} 0 ${fA} ${fS} ${x2},${y2}`);
+    zdom.set(path, 'style', 'stroke:#000;fill:none;stroke-width:2');
+
+    zdom.add(svg, path);
+  }
+  
+  let W = 400, H=400;
+  let r = 10;
+  let cx,cy;
+  
+  // make canvas
+  let canvas = zdom.createCanvas(W,H);
+  zdom.add(document.body, canvas);
+  let ctx = canvas.getContext('2d');
+  
+  // make svg
+  let svg = zdom.createSVG(W,H);
+  zdom.add(document.body, svg);
+
+  let earc;
+  
+  cx = 100; cy = 100;
+  earc = circularArcFrom3Points([cx-r,cy],[cx,cy-r],[cx+r,cy]);
+
+  canvasDraw(ctx, earc);
+  svgDraw(svg, earc);
+  
+}
+
 window.onload = () => {
   // -- test bbox
   // document.body.innerHTML = testBBox();
@@ -136,6 +257,8 @@ window.onload = () => {
   //   document.body.innerHTML = testBezSurfSubdivision([ev.offsetX, ev.offsetY]);
   // });
 
-  drawGeometries();
+  //drawGeometries();
+  
+  drawCircleArcs();
 };
 
