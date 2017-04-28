@@ -4,13 +4,9 @@
   "description": "Math functionality for Zector",
   "main": "src/index.js",
   "scripts": {
-    "build-test": "webpack --config webpack-test.config.js",
-    "watch-test": "webpack --watch --config webpack-test.config.js",
-    "build-draw": "webpack --config webpack-draw.config.js",
-    "watch-draw": "webpack --watch --config webpack-draw.config.js",
-    "build-bundle": "webpack --config webpack-bundle.config.js",
-    "watch-bundle": "webpack --watch --config webpack-bundle.config.js",
-    "test": "mocha build/zmath-test.js"
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
+    "test": "mocha build/zmath-mocha.js"
   },
   "repository": {
     "type": "git",
