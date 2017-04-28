@@ -218,7 +218,7 @@ function drawCircleArcs() {
     let fA = (Math.abs(maxAngle-minAngle) > Math.PI) ? 1 : 0;
     let fS = (maxAngle-minAngle > 0) ? 1 : 0;
     
-    // fA = ccw ? fA : (1-fA);
+    fA = ccw ? (1-fA) : fA;
     fS = ccw ? (1-fS) : fS;
 
     zdom.set(path, 'd', `M ${x1},${y1} A ${radius},${radius} 0 ${fA} ${fS} ${x2},${y2}`);
@@ -295,14 +295,14 @@ function drawCircleArcs() {
   cx += step;
   draw(circularArcFrom3Points(B(),A(),D()));
 
-  // cx += 2*step;
-  // draw(circularArcFrom3Points([cx,cy-r],[cx+r,cy],[cx-r,cy]));
-  // cx += step;
-  // draw(circularArcFrom3Points([cx+r,cy],[cx,cy+r],[cx,cy-r]));
-  // cx += step;
-  // draw(circularArcFrom3Points([cx,cy+r],[cx-r,cy],[cx+r,cy]));
-  // cx += step;
-  // draw(circularArcFrom3Points([cx-r,cy],[cx,cy-r],[cx,cy+r]));
+  cx = 10; cy+= step;
+  draw(circularArcFrom3Points(C(),A(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),B(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(A(),C(),D()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),D(),A()));
 }
 
 window.onload = () => {
