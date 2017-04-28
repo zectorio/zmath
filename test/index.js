@@ -217,6 +217,9 @@ function drawCircleArcs() {
 
     let fA = (Math.abs(maxAngle-minAngle) > Math.PI) ? 1 : 0;
     let fS = (maxAngle-minAngle > 0) ? 1 : 0;
+    
+    // fA = ccw ? fA : (1-fA);
+    fS = ccw ? (1-fS) : fS;
 
     zdom.set(path, 'd', `M ${x1},${y1} A ${radius},${radius} 0 ${fA} ${fS} ${x2},${y2}`);
     zdom.set(path, 'style', 'stroke:#000;fill:none;stroke-width:2');
@@ -224,8 +227,15 @@ function drawCircleArcs() {
     zdom.add(svg, path);
   }
   
+  function draw(earc) {
+    console.log(JSON.stringify(earc));
+    canvasDraw(ctx, earc);
+    svgDraw(svg, earc);
+  }
+  
   let W = 400, H=400;
-  let r = 10;
+  let r = 8;
+  let step = 30;
   let cx,cy;
   
   // make canvas
@@ -236,15 +246,63 @@ function drawCircleArcs() {
   // make svg
   let svg = zdom.createSVG(W,H);
   zdom.add(document.body, svg);
-
-  let earc;
   
-  cx = 100; cy = 100;
-  earc = circularArcFrom3Points([cx-r,cy],[cx,cy-r],[cx+r,cy]);
+  cx = 10; cy = 10;
 
-  canvasDraw(ctx, earc);
-  svgDraw(svg, earc);
+  /**
+   *                   B
+   *              P        Q 
+   *                   
+   *           A       O       C
+   *             
+   *              S         R
+   *                   D
+   *                   
+   *             O = [cx,cy]
+   */
+  let A = () => [cx-r,cy];
+  let B = () => [cx,cy-r];
+  let C = () => [cx+r,cy];
+  let D = () => [cx,cy+r];
+  let P = () => [cx-r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
+  let Q = () => [cx+r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
+  let R = () => [cx+r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
+  let S = () => [cx-r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
+
+  draw(circularArcFrom3Points(A(),P(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),Q(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),R(),D()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),S(),A()));
   
+  cx = 10; cy += step;
+  draw(circularArcFrom3Points(A(),B(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),C(),D()));
+  cx += step;
+  draw(circularArcFrom3Points(C(),D(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),A(),B()));
+
+  cx += 2*step;
+  draw(circularArcFrom3Points(C(),B(),A()));
+  cx += step;
+  draw(circularArcFrom3Points(D(),C(),B()));
+  cx += step;
+  draw(circularArcFrom3Points(A(),D(),C()));
+  cx += step;
+  draw(circularArcFrom3Points(B(),A(),D()));
+
+  // cx += 2*step;
+  // draw(circularArcFrom3Points([cx,cy-r],[cx+r,cy],[cx-r,cy]));
+  // cx += step;
+  // draw(circularArcFrom3Points([cx+r,cy],[cx,cy+r],[cx,cy-r]));
+  // cx += step;
+  // draw(circularArcFrom3Points([cx,cy+r],[cx-r,cy],[cx+r,cy]));
+  // cx += step;
+  // draw(circularArcFrom3Points([cx-r,cy],[cx,cy-r],[cx,cy+r]));
 }
 
 window.onload = () => {
