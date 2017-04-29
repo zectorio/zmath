@@ -125,9 +125,9 @@ class Transform {
    * @returns {Transform}
    */
   static rotateAndScaleAround(angle, [sx,sy], point) {
-    let pre = new Transform().translate(...point);
-    let rotation = new Transform().rotate(angle);
-    let scale = new Transform().scale(sx,sy);
+    let pre = new Transform().translate(point[0], point[1]);
+    let rotation = new Transform().setRotation(angle);
+    let scale = new Transform().setScale(sx,sy);
     let post = new Transform().translate(-point[0], -point[1]);
     return pre.mul(rotation).mul(scale).mul(post);
   }

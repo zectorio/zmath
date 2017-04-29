@@ -130,25 +130,6 @@ import {vec2} from '../src'
 
 
 function drawCircleArcs() {
-  
-  function getCircleAngle(center, pt) {
-    let dot = vec2.dot([1,0], vec2.unit(vec2.sub(pt, center)));
-    if(pt[1] > center[1]) {
-      return wrapAngle(Math.acos(dot));
-    } else {
-      return wrapAngle(2*Math.PI - Math.acos(dot));
-    }
-  }
-
-  function wrapAngle(angle) {
-    while(angle < 0) {
-      angle = angle + 2*Math.PI;
-    }
-    while(angle > 2*Math.PI) {
-      angle = angle - 2*Math.PI;
-    }
-    return angle;
-  }
 
   function canvasDraw(ctx, earc) {
 
