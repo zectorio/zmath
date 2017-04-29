@@ -151,9 +151,6 @@ function drawCircleArcs() {
   }
 
   /**
-   * If `reversed`
-   * then `start` corresponds to `pB` and `end` corresponds to `pA`
-   * else `start` corresponds to `pA` and `end` corresponds to `pB`
    * @param pA
    * @param pB
    * @param pC
@@ -187,27 +184,27 @@ function drawCircleArcs() {
 
     let ccw = minAngle > throughAngle || throughAngle > maxAngle;
 
-    let reversed = (minAngle !== startAngle);
-
     let radius = vec2.dist(pA, center);
 
-    return {center, radius, start:startAngle, end:endAngle, ccw, reversed};
+    return {center, radius, start:startAngle, end:endAngle, ccw};
   }
 
-  function canvasDraw(ctx, {center,radius, start, end, ccw, reversed}) {
+  function canvasDraw(ctx, {center,radius, start, end, ccw}) {
 
     let [cx,cy] = center;
+    
+    let decreasing = start > end;
 
     ctx.beginPath();
-    let minAngle = reversed ? end : start;
-    let maxAngle = reversed ? start : end;
+    let minAngle = decreasing ? end : start;
+    let maxAngle = decreasing ? start : end;
     ctx.arc(cx,cy,radius,minAngle,maxAngle,ccw);
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
     ctx.stroke();
   }
 
-  function svgDraw(svg, {center,radius, start, end, ccw, reversed}) {
+  function svgDraw(svg, {center,radius, start, end, ccw}) {
     let [cx,cy] = center;
 
     let path = zdom.createPath();
