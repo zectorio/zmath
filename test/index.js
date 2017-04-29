@@ -150,6 +150,15 @@ function drawCircleArcs() {
     return angle;
   }
 
+  /**
+   * If `reversed`
+   * then `start` corresponds to `pB` and `end` corresponds to `pA`
+   * else `start` corresponds to `pA` and `end` corresponds to `pB`
+   * @param pA
+   * @param pB
+   * @param pC
+   * @returns {*}
+   */
   function  circularArcFrom3Points(pA,pB,pC) {
     let EPSILON = 1e-6;
     let ax = pA[0], ay = pA[1];
@@ -182,41 +191,35 @@ function drawCircleArcs() {
 
     let radius = vec2.dist(pA, center);
 
-    // Is this correct?
-    // if(reversed) {
-    //   let tmp = minAngle;
-    //   minAngle = maxAngle;
-    //   maxAngle = tmp;
-    //   ccw = !ccw;
-    // }
-
-    return {center, radius, minAngle, maxAngle, ccw, reversed};
+    return {center, radius, start:startAngle, end:endAngle, ccw, reversed};
   }
 
-  function canvasDraw(ctx, {center,radius, minAngle, maxAngle, ccw, reversed}) {
+  function canvasDraw(ctx, {center,radius, start, end, ccw, reversed}) {
 
     let [cx,cy] = center;
 
     ctx.beginPath();
+    let minAngle = reversed ? end : start;
+    let maxAngle = reversed ? start : end;
     ctx.arc(cx,cy,radius,minAngle,maxAngle,ccw);
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
     ctx.stroke();
   }
 
-  function svgDraw(svg, {center,radius, minAngle, maxAngle, ccw, reversed}) {
+  function svgDraw(svg, {center,radius, start, end, ccw, reversed}) {
     let [cx,cy] = center;
 
     let path = zdom.createPath();
 
-    let x1 = cx + radius * Math.cos(minAngle);
-    let y1 = cy + radius * Math.sin(minAngle);
+    let x1 = cx + radius * Math.cos(start);
+    let y1 = cy + radius * Math.sin(start);
 
-    let x2 = cx + radius * Math.cos(maxAngle);
-    let y2 = cy + radius * Math.sin(maxAngle);
+    let x2 = cx + radius * Math.cos(end);
+    let y2 = cy + radius * Math.sin(end);
 
-    let fA = (Math.abs(maxAngle-minAngle) > Math.PI) ? 1 : 0;
-    let fS = (maxAngle-minAngle > 0) ? 1 : 0;
+    let fA = (Math.abs(end-start) > Math.PI) ? 1 : 0;
+    let fS = (end-start > 0) ? 1 : 0;
     
     fA = ccw ? (1-fA) : fA;
     fS = ccw ? (1-fS) : fS;
@@ -228,7 +231,6 @@ function drawCircleArcs() {
   }
   
   function draw(earc) {
-    console.log(JSON.stringify(earc));
     canvasDraw(ctx, earc);
     svgDraw(svg, earc);
   }
