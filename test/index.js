@@ -150,78 +150,40 @@ function drawCircleArcs() {
     return angle;
   }
 
-  /**
-   * @param pA
-   * @param pB
-   * @param pC
-   * @returns {*}
-   */
-  function  circularArcFrom3Points(pA,pB,pC) {
-    let EPSILON = 1e-6;
-    let ax = pA[0], ay = pA[1];
-    let bx = pB[0], by = pB[1];
-    let cx = pC[0], cy = pC[1];
+  function canvasDraw(ctx, earc) {
 
-    // Ref: https://en.wikipedia.org/wiki/Circumscribed_circle#Circumcenter_coordinates
-    let D = 2 * (ax * (by-cy) + bx * (cy-ay) + cx * (ay-by));
-    if(Math.abs(D) < EPSILON) {
-      return null;
-    }
-    let x = ((ax * ax + ay * ay) * (by - cy) +
-      (bx * bx + by * by) * (cy - ay) +
-      (cx * cx + cy * cy) * (ay - by))/D;
-    let y = ((ax * ax + ay * ay) * (cx - bx) +
-      (bx * bx + by * by) * (ax - cx) +
-      (cx * cx + cy * cy) * (bx - ax))/D;
-    let center = [x,y];
-
-    let startAngle = getCircleAngle(center, pA),
-      throughAngle = getCircleAngle(center, pB),
-      endAngle = getCircleAngle(center, pC);
-
-    let minAngle = Math.min(startAngle, endAngle);
-    let maxAngle = Math.max(startAngle, endAngle);
-
-    let ccw = minAngle > throughAngle || throughAngle > maxAngle;
-
-    let radius = vec2.dist(pA, center);
-
-    return {center, radius, start:startAngle, end:endAngle, ccw};
-  }
-
-  function canvasDraw(ctx, {center,radius, start, end, ccw}) {
-
-    let [cx,cy] = center;
+    let [cx,cy] = earc.center;
     
-    let decreasing = start > end;
+    let decreasing = earc.start > earc.end;
 
     ctx.beginPath();
-    let minAngle = decreasing ? end : start;
-    let maxAngle = decreasing ? start : end;
-    ctx.arc(cx,cy,radius,minAngle,maxAngle,ccw);
+    let minAngle = decreasing ? earc.end : earc.start;
+    let maxAngle = decreasing ? earc.start : earc.end;
+    ctx.arc(cx,cy,earc.rx,minAngle,maxAngle,earc.ccw);
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
     ctx.stroke();
   }
 
-  function svgDraw(svg, {center,radius, start, end, ccw}) {
-    let [cx,cy] = center;
+  function svgDraw(svg, earc) {
+    let [cx,cy] = earc.center;
 
     let path = zdom.createPath();
 
-    let x1 = cx + radius * Math.cos(start);
-    let y1 = cy + radius * Math.sin(start);
+    let x1 = cx + earc.rx * Math.cos(earc.start);
+    let y1 = cy + earc.ry * Math.sin(earc.start);
 
-    let x2 = cx + radius * Math.cos(end);
-    let y2 = cy + radius * Math.sin(end);
+    let x2 = cx + earc.rx * Math.cos(earc.end);
+    let y2 = cy + earc.ry * Math.sin(earc.end);
 
-    let fA = (Math.abs(end-start) > Math.PI) ? 1 : 0;
-    let fS = (end-start > 0) ? 1 : 0;
+    let fA = (Math.abs(earc.end-earc.start) > Math.PI) ? 1 : 0;
+    let fS = (earc.end-earc.start > 0) ? 1 : 0;
     
-    fA = ccw ? (1-fA) : fA;
-    fS = ccw ? (1-fS) : fS;
+    fA = earc.ccw ? (1-fA) : fA;
+    fS = earc.ccw ? (1-fS) : fS;
 
-    zdom.set(path, 'd', `M ${x1},${y1} A ${radius},${radius} 0 ${fA} ${fS} ${x2},${y2}`);
+    zdom.set(path, 'd',
+      `M ${x1},${y1} A ${earc.rx},${earc.ry} 0 ${fA} ${fS} ${x2},${y2}`);
     zdom.set(path, 'style', 'stroke:#000;fill:none;stroke-width:2');
 
     zdom.add(svg, path);
@@ -275,171 +237,171 @@ function drawCircleArcs() {
   let X = () => [cx-r*Math.sin(Math.PI/6), cy+r*Math.cos(Math.PI/6)];
   
   // 1/8 Pie
-  draw(circularArcFrom3Points(A(),U(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),U(),P()));
   cx += step;
-  draw(circularArcFrom3Points(B(),V(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),V(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(C(),W(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),W(),R()));
   cx += step;
-  draw(circularArcFrom3Points(D(),X(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),X(),S()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(P(),U(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),U(),A()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),V(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),V(),B()));
   cx += step;
-  draw(circularArcFrom3Points(R(),W(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),W(),C()));
   cx += step;
-  draw(circularArcFrom3Points(S(),X(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),X(),D()));
 
   // Quarter Pie
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(A(),P(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),P(),B()));
   cx += step;
-  draw(circularArcFrom3Points(B(),Q(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),Q(),C()));
   cx += step;
-  draw(circularArcFrom3Points(C(),R(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),R(),D()));
   cx += step;
-  draw(circularArcFrom3Points(D(),S(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),S(),A()));
   
   cx += 2*step;
-  draw(circularArcFrom3Points(B(),P(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),P(),A()));
   cx += step;
-  draw(circularArcFrom3Points(C(),Q(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),Q(),B()));
   cx += step;
-  draw(circularArcFrom3Points(D(),R(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),R(),C()));
   cx += step;
-  draw(circularArcFrom3Points(A(),S(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),S(),D()));
   
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(P(),B(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),B(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),C(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),C(),R()));
   cx += step;
-  draw(circularArcFrom3Points(R(),D(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),D(),S()));
   cx += step;
-  draw(circularArcFrom3Points(S(),A(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),A(),P()));
   
   cx += 2*step;
-  draw(circularArcFrom3Points(Q(),B(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),B(),P()));
   cx += step;
-  draw(circularArcFrom3Points(R(),C(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),C(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(S(),D(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),D(),R()));
   cx += step;
-  draw(circularArcFrom3Points(P(),A(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),A(),S()));
   
   // Half Pie
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(A(),B(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),B(),C()));
   cx += step;
-  draw(circularArcFrom3Points(B(),C(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),C(),D()));
   cx += step;
-  draw(circularArcFrom3Points(C(),D(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),D(),A()));
   cx += step;
-  draw(circularArcFrom3Points(D(),A(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),A(),B()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(C(),B(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),B(),A()));
   cx += step;
-  draw(circularArcFrom3Points(D(),C(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),C(),B()));
   cx += step;
-  draw(circularArcFrom3Points(A(),D(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),D(),C()));
   cx += step;
-  draw(circularArcFrom3Points(B(),A(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),A(),D()));
 
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(P(),Q(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),Q(),R()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),R(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),R(),S()));
   cx += step;
-  draw(circularArcFrom3Points(R(),S(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),S(),P()));
   cx += step;
-  draw(circularArcFrom3Points(S(),P(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),P(),Q()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(R(),Q(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),Q(),P()));
   cx += step;
-  draw(circularArcFrom3Points(S(),R(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),R(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(P(),S(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),S(),R()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),P(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),P(),S()));
   
   // Three Quarters Pie
   cx = 10; cy+= step;
-  draw(circularArcFrom3Points(C(),A(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),A(),B()));
   cx += step;
-  draw(circularArcFrom3Points(D(),B(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),B(),C()));
   cx += step;
-  draw(circularArcFrom3Points(A(),C(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),C(),D()));
   cx += step;
-  draw(circularArcFrom3Points(B(),D(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),D(),A()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(B(),A(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),A(),C()));
   cx += step;
-  draw(circularArcFrom3Points(C(),B(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),B(),D()));
   cx += step;
-  draw(circularArcFrom3Points(D(),C(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),C(),A()));
   cx += step;
-  draw(circularArcFrom3Points(A(),D(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),D(),B()));
   
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(P(),B(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),B(),S()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),C(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),C(),P()));
   cx += step;
-  draw(circularArcFrom3Points(R(),D(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),D(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(S(),A(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),A(),R()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(S(),B(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),B(),P()));
   cx += step;
-  draw(circularArcFrom3Points(P(),C(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),C(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),D(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),D(),R()));
   cx += step;
-  draw(circularArcFrom3Points(R(),A(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),A(),S()));
   
   // 7/8 Pie
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(P(),S(),A()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),S(),A()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),P(),B()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),P(),B()));
   cx += step;
-  draw(circularArcFrom3Points(R(),Q(),C()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),Q(),C()));
   cx += step;
-  draw(circularArcFrom3Points(S(),R(),D()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),R(),D()));
 
   cx += 2*step;
-  draw(circularArcFrom3Points(A(),S(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(A(),S(),P()));
   cx += step;
-  draw(circularArcFrom3Points(B(),P(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(B(),P(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(C(),Q(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(C(),Q(),R()));
   cx += step;
-  draw(circularArcFrom3Points(D(),R(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(D(),R(),S()));
   
   // > 7/8 Pie
   cx = 10; cy += step;
-  draw(circularArcFrom3Points(P(),A(),U()));
+  draw(geom.EllipseArc.circularArcFrom3Points(P(),A(),U()));
   cx += step;
-  draw(circularArcFrom3Points(Q(),B(),V()));
+  draw(geom.EllipseArc.circularArcFrom3Points(Q(),B(),V()));
   cx += step;
-  draw(circularArcFrom3Points(R(),C(),W()));
+  draw(geom.EllipseArc.circularArcFrom3Points(R(),C(),W()));
   cx += step;
-  draw(circularArcFrom3Points(S(),D(),X()));
+  draw(geom.EllipseArc.circularArcFrom3Points(S(),D(),X()));
   
   cx += 2*step;
-  draw(circularArcFrom3Points(U(),A(),P()));
+  draw(geom.EllipseArc.circularArcFrom3Points(U(),A(),P()));
   cx += step;
-  draw(circularArcFrom3Points(V(),B(),Q()));
+  draw(geom.EllipseArc.circularArcFrom3Points(V(),B(),Q()));
   cx += step;
-  draw(circularArcFrom3Points(W(),C(),R()));
+  draw(geom.EllipseArc.circularArcFrom3Points(W(),C(),R()));
   cx += step;
-  draw(circularArcFrom3Points(X(),D(),S()));
+  draw(geom.EllipseArc.circularArcFrom3Points(X(),D(),S()));
 }
 
 window.onload = () => {
