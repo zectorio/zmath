@@ -86,7 +86,8 @@ class CubicBezier extends Bezier {
   }
 
   aabb() {
-    let extremes = this._getExtremes().map(t => this.evaluate(t));
+    let params = this._getExtremes().concat([0.0,1.0]);
+    let extremes = params.map(t => this.evaluate(t));
     return new AABB({
       min : vec2.low(...extremes),
       max : vec2.high(...extremes)
