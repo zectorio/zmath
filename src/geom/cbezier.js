@@ -46,26 +46,40 @@ class CubicBezier extends Bezier {
 
     // For x
     sqterm = bx*bx - 4*ax*cx;
-    if(sqterm >= 0) {
-      let Ax = -bx/(2*ax);
-      let Bx = Math.sqrt(sqterm)/(2*ax);
-      tx0 = Ax - Bx;
-      tx1 = Ax + Bx;
+    if(ax !== 0) {
+      if(sqterm >= 0) {
+        let Ax = -bx/(2*ax);
+        let Bx = Math.sqrt(sqterm)/(2*ax);
+        tx0 = Ax - Bx;
+        tx1 = Ax + Bx;
+      } else {
+        tx0 = 0.0;
+        tx1 = 1.0;
+      }
     } else {
-      tx0 = 0.0;
-      tx1 = 1.0;
+      // Only one root exists,
+      // see https://en.wikipedia.org/wiki/Quadratic_equation#Quadratic_formula_and_its_derivation
+      tx0 = -cx/bx;
+      tx1 = Infinity;
     }
 
     // For y
     sqterm = by*by - 4*ay*cy;
-    if(sqterm >= 0) {
-      let Ay = -by/(2*ay);
-      let By = Math.sqrt(sqterm)/(2*ay);
-      ty0 = Ay - By;
-      ty1 = Ay + By;
+    if(ay !== 0) {
+      if(sqterm >= 0) {
+        let Ay = -by/(2*ay);
+        let By = Math.sqrt(sqterm)/(2*ay);
+        ty0 = Ay - By;
+        ty1 = Ay + By;
+      } else {
+        ty0 = 0.0;
+        ty1 = 1.0;
+      }
     } else {
-      ty0 = 0.0;
-      ty1 = 1.0;
+      // Only one root exists
+      // see https://en.wikipedia.org/wiki/Quadratic_equation#Quadratic_formula_and_its_derivation
+      ty0 = -cy/by;
+      ty1 = Infinity;
     }
 
     return [tx0,tx1,ty0,ty1].filter(t => t >= 0.0 && t <= 1.0);
