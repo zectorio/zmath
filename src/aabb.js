@@ -100,6 +100,16 @@ class AABB {
       `width="${this.width()}" height="${this.height()}" `+
       `style="fill:none;stroke:#888"></rect>`;
   }
+  
+  toCanvasPathDef() {
+    return {
+      type : 'rect',
+      x : this.min[0],
+      y : this.min[1],
+      w : this.max[0]-this.min[0],
+      h : this.max[1]-this.min[1]
+    };
+  }
 }
 
 export default AABB;

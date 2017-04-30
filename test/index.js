@@ -1,9 +1,13 @@
 
 import {geom} from '..';
 import {Kolor} from 'zbits'
+import ZCanvas from 'zcanvas'
+import zdom from 'zdom'
+import {vec2} from '../src'
 
 function testBBox() {
 
+  /*
   let line = new geom.Line([10,10],[200,300]);
   let cbez1 = new geom.CubicBezier([[100,10],[200,200],[210,5],[400,100]]);
   let cbez2 = new geom.CubicBezier([[100,210],[0,300],[210,105],[400,300]]);
@@ -44,6 +48,40 @@ function testBBox() {
   </g>
 </svg>
 `;
+  */
+  let WIDTH=1000;
+  let HEIGHT=800;
+  let zc = new ZCanvas('svg',WIDTH,HEIGHT);
+  zdom.add(document.body, zc.getDOMElement());
+
+  let GAP=10;
+  let X=GAP;
+  let Y=GAP;
+  let W=100;
+  let H=100;
+  
+  let geomStyle = {stroke:'#f00', strokeWidth:2, fill:'none'};
+  let aabbStyle = {stroke:'#000', strokeWidth:1, fill:'none'};
+  
+  {
+    let line = new geom.Line([X+10,Y+10],[X+W-10,Y+H-30]);
+    zc.root().add(
+      new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(line.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  
+  X += W+GAP;
+  
+  {
+    let cbez1 = new geom.CubicBezier([[X,Y+H],[X+.25*W,Y],[X+.75*W,Y],[X+W,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez1.toCanvasPathDef(), geomStyle));
+    // zc.root().add(
+    //   new ZCanvas.RenderShape(cbez1.aabb().toCanvasPathDef(), aabbStyle));
+  }
+
+  zc.render();
 }
 
 function testBezSurfSubdivision(ipoint) {
@@ -105,8 +143,6 @@ function testBezSurfSubdivision(ipoint) {
 `;
 }
 
-import ZCanvas from 'zcanvas'
-import zdom from 'zdom'
 
 function drawGeometries() {
 
@@ -126,7 +162,6 @@ function drawGeometries() {
 
 }
 
-import {vec2} from '../src'
 
 
 function drawCircleArcs() {
@@ -387,7 +422,7 @@ function drawCircleArcs() {
 
 window.onload = () => {
   // -- test bbox
-  // document.body.innerHTML = testBBox();
+  testBBox();
 
   // --- test bezsurf subdiv
   // document.body.innerHTML = testBezSurfSubdivision();
@@ -397,6 +432,6 @@ window.onload = () => {
 
   //drawGeometries();
   
-  drawCircleArcs();
+  // drawCircleArcs();
 };
 
