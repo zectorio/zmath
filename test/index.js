@@ -145,7 +145,7 @@ function testBBox() {
   }
   
   X = GAP;
-  Y += W+GAP;
+  Y += W+4*GAP;
 
   {
     let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+0.25*H],[X+W,Y+0.75*H],[X,Y+H]]);
@@ -158,7 +158,7 @@ function testBBox() {
   
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+0.25*H],[X+W,Y+0.75*H],[X,Y+H]]);
+    let cbez = new geom.CubicBezier([[X+W/2,Y],[X-W,Y+0.25*H],[X+2*W,Y+0.75*H],[X+W/2,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -166,6 +166,46 @@ function testBBox() {
     drawCPoints(cbez);
   }
   
+  X += W+GAP;
+  {
+    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+0.75*H],[X+W,Y+0.25*H],[X,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+
+  X += W+GAP;
+  {
+    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y-H],[X+W,Y+2*H],[X,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+  
+  X += W+GAP;
+  {
+    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+2*H],[X+W,Y-H],[X,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+
+  X += W+GAP;
+  {
+    let cbez = new geom.CubicBezier([[X,Y+H/2],[X+W,Y-H],[X+W,Y],[X+W/2,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+
   zc.render();
 }
 
