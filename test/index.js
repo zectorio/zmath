@@ -294,13 +294,12 @@ function drawCircleArcs() {
   function canvasDraw(ctx, earc) {
 
     let [cx,cy] = earc.center;
-    
-    let decreasing = earc.start > earc.end;
 
     ctx.beginPath();
-    let minAngle = decreasing ? earc.end : earc.start;
-    let maxAngle = decreasing ? earc.start : earc.end;
-    ctx.arc(cx,cy,earc.rx,minAngle,maxAngle,earc.ccw);
+    
+    let ccw = earc.start > earc.end ? !earc.ccw : earc.ccw;
+    ctx.ellipse(cx,cy,earc.rx,earc.ry,0,earc.start,earc.end, ccw);
+    
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
     ctx.stroke();
