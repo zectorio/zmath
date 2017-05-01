@@ -28,3 +28,62 @@ describe('Create line', () => {
     assert.deepEqual(line.evaluate(0.5), [5,5]);
   });
 });
+
+
+describe('Manufacturing circular arcs', () => {
+
+  let cx=10; let cy=10; let r=8;
+  /**
+   *                   B V
+   *              P        Q
+   *            U
+   *           A       O       C
+   *                          W
+   *              S         R
+   *                X  D
+   *
+   *             O = [cx,cy]
+   */
+  let A = () => [cx-r,cy];
+  let B = () => [cx,cy-r];
+  let C = () => [cx+r,cy];
+  let D = () => [cx,cy+r];
+
+  let P = () => [cx-r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
+  let Q = () => [cx+r*Math.cos(Math.PI/4), cy-r*Math.sin(Math.PI/4)];
+  let R = () => [cx+r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
+  let S = () => [cx-r*Math.cos(Math.PI/4), cy+r*Math.sin(Math.PI/4)];
+
+  let U = () => [cx-r*Math.cos(Math.PI/6), cy-r*Math.sin(Math.PI/6)];
+  let V = () => [cx+r*Math.sin(Math.PI/6), cy-r*Math.cos(Math.PI/6)];
+  let W = () => [cx+r*Math.cos(Math.PI/6), cy+r*Math.sin(Math.PI/6)];
+  let X = () => [cx-r*Math.sin(Math.PI/6), cy+r*Math.cos(Math.PI/6)];
+  
+  it('Semi circle 1', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( A(), B(), C() );
+    assert.equal(earc.start, Math.PI);
+    assert.equal(earc.end, 2*Math.PI);
+    assert.equal(earc.ccw, false);
+  });
+
+  it('Semi circle 1 - rvs', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( C(), B(), A() );
+    assert.equal(earc.start, 2*Math.PI);
+    assert.equal(earc.end, Math.PI);
+    assert.equal(earc.ccw, true);
+  });
+
+  it('Quarter Circle 1', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( A(), P(), B() );
+    assert.equal(earc.start, Math.PI);
+    assert.equal(earc.end, 3*Math.PI/2);
+    assert.equal(earc.ccw, false);
+  });
+  it('Quarter Circle 1 - rvs', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( B(), P(), A() );
+    assert.equal(earc.start, 3*Math.PI/2);
+    assert.equal(earc.end, Math.PI);
+    assert.equal(earc.ccw, true);
+  });
+  
+});

@@ -178,10 +178,7 @@ class EllipseArc extends Curve {
       throughAngle = getCircleAngle(center, pB),
       endAngle = getCircleAngle(center, pC);
 
-    let minAngle = Math.min(startAngle, endAngle);
-    let maxAngle = Math.max(startAngle, endAngle);
-
-    let ccw = minAngle > throughAngle || throughAngle > maxAngle;
+    let ccw = startAngle > throughAngle || throughAngle > endAngle;
 
     let radius = vec2.dist(pA, center);
 
