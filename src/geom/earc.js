@@ -178,7 +178,35 @@ class EllipseArc extends Curve {
       throughAngle = getCircleAngle(center, pB),
       endAngle = getCircleAngle(center, pC);
 
-    let ccw = startAngle > throughAngle || throughAngle > endAngle;
+    let ccw;
+
+    /**
+     * 
+     *  (A)     T(1)        S           T(2)           E          T(3)
+     *     
+     *     |---------------------------------------------------------|
+     *     0                           PI                           2*PI
+     *
+     *  (B)     T(1)        E           T(2)           S          T(3)
+     */
+
+    if(startAngle < endAngle) { // case A
+      if(0 <= throughAngle && throughAngle < startAngle) { // A:1
+        ccw = true;
+      } else if(startAngle < throughAngle && throughAngle < endAngle) { // A:2
+        ccw = false;
+      } else if(endAngle < throughAngle && throughAngle <= 2*Math.PI) { // A:3
+        ccw = true;
+      }
+    } else { // case B
+      if(0 <= throughAngle && throughAngle < endAngle) { // B:1
+        ccw = false;
+      } else if(endAngle < throughAngle && throughAngle < startAngle) { // B:2
+        ccw = true; 
+      } else if(startAngle < throughAngle && throughAngle <= 2*Math.PI) { // B:3
+        ccw = false;
+      }
+    }
 
     let radius = vec2.dist(pA, center);
 

@@ -72,6 +72,20 @@ describe('Manufacturing circular arcs', () => {
     assert.equal(earc.end, Math.PI);
     assert.equal(earc.ccw, true);
   });
+  
+  it('Semi circle 2', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( B(), A(), D() );
+    assert.equal(earc.start, 3*Math.PI/2);
+    assert.equal(earc.end, Math.PI/2);
+    assert.equal(earc.ccw, true);
+  });
+  
+  it('Semi circle 2 - rvs', () => {
+    let earc = geom.EllipseArc.circularArcFrom3Points( B(), C(), D() );
+    assert.equal(earc.start, 3*Math.PI/2);
+    assert.equal(earc.end, Math.PI/2);
+    assert.equal(earc.ccw, false);
+  });
 
   it('Quarter Circle 1', () => {
     let earc = geom.EllipseArc.circularArcFrom3Points( A(), P(), B() );
