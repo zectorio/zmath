@@ -205,6 +205,67 @@ function testBBox() {
       new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
     drawCPoints(cbez);
   }
+  
+  //
+  // Circular Arcs
+  //
+  X = GAP;
+  Y += H+3*GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI/2, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI/2, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI/4, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,5*Math.PI/4, Math.PI/2, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
 
   zc.render();
 }
@@ -288,6 +349,15 @@ function drawGeometries() {
 }
 
 
+function wrapAngle(angle) {
+  while(angle < 0) {
+    angle = angle + 2*Math.PI;
+  }
+  while(angle > 2*Math.PI) {
+    angle = angle - 2*Math.PI;
+  }
+  return angle;
+}
 
 function drawCircleArcs() {
 
@@ -308,6 +378,21 @@ function drawCircleArcs() {
   function svgDraw(svg, earc) {
     let [cx,cy] = earc.center;
 
+    let span;
+    if(earc.ccw) {
+      if(earc.start > earc.end) {
+        span = earc.start - earc.end;
+      } else {
+        span = 2*Math.PI - (earc.end-earc.start);
+      }
+    } else {
+      if(earc.start < earc.end) {
+        span = earc.end - earc.start;
+      } else {
+        span = 2*Math.PI - (earc.start-earc.end);
+      }
+    }
+    
     let path = zdom.createPath();
 
     let x1 = cx + earc.rx * Math.cos(earc.start);
@@ -546,7 +631,7 @@ function drawCircleArcs() {
 
 window.onload = () => {
   // -- test bbox
-  testBBox();
+  // testBBox();
 
   // --- test bezsurf subdiv
   // document.body.innerHTML = testBezSurfSubdivision();
@@ -556,6 +641,6 @@ window.onload = () => {
 
   //drawGeometries();
   
-  // drawCircleArcs();
+  drawCircleArcs();
 };
 

@@ -47,16 +47,87 @@ class EllipseArc extends Curve {
   }
   
   aabb() {
-    return new AABB({
-      min : vec2.sub(this.center, [this.rx,this.ry]),
-      max : vec2.add(this.center, [this.rx,this.ry])
-    });
+    let span;
+    if(this.ccw) {
+      if(this.start > this.end) {
+        span = this.start - this.end;
+      } else {
+        span = 2*Math.PI - (this.end-this.start);
+      }
+    } else {
+      if(this.start < this.end) {
+        span = this.end - this.start;
+      } else {
+        span = 2*Math.PI - (this.start-this.end);
+      }
+    }
+    
+    if(span >= 3*Math.PI/2) {
+      return new AABB({
+        min : vec2.sub(this.center, [this.rx,this.ry]),
+        max : vec2.add(this.center, [this.rx,this.ry])
+      });
+    } else if(span < Math.PI/2) {
+      let ps = this.evaluate(this.start);
+      let pe = this.evaluate(this.end);
+      return new AABB({
+        min : vec2.low(ps,pe),
+        max : vec2.high(ps,pe)
+      });
+    } else {
+      let extremes = [];
+      let startAngle, endAngle;
+      // minAngle = Math.min(this.start, this.end);
+      // maxAngle = Math.max(this.start, this.end);
+      startAngle = this.start;
+      endAngle = this.end;
+      
+      if(this.ccw) {
+
+        if(startAngle >= Math.PI/2 && endAngle <= Math.PI/2) {
+          extremes.push(this.evaluate(Math.PI/2))
+        }
+        if(startAngle >= Math.PI && endAngle <= Math.PI) {
+          extremes.push(this.evaluate(Math.PI))
+        }
+        if(startAngle >= 3*Math.PI/2 && endAngle <= 3*Math.PI/2) {
+          extremes.push(this.evaluate(3*Math.PI/2))
+        }
+
+        if(startAngle >= 0 && endAngle <= 2*Math.PI) {
+          extremes.push(this.evaluate(0));
+        }
+        
+      } else {
+
+        if(startAngle <= Math.PI/2 && endAngle >= Math.PI/2) {
+          extremes.push(this.evaluate(Math.PI/2))
+        }
+        if(startAngle <= Math.PI && endAngle >= Math.PI) {
+          extremes.push(this.evaluate(Math.PI))
+        }
+        if(startAngle <= 3*Math.PI/2 && endAngle >= 3*Math.PI/2) {
+          extremes.push(this.evaluate(3*Math.PI/2))
+        }
+
+        if(startAngle <= 2*Math.PI && endAngle >= 0) {
+          extremes.push(this.evaluate(0));
+        }
+      }
+      
+      extremes.push(this.evaluate(this.start));
+      extremes.push(this.evaluate(this.end));
+      return new AABB({
+        min : vec2.low(...extremes),
+        max : vec2.high(...extremes)
+      });
+    }
   }
 
   /**
    * Evaluate point on arc at angle t
    * @param {number} t - Angle in radians
-   * @returns {number[]}
+   * @returns {Point2D}
    */
   evaluate(t) {
     let [cx,cy] = this.center;
@@ -67,14 +138,22 @@ class EllipseArc extends Curve {
   }
 
   toCanvasPathDef() {
-
+    let [cx,cy] = this.center;
+    let [x1,y1] = this.evaluate(this.start);
+    return {
+      type : 'path',
+      curveseq : [
+        ['M',x1,y1],
+        ['E',cx,cy,this.rx,this.ry, this.start,this.end, this.ccw?1:0]
+      ]
+    };
   }
 
   /**
    * Create circular arc that starts from pA, ends at pC and passes through pB
-   * @param {number[]} pA Start point
-   * @param {number[]} pB Through point
-   * @param {number[]} pC End point
+   * @param {Point2D} pA Start point
+   * @param {Point2D} pB Through point
+   * @param {Point2D} pC End point
    * @returns {EllipseArc|null}
    */
   static circularArcFrom3Points(pA,pB,pC) {
