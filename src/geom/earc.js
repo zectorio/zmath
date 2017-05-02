@@ -6,16 +6,16 @@ import {EPSILON} from '../constants'
 
 class EllipseArc extends Curve {
 
-
   /**
    * @param {number[]} center - Center of ellipse
    * @param {number} rx - Radius along X
    * @param {number} ry - Radius along Y
    * @param {number} start - Start angle in radians
    * @param {number} end - End angle in radians
+   * @param {number} xrot - Rotation of ellipse w.r.t. global X-axis
    * @param {boolean} ccw - Counter Clock Wise
    */
-  constructor(center, rx, ry, start, end, ccw) {
+  constructor(center, rx, ry, start, end, xrot, ccw) {
 
     super();
 
@@ -43,6 +43,12 @@ class EllipseArc extends Curve {
      * @type {boolean}
      */
     this.ccw = ccw;
+
+    /**
+     * Angle between the X axis of ellipse and global X-axis
+     * @type {number}
+     */
+    this.xrotation = xrot;
 
   }
 
@@ -149,10 +155,19 @@ class EllipseArc extends Curve {
    */
   evaluate(t) {
     let [cx,cy] = this.center;
-    return [
-      cx + this.rx * Math.cos(t),
-      cy + this.ry * Math.sin(t)
-    ];
+    let {rx,ry} = this;
+    let phi = this.xrotation;
+    if(phi !== 0) {
+      return [
+        cx + rx * Math.cos(t) * Math.cos(phi) - ry * Math.sin(t) * Math.sin(phi),
+        cy + ry * Math.cos(t) * Math.sin(phi) + ry * Math.sin(t) * Math.cos(phi) 
+      ];
+    } else {
+      return [
+        cx + rx * Math.cos(t),
+        cy + ry * Math.sin(t)
+      ];
+    }
   }
 
   /**
@@ -165,7 +180,8 @@ class EllipseArc extends Curve {
       type : 'path',
       curveseq : [
         ['M',x1,y1],
-        ['E',cx,cy,this.rx,this.ry, this.start,this.end, this.ccw?1:0]
+        ['E',cx,cy,this.rx,this.ry, this.xrotation,
+          this.start,this.end, this.ccw?1:0]
       ]
     };
   }
@@ -195,9 +211,9 @@ class EllipseArc extends Curve {
       (cx * cx + cy * cy) * (bx - ax))/D;
     let center = [x,y];
 
-    let startAngle = getCircleAngle(center, pA),
-      throughAngle = getCircleAngle(center, pB),
-      endAngle = getCircleAngle(center, pC);
+    let startAngle = EllipseArc.getCircleAngle(center, pA),
+      throughAngle = EllipseArc.getCircleAngle(center, pB),
+      endAngle = EllipseArc.getCircleAngle(center, pC);
 
     let ccw;
 
@@ -243,16 +259,16 @@ class EllipseArc extends Curve {
 
   }
 
-}
-
-function getCircleAngle(center, pt) {
-  let dot = vec2.dot([1,0], vec2.unit(vec2.sub(pt, center)));
-  if(pt[1] > center[1]) {
-    return wrapAngle(Math.acos(dot));
-  } else {
-    return wrapAngle(2*Math.PI - Math.acos(dot));
+  static getCircleAngle(center, pt) {
+    let dot = vec2.dot([1,0], vec2.unit(vec2.sub(pt, center)));
+    if(pt[1] > center[1]) {
+      return wrapAngle(Math.acos(dot));
+    } else {
+      return wrapAngle(2*Math.PI - Math.acos(dot));
+    }
   }
 }
+
 
 function wrapAngle(angle) {
   while(angle < 0) {
