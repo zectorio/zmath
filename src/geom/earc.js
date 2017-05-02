@@ -252,7 +252,7 @@ class EllipseArc extends Curve {
 
     let radius = vec2.dist(pA, center);
 
-    return new EllipseArc(center, radius, radius, startAngle, endAngle, ccw);
+    return new EllipseArc(center, radius, radius, 0, startAngle, endAngle, ccw);
   }
 
   static circularArcFrom2PointsAndRadius(pA, pB, radius, sideflag) {
