@@ -763,8 +763,6 @@ function drawCircleArcs() {
 }
 
 window.onload = () => {
-  // -- test bbox
-  testBBox();
 
   // --- test bezsurf subdiv
   // document.body.innerHTML = testBezSurfSubdivision();
@@ -774,6 +772,22 @@ window.onload = () => {
 
   //drawGeometries();
   
-  // drawCircleArcs();
+  
+  let choice = window.location.hash || '#bboxes';
+  switch(choice) {
+    case '#bboxes':
+      testBBox();
+      break;
+    case '#circarcs':
+      drawCircleArcs();
+      break;
+  }
+  document.querySelector('select').value = choice.substr(1);
+
+  document.querySelector('select').onchange = ev => {
+    window.location.href =
+      window.location.origin+window.location.pathname+'#'+ev.target.value;
+    window.location.reload();
+  }
 };
 
