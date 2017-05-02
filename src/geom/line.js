@@ -14,6 +14,22 @@ class Line extends Curve {
     this.start = start;
     this.end = end;
   }
+  
+  getLineSlope() {
+    let [x1,y1] = this.start;
+    let [x2,y2] = this.end;
+    if(x1 == x2) {
+      return Infinity;
+    } else {
+      return (y2-y1)/(x2-x1);
+    }
+  }
+  
+  getYIntercept() {
+    let [x1,y1] = this.start;
+    let [x2,y2] = this.end;
+    return (x2*y1-x1*y2)/(x2-x1);
+  }
 
   /**
    * Evaluate line at given parameter value
@@ -78,12 +94,20 @@ class Line extends Curve {
    * Generate memento
    * @returns {Object} Memento
    */
-  generateMemento() {
+  toMemento() {
     return {
       type : Line.TYPEID,
       start : this.start.slice(),
       end : this.end.slice()
     };
+  }
+  
+  static fromMemento(m) {
+    return new Line(m.start, m.end); 
+  }
+  
+  clone() {
+    return Line.fromMemento(this.toMemento());
   }
 
   /**

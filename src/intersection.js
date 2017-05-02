@@ -1,7 +1,7 @@
 
 import {EPSILON} from './constants'
 import geom from './geom'
-import {isZero, isEqualFloat} from '.'
+import {vec2, isZero, isEqualFloat} from '.'
 
 let inRangeInclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
@@ -153,61 +153,100 @@ export default class Intersection {
    * @returns {Array.<Array<number>>}
    */
   static lineellipsearc(lineA, earcB) {
-    //
-    // The idea is to transform the circle (by translation and rotation) so
-    // that in the transformed coordinate system the line appears as X-axis.
-    // Then the points of intersection as the roots of the circle, i.e. points
-    // on circle where y=0.
-    //
-    let [x1,y1] = lineA.start;
-    let [x2,y2] = lineA.end;
-
-    let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
-
-    let center = earcB.center;
-    let [txc, tyc] = align(center);
-
-    let rx = earcB.rx;
-    let ry = earcB.ry;
-
-    if(ry < tyc) {
-      return [[],[]]; // There's no intersection
-    }
-
-    let K = Math.sqrt(r*r - tyc*tyc);
-
-    let piArr;
-    if(isZero(K)) {
-      // The line is tangent to circle
-      piArr = [unalign([txc,0])];
-    } else {
-      let txi1 = txc + K;
-      let txi2 = txc - K;
-      piArr = [
-        unalign([txi1,0]),
-        unalign([txi2,0])
+    
+    let xlineA = lineA.clone();
+    xlineA.start = vec2.sub(xlineA.start, earcB.center);
+    xlineA.end = vec2.sub(xlineA.end, earcB.center);
+    
+    let a = earcB.rx;
+    let b = earcB.ry;
+    let c = xlineA.getYIntercept();
+    let m = xlineA.getLineSlope();
+    let c2 = c*c;
+    let b2 = b*b;
+    let a2 = a*a;
+    let m2 = m*m;
+    if(c2 < b2+a2*m2) {
+      
+      let A = -2*a2*m*c;
+      let B = 2*a*Math.sqrt(a2*m2*b2-b2*c2+b2*b2);
+      let C = 2*(a2*m2+b2);
+      
+      let ix0 = (A+B)/C;
+      let ix1 = (A-B)/C;
+      
+      let [xs,ys] = xlineA.start;
+      let [xe,ye] = xlineA.end;
+      
+      let tA0 = (ix0-xs)/(xe-xs);
+      let tA1 = (ix1-xs)/(xe-xs);
+      
+      let tB0 = Math.acos(ix0/earcB.rx);
+      let tB1 = Math.acos(ix1/earcB.rx);
+      
+      return [
+        [tA0,tA1],[tB0,tB1]
       ];
+      
+    } else {
+      // No intersection
+      return [[],[]];
     }
-
-    let taArr = [], tbArr = [];
-    for(let pi of piArr) {
-      let ta;
-      if(x2 === x1) {
-        ta = (pi[1]-y1)/(y2-y1);
-      } else {
-        ta = (pi[0]-x1)/(x2-x1);
-      }
-      let tb = geom.EllipseArc.getCircleAngle(center, pi);
-      if (inRangeExclusive(ta, lineA) && inRangeInclusive(tb, earcB)) {
-        taArr.push(ta);
-      }
-
-      if (inRangeExclusive(tb, earcB) && inRangeInclusive(ta, lineA)) {
-        tbArr.push(tb);
-      }
-    }
-
-    return [taArr, tbArr];
+    // //
+    // // The idea is to transform the circle (by translation and rotation) so
+    // // that in the transformed coordinate system the line appears as X-axis.
+    // // Then the points of intersection as the roots of the circle, i.e. points
+    // // on circle where y=0.
+    // //
+    // let [x1,y1] = lineA.start;
+    // let [x2,y2] = lineA.end;
+    //
+    // let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
+    //
+    // let center = earcB.center;
+    // let [txc, tyc] = align(center);
+    //
+    // let rx = earcB.rx;
+    // let ry = earcB.ry;
+    //
+    // if(ry < tyc) {
+    //   return [[],[]]; // There's no intersection
+    // }
+    //
+    // let K = Math.sqrt(r*r - tyc*tyc);
+    //
+    // let piArr;
+    // if(isZero(K)) {
+    //   // The line is tangent to circle
+    //   piArr = [unalign([txc,0])];
+    // } else {
+    //   let txi1 = txc + K;
+    //   let txi2 = txc - K;
+    //   piArr = [
+    //     unalign([txi1,0]),
+    //     unalign([txi2,0])
+    //   ];
+    // }
+    //
+    // let taArr = [], tbArr = [];
+    // for(let pi of piArr) {
+    //   let ta;
+    //   if(x2 === x1) {
+    //     ta = (pi[1]-y1)/(y2-y1);
+    //   } else {
+    //     ta = (pi[0]-x1)/(x2-x1);
+    //   }
+    //   let tb = geom.EllipseArc.getCircleAngle(center, pi);
+    //   if (inRangeExclusive(ta, lineA) && inRangeInclusive(tb, earcB)) {
+    //     taArr.push(ta);
+    //   }
+    //
+    //   if (inRangeExclusive(tb, earcB) && inRangeInclusive(ta, lineA)) {
+    //     tbArr.push(tb);
+    //   }
+    // }
+    //
+    // return [taArr, tbArr];
   }
 
   static linecubicbez(lineA, qbezB) {

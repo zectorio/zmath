@@ -848,24 +848,32 @@ function testIntersections() {
   let Y=GAP;
   let W=100;
   let H=100;
+  let IPR=2;
 
   let geomStyle = {stroke:'#000', strokeWidth:2, fill:'none'};
-  let ipointStyle = {stroke:'none', fill:'#f00'};
+  let ipointStyle1 = {stroke:'none', fill:'#f00'};
+  let ipointStyle2 = {stroke:'#00f', fill:'none', strokeWidth:3};
+  
+  function plotIPoints(points, style) {
+    for(let point of points) {
+      zc.root().add(new ZCanvas.RenderShape(
+        {type:'circle',r:IPR,cx:point[0],cy:point[1]}, style));
+    }
+  }
   
   {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     let line = new geom.Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, earcIParams] = (Intersection.lineellipsearc(line, earc));
+    plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
   }
   
   X+=GAP+W;
   
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
-    zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
-    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
   }
   
   zc.render();
