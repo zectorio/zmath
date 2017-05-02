@@ -228,6 +228,14 @@ function testBBox() {
   }
   X += W+GAP;
   {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI/4, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -236,7 +244,8 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, false);
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -244,7 +253,19 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, true);
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  
+  X = GAP;
+  Y += H+3*GAP;
+  {
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -252,7 +273,8 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, false);
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -260,7 +282,35 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, true);
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, true);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, false);
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(earc.aabb().toCanvasPathDef(), aabbStyle));
+  }
+  X += W+GAP;
+  {
+    let earc = new geom.EllipseArc(
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -375,22 +425,7 @@ function drawCircleArcs() {
     let y2 = cy + earc.ry * Math.sin(earc.end);
 
     let fS = earc.ccw ? 0 : 1;
-    
-    let span;
-    if(earc.start < earc.end) {
-      if(earc.ccw) {
-        span = 2*Math.PI - (earc.end-earc.start);
-      } else {
-        span = earc.end-earc.start;
-      }
-    } else {
-      if(earc.ccw) {
-        span = earc.start-earc.end;
-      } else {
-        span = 2*Math.PI - (earc.start-earc.end);
-      }
-    }
-    let fA = span > Math.PI ? 1 : 0;
+    let fA = earc.getAngleSpan() > Math.PI ? 1 : 0;
 
     zdom.set(path, 'd',
       `M ${x1},${y1} A ${earc.rx},${earc.ry} 0 ${fA} ${fS} ${x2},${y2}`);
@@ -616,7 +651,7 @@ function drawCircleArcs() {
 
 window.onload = () => {
   // -- test bbox
-  // testBBox();
+  testBBox();
 
   // --- test bezsurf subdiv
   // document.body.innerHTML = testBezSurfSubdivision();
@@ -626,6 +661,6 @@ window.onload = () => {
 
   //drawGeometries();
   
-  drawCircleArcs();
+  // drawCircleArcs();
 };
 

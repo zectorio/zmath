@@ -45,22 +45,32 @@ class EllipseArc extends Curve {
     this.ccw = ccw;
 
   }
-  
-  aabb() {
+
+  /**
+   * Returns total angular span of this arc. The value is unsigned. It takes
+   * into consideration the winding direction (cw/ccw) and start-end angles
+   * @returns {number}
+   */
+  getAngleSpan() {
     let span;
-    if(this.ccw) {
-      if(this.start > this.end) {
-        span = this.start - this.end;
-      } else {
+    if(this.start < this.end) {
+      if(this.ccw) {
         span = 2*Math.PI - (this.end-this.start);
+      } else {
+        span = this.end-this.start;
       }
     } else {
-      if(this.start < this.end) {
-        span = this.end - this.start;
+      if(this.ccw) {
+        span = this.start-this.end;
       } else {
         span = 2*Math.PI - (this.start-this.end);
       }
     }
+    return span;
+  }
+  
+  aabb() {
+    let span = this.getAngleSpan();
     
     if(span >= 3*Math.PI/2) {
       return new AABB({
@@ -75,42 +85,47 @@ class EllipseArc extends Curve {
         max : vec2.high(ps,pe)
       });
     } else {
+
+      /**
+       *                                ---> cw
+       *                         S                      E
+       *
+       *     |---------------------------------------------------------|
+       *     0             PI/2         PI           3*PI/2           2*PI
+       *     
+       *                         E                      S
+       *                                <--- ccw
+       */
       let extremes = [];
-      let startAngle, endAngle;
-      // minAngle = Math.min(this.start, this.end);
-      // maxAngle = Math.max(this.start, this.end);
-      startAngle = this.start;
-      endAngle = this.end;
       
-      if(this.ccw) {
-
-        if(startAngle >= Math.PI/2 && endAngle <= Math.PI/2) {
-          extremes.push(this.evaluate(Math.PI/2))
+      let PI = Math.PI;
+      let keyAngles = [PI/2,PI,3*PI/2];
+      for(let keyAngle of keyAngles) {
+        let included = false;
+        if(this.start < this.end) {
+          if(this.start <= keyAngle && keyAngle <= this.end) { // Inside S <-> E
+            included = !this.ccw;
+          } else { // Outside S <-> E
+            included = this.ccw;
+          }
+        } else {
+          if(this.end <= keyAngle && keyAngle <= this.start) { // Inside E <-> S
+            included = this.ccw;
+          } else { // Outside E <-> S
+            included = !this.ccw;
+          }
         }
-        if(startAngle >= Math.PI && endAngle <= Math.PI) {
-          extremes.push(this.evaluate(Math.PI))
+        if(included) {
+          extremes.push(this.evaluate(keyAngle));
         }
-        if(startAngle >= 3*Math.PI/2 && endAngle <= 3*Math.PI/2) {
-          extremes.push(this.evaluate(3*Math.PI/2))
-        }
-
-        if(startAngle >= 0 && endAngle <= 2*Math.PI) {
+      }
+      
+      if(this.start < this.end) {
+        if(this.ccw) {
           extremes.push(this.evaluate(0));
         }
-        
       } else {
-
-        if(startAngle <= Math.PI/2 && endAngle >= Math.PI/2) {
-          extremes.push(this.evaluate(Math.PI/2))
-        }
-        if(startAngle <= Math.PI && endAngle >= Math.PI) {
-          extremes.push(this.evaluate(Math.PI))
-        }
-        if(startAngle <= 3*Math.PI/2 && endAngle >= 3*Math.PI/2) {
-          extremes.push(this.evaluate(3*Math.PI/2))
-        }
-
-        if(startAngle <= 2*Math.PI && endAngle >= 0) {
+        if(!this.ccw) {
           extremes.push(this.evaluate(0));
         }
       }
