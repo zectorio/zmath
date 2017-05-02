@@ -1,7 +1,7 @@
 
 import {EPSILON} from './constants'
 import geom from './geom'
-import {isEqualFloat} from '.'
+import {isZero, isEqualFloat} from '.'
 
 let inRangeInclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
@@ -145,4 +145,194 @@ export default class Intersection {
 
     return [taArr, tbArr];
   }
+
+  /**
+   *
+   * @param {Line} lineA
+   * @param {EllipseArc} earcB
+   * @returns {Array.<Array<number>>}
+   */
+  static lineellipsearc(lineA, earcB) {
+    //
+    // The idea is to transform the circle (by translation and rotation) so
+    // that in the transformed coordinate system the line appears as X-axis.
+    // Then the points of intersection as the roots of the circle, i.e. points
+    // on circle where y=0.
+    //
+    let [x1,y1] = lineA.start;
+    let [x2,y2] = lineA.end;
+
+    let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
+
+    let center = earcB.center;
+    let [txc, tyc] = align(center);
+
+    let rx = earcB.rx;
+    let ry = earcB.ry;
+
+    if(ry < tyc) {
+      return [[],[]]; // There's no intersection
+    }
+
+    let K = Math.sqrt(r*r - tyc*tyc);
+
+    let piArr;
+    if(isZero(K)) {
+      // The line is tangent to circle
+      piArr = [unalign([txc,0])];
+    } else {
+      let txi1 = txc + K;
+      let txi2 = txc - K;
+      piArr = [
+        unalign([txi1,0]),
+        unalign([txi2,0])
+      ];
+    }
+
+    let taArr = [], tbArr = [];
+    for(let pi of piArr) {
+      let ta;
+      if(x2 === x1) {
+        ta = (pi[1]-y1)/(y2-y1);
+      } else {
+        ta = (pi[0]-x1)/(x2-x1);
+      }
+      let tb = geom.EllipseArc.getCircleAngle(center, pi);
+      if (inRangeExclusive(ta, lineA) && inRangeInclusive(tb, earcB)) {
+        taArr.push(ta);
+      }
+
+      if (inRangeExclusive(tb, earcB) && inRangeInclusive(ta, lineA)) {
+        tbArr.push(tb);
+      }
+    }
+
+    return [taArr, tbArr];
+  }
+
+  static linecubicbez(lineA, qbezB) {
+    // Ref:
+    // https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js
+    // http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
+    //
+    // The idea is to transform the Cubic Bezier curve (by translation and
+    // rotation) so that the line appears as X-axis in the transformed
+    // coordinate system. Then the points of intersection are same as the
+    // roots of the bezier curve. We find parametric values of these roots.
+    // Evaluate the curve at those values to get points of intersection, then
+    // find their parametric values on the line.
+    //
+
+    let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
+    let tcpoints = qbezB.cpoints.map(align);
+    let tqbezB = new geom.CubicBezier(tcpoints);
+
+    let crt = (v) => (v<0) ? -Math.pow(-v,1/3) : Math.pow(v,1/3);
+
+    let qbezParams;
+
+    let pa = tcpoints[0][1],
+      pb = tcpoints[1][1],
+      pc = tcpoints[2][1],
+      pd = tcpoints[3][1],
+      d = (-pa + 3*pb - 3*pc + pd),
+      a = (3*pa - 6*pb + 3*pc) / d,
+      b = (-3*pa + 3*pb) / d,
+      c = pa / d,
+      p = (3*b - a*a)/3,
+      p3 = p/3,
+      q = (2*a*a*a - 9*a*b + 27*c)/27,
+      q2 = q/2,
+      discriminant = q2*q2 + p3*p3*p3,
+      tau = 2*Math.PI,
+      u1,v1,x1,x2,x3;
+    if (discriminant < 0) {
+      let mp3 = -p/3,
+        mp33 = mp3*mp3*mp3,
+        r = Math.sqrt( mp33 ),
+        t = -q/(2*r),
+        cosphi = t<-1 ? -1 : t>1 ? 1 : t,
+        phi = Math.acos(cosphi),
+        crtr = crt(r),
+        t1 = 2*crtr;
+      x1 = t1 * Math.cos(phi/3) - a/3;
+      x2 = t1 * Math.cos((phi+tau)/3) - a/3;
+      x3 = t1 * Math.cos((phi+2*tau)/3) - a/3;
+      qbezParams = [x1, x2, x3];
+    } else if(discriminant === 0) {
+      u1 = q2 < 0 ? crt(-q2) : -crt(q2);
+      x1 = 2*u1-a/3;
+      x2 = -u1 - a/3;
+      qbezParams = [x1,x2];
+    } else {
+      let sd = Math.sqrt(discriminant);
+      u1 = crt(-q2+sd);
+      v1 = crt(q2+sd);
+      qbezParams = [u1-v1-a/3];
+    }
+
+    let [xs,ys] = lineA.start;
+    let [xe,ye] = lineA.end;
+
+    let taArr=[], tbArr=[];
+
+    // We do not record the breaks that are at the end of the interval
+    // We have to do this on both curves (a and b) separately.
+    // The intersection points whose break parameter is exclusively inside
+    // the curve's interval (i.e. not on its end points), then it can be
+    // recorded as intersection point, provided that the break parameter of
+    // this intersection point on the other curve is in its parameter
+    // range inclusively (i.e. it could be on its end points)
+    for(let tb of qbezParams) {
+      if(inRangeExclusive(tb, qbezB)) {
+        let pt = unalign(tqbezB.evaluate(tb));
+        let ta;
+        if(isZero(ye-ys)) {
+          ta = (pt[0]-xs)/(xe-xs);
+        } else {
+          ta = (pt[1]-ys)/(ye-ys);
+        }
+        if(inRangeInclusive(ta, lineA)) {
+          tbArr.push(tb);
+        }
+      }
+    }
+    for(let tb of qbezParams) {
+      if(inRangeInclusive(tb, qbezB)) {
+        let pt = unalign(tqbezB.evaluate(tb));
+        let ta;
+        if(isZero(ye-ys)) {
+          ta = (pt[0]-xs)/(xe-xs);
+        } else {
+          ta = (pt[1]-ys)/(ye-ys);
+        }
+        if(inRangeExclusive(ta, lineA)) {
+          taArr.push(ta);
+        }
+      }
+    }
+
+    return [taArr, tbArr];
+  }
+}
+
+function alignToLineTransform([x1,y1], [x2,y2]) {
+  let tx = x1, ty = y1;
+  let a = -Math.atan2(y2-y1,x2-x1);
+  return [
+    (p) => { // align (forward transform)
+      let [x,y] = p;
+      return [
+        (x-tx) * Math.cos(a) - (y-ty) * Math.sin(a),
+        (x-tx) * Math.sin(a) + (y-ty) * Math.cos(a)
+      ];
+    },
+    (p) => { // unalign (reverse transform)
+      let [x,y] = p;
+      return [
+        x * Math.cos(a) + y * Math.sin(a) + tx,
+        -x * Math.sin(a) + y * Math.cos(a) + ty
+      ];
+    }
+  ]
 }
