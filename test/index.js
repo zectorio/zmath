@@ -101,13 +101,37 @@ function runUnitTests() {
     assert.equal(earc.ccw, true);
   });
 
+  // Line-Line intersection
 
-  QUnit.test('Line-Line 1', assert => {
+  QUnit.test('Line-Line : At midpoint', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,50],[100,50]), new geom.Line([50,0],[50,100]))
+      new geom.Line([0,50],[100,50]), new geom.Line([50,0],[50,100]));
     assert.deepEqual(iparams, [[0.5],[0.5]]);
   });
 
+  QUnit.test('Line-Line : At endpoint', assert => {
+    let iparams = Intersection.lineline(
+      new geom.Line([0,50],[100,50]), new geom.Line([100,0],[100,100]));
+    assert.deepEqual(iparams, [[],[0.5]]);
+  });
+  
+  QUnit.test('Line-Line : No intersection', assert => {
+    let iparams = Intersection.lineline(
+      new geom.Line([0,50],[100,50]), new geom.Line([101,0],[101,100]));
+    assert.deepEqual(iparams, [[],[]]);
+  });
+  
+  QUnit.test('Line-Line : meet at endpoints, no intersection', assert => {
+    let iparams = Intersection.lineline(
+      new geom.Line([0,100],[100,100]), new geom.Line([100,0],[100,100]));
+    assert.deepEqual(iparams, [[],[]]);
+  });
+  
+  QUnit.test('Line-Line : slanted lines meet at midpoint', assert => {
+    let iparams = Intersection.lineline(
+      new geom.Line([0,0],[100,100]), new geom.Line([100,0],[0,100]));
+    assert.deepEqual(iparams, [[0.5],[0.5]]);
+  });
 }
 
 function testBBox() {

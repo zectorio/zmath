@@ -28,9 +28,16 @@ let inRangeExclusive = (t, crv) => {
 export default class Intersection {
 
   /**
+   * Computes intersection between lineA and lineB and returns list of
+   * parameters at which the intersection takes place. If lines do not intersect
+   * the parameter array is empty
+   * The intersection parameters exclude the end points, hence the parameter
+   * values will be 0<t<1. For e.g. if lineA's start point is incident on lineB
+   * (not lineB's endpoints), then lineA won't have any intersection parameters,
+   * but lineB will have one.
    * @param {Line} lineA
    * @param {Line} lineB
-   * @returns {number[]}
+   * @returns {Array.<Array.number>} List of intersection parameters on lineA and lineB
    */
   static lineline(lineA, lineB) {
 
@@ -127,21 +134,13 @@ export default class Intersection {
     if(inRangeExclusive(tb, lineB)) {
       if(inRangeInclusive(ta, lineA)) {
         tbArr.push(tb);
-      } else {
-        tbArr.push(null);
       }
-    } else {
-      tbArr.push(null);
     }
 
     if(inRangeInclusive(tb, lineB)) {
       if(inRangeExclusive(ta, lineA)) {
         taArr.push(ta);
-      } else {
-        taArr.push(null);
       }
-    } else {
-      taArr.push(null);
     }
 
     return [taArr, tbArr];
