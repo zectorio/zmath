@@ -1,6 +1,6 @@
 
 const assert = require('assert');
-const {vec2, Transform, geom, Translation} = require('..');
+const {vec2, Transform, geom, Translation, Intersection} = require('..');
 
 describe('Vec2 add', () => {
   it('should add two vectors', () => {
@@ -99,5 +99,15 @@ describe('Manufacturing circular arcs', () => {
     assert.equal(earc.end, Math.PI);
     assert.equal(earc.ccw, true);
   });
+  
+});
+
+describe('Intersection', () => {
+  
+  it('Line-Line 1', () => {
+    let iparams = Intersection.lineline(
+      new geom.Line([0,50],[100,50]), new geom.Line([50,0],[50,100]))
+    assert.deepEqual(iparams, [[0.5],[0.5]]);
+  })
   
 });

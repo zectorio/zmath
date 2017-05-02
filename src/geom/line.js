@@ -6,8 +6,8 @@ import Curve from './curve'
 class Line extends Curve {
 
   /**
-   * @param {!number[]} start
-   * @param {!number[]} end
+   * @param {Point2D} start
+   * @param {Point2D} end
    */
   constructor(start, end) {
     super();
@@ -18,7 +18,7 @@ class Line extends Curve {
   /**
    * Evaluate line at given parameter value
    * @param {number} t
-   * @returns {number[]} point
+   * @returns {Point2D} point
    */
   evaluate(t) {
     return vec2.add(

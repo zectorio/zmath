@@ -59,4 +59,4 @@ let bundleConfig = {
   }
 };
 
-module.exports = indexConfig;
+module.exports = mochaConfig;

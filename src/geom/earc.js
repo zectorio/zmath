@@ -68,7 +68,10 @@ class EllipseArc extends Curve {
     }
     return span;
   }
-  
+
+  /**
+   * @returns {AABB}
+   */
   aabb() {
     let span = this.getAngleSpan();
     
@@ -152,6 +155,9 @@ class EllipseArc extends Curve {
     ];
   }
 
+  /**
+   * @returns {ZCanvas~PathDefinition}
+   */
   toCanvasPathDef() {
     let [cx,cy] = this.center;
     let [x1,y1] = this.evaluate(this.start);
