@@ -48,7 +48,7 @@ class EllipseArc extends Curve {
      * Angle between the X axis of ellipse and global X-axis
      * @type {number}
      */
-    this.xrotation = xrot;
+    this.xrot = xrot;
 
   }
 
@@ -156,7 +156,7 @@ class EllipseArc extends Curve {
   evaluate(t) {
     let [cx,cy] = this.center;
     let {rx,ry} = this;
-    let phi = this.xrotation;
+    let phi = this.xrot;
     if(phi !== 0) {
       return [
         cx + rx * Math.cos(t) * Math.cos(phi) - ry * Math.sin(t) * Math.sin(phi),
@@ -180,7 +180,7 @@ class EllipseArc extends Curve {
       type : 'path',
       curveseq : [
         ['M',x1,y1],
-        ['E',cx,cy,this.rx,this.ry, this.xrotation,
+        ['E',cx,cy,this.rx,this.ry, this.xrot,
           this.start,this.end, this.ccw?1:0]
       ]
     };
