@@ -181,6 +181,8 @@ class EllipseArc extends Curve {
     let ccw;
 
     /**
+     *                                ---> cw
+     *                                
      * 
      *  (A)     T(1)        S           T(2)           E          T(3)
      *     
@@ -188,6 +190,9 @@ class EllipseArc extends Curve {
      *     0                           PI                           2*PI
      *
      *  (B)     T(1)        E           T(2)           S          T(3)
+     *  
+     *  
+     *                                <--- ccw
      */
 
     if(startAngle < endAngle) { // case A

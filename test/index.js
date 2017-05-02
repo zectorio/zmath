@@ -374,11 +374,23 @@ function drawCircleArcs() {
     let x2 = cx + earc.rx * Math.cos(earc.end);
     let y2 = cy + earc.ry * Math.sin(earc.end);
 
-    let fA = (Math.abs(earc.end-earc.start) > Math.PI) ? 1 : 0;
-    let fS = (earc.end-earc.start > 0) ? 1 : 0;
+    let fS = earc.ccw ? 0 : 1;
     
-    fA = earc.ccw ? (1-fA) : fA;
-    fS = earc.ccw ? (1-fS) : fS;
+    let span;
+    if(earc.start < earc.end) {
+      if(earc.ccw) {
+        span = 2*Math.PI - (earc.end-earc.start);
+      } else {
+        span = earc.end-earc.start;
+      }
+    } else {
+      if(earc.ccw) {
+        span = earc.start-earc.end;
+      } else {
+        span = 2*Math.PI - (earc.start-earc.end);
+      }
+    }
+    let fA = span > Math.PI ? 1 : 0;
 
     zdom.set(path, 'd',
       `M ${x1},${y1} A ${earc.rx},${earc.ry} 0 ${fA} ${fS} ${x2},${y2}`);
