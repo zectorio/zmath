@@ -174,6 +174,8 @@ export default class Intersection {
       
       let ix0 = (A+B)/C;
       let ix1 = (A-B)/C;
+      let iy0 = m*ix0+c;
+      let iy1 = m*ix1+c;
       
       let [xs,ys] = xlineA.start;
       let [xe,ye] = xlineA.end;
@@ -181,8 +183,8 @@ export default class Intersection {
       let tA0 = (ix0-xs)/(xe-xs);
       let tA1 = (ix1-xs)/(xe-xs);
       
-      let tB0 = Math.acos(ix0/earcB.rx);
-      let tB1 = Math.acos(ix1/earcB.rx);
+      let tB0 = Math.atan2(iy0/ix0, earcB.ry/earcB.rx);
+      let tB1 = Math.atan2(iy1/ix1, earcB.ry/earcB.rx);
       
       return [
         [tA0,tA1],[tB0,tB1]
