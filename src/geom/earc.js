@@ -10,12 +10,12 @@ class EllipseArc extends Curve {
    * @param {number[]} center - Center of ellipse
    * @param {number} rx - Radius along X
    * @param {number} ry - Radius along Y
+   * @param {number} xrot - Rotation of ellipse w.r.t. global X-axis
    * @param {number} start - Start angle in radians
    * @param {number} end - End angle in radians
-   * @param {number} xrot - Rotation of ellipse w.r.t. global X-axis
    * @param {boolean} ccw - Counter Clock Wise
    */
-  constructor(center, rx, ry, start, end, xrot, ccw) {
+  constructor(center, rx, ry, xrot, start, end, ccw) {
 
     super();
 
