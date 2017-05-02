@@ -301,7 +301,7 @@ function testBBox() {
   Y += H+3*GAP;
   {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
-      0,0, Math.PI/2, true);
+      0, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -310,7 +310,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
-      0,0, Math.PI/2, false);
+      0, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -319,7 +319,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
-      0,0, Math.PI/4, true);
+      0, Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -328,7 +328,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
-      0,0, Math.PI/4, false);
+      0, Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -337,7 +337,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,0, 3*Math.PI/4, false);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -346,7 +346,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,0, 3*Math.PI/4, true);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -357,7 +357,7 @@ function testBBox() {
   Y += H+3*GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,3*Math.PI/2, Math.PI/2, false);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -366,7 +366,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,3*Math.PI/2, Math.PI/2, true);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -375,7 +375,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,Math.PI/4, 5*Math.PI/4, false);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -384,7 +384,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,Math.PI/4, 5*Math.PI/4, true);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -393,7 +393,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,0, Math.PI, false);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -402,7 +402,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.4*W,0.4*W,0,0, Math.PI, true);
+      [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -414,7 +414,7 @@ function testBBox() {
   Y += H+3*GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI/2, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -423,7 +423,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI/2, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -432,7 +432,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI/4, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -441,7 +441,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI/4, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -450,7 +450,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, 3*Math.PI/4, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, 3*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -459,7 +459,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, 3*Math.PI/4, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, 3*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -470,7 +470,7 @@ function testBBox() {
   Y += H+3*GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,3*Math.PI/2, Math.PI/2, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,3*Math.PI/2, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -479,7 +479,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,3*Math.PI/2, Math.PI/2, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,3*Math.PI/2, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -488,7 +488,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,Math.PI/4, 5*Math.PI/4, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,Math.PI/4, 5*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -497,7 +497,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,Math.PI/4, 5*Math.PI/4, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,Math.PI/4, 5*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -506,7 +506,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI, false);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -515,7 +515,7 @@ function testBBox() {
   X += W+GAP;
   {
     let earc = new geom.EllipseArc(
-      [X+W/2,Y+H/2],0.5*W,0.3*W,0,0, Math.PI, true);
+      [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -584,24 +584,6 @@ function testBezSurfSubdivision(ipoint) {
 `;
 }
 
-
-function drawGeometries() {
-
-  let zc = new ZCanvas('svg',640,480);
-
-  let line = new geom.Line([100,100],[150,455]);
-  let cbez = new geom.CubicBezier([[100,100],[200,255],[300,30],[500,100]]);
-
-  zc.root().add(new ZCanvas.RenderShape(
-    line.toCanvasPathDef(), {stroke:'#000',strokeWidth:4}));
-  zc.root().add(new ZCanvas.RenderShape(
-    cbez.toCanvasPathDef(), {stroke:'#f00',strokeWidth:2,fill:'none'}));
-
-  zc.render();
-
-  zdom.add(document.body, zc.getDOMElement());
-
-}
 
 function drawCircleArcs() {
 
@@ -854,6 +836,41 @@ function drawCircleArcs() {
   draw(geom.EllipseArc.circularArcFrom3Points(X(),D(),S()));
 }
 
+function testIntersections() {
+
+  let WIDTH=1000;
+  let HEIGHT=800;
+  let zc = new ZCanvas('svg',WIDTH,HEIGHT);
+  zdom.add(document.body, zc.getDOMElement());
+
+  let GAP=10;
+  let X=GAP;
+  let Y=GAP;
+  let W=100;
+  let H=100;
+
+  let geomStyle = {stroke:'#000', strokeWidth:2, fill:'none'};
+  let ipointStyle = {stroke:'none', fill:'#f00'};
+  
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+  }
+  
+  X+=GAP+W;
+  
+  {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+  }
+  
+  zc.render();
+}
+
 window.onload = () => {
 
   // --- test bezsurf subdiv
@@ -872,6 +889,9 @@ window.onload = () => {
       break;
     case '#circarcs':
       drawCircleArcs();
+      break;
+    case '#intersections':
+      testIntersections();
       break;
     case '#unittests':
       runUnitTests();

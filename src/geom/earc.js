@@ -10,12 +10,11 @@ class EllipseArc extends Curve {
    * @param {number[]} center - Center of ellipse
    * @param {number} rx - Radius along X
    * @param {number} ry - Radius along Y
-   * @param {number} xrot - Rotation of ellipse w.r.t. global X-axis
    * @param {number} start - Start angle in radians
    * @param {number} end - End angle in radians
    * @param {boolean} ccw - Counter Clock Wise
    */
-  constructor(center, rx, ry, xrot, start, end, ccw) {
+  constructor(center, rx, ry, start, end, ccw) {
 
     super();
 
@@ -43,12 +42,6 @@ class EllipseArc extends Curve {
      * @type {boolean}
      */
     this.ccw = ccw;
-
-    /**
-     * Angle between the X axis of ellipse and global X-axis
-     * @type {number}
-     */
-    this.xrot = xrot;
 
   }
 
@@ -156,18 +149,10 @@ class EllipseArc extends Curve {
   evaluate(t) {
     let [cx,cy] = this.center;
     let {rx,ry} = this;
-    let phi = this.xrot;
-    if(phi !== 0) {
-      return [
-        cx + rx * Math.cos(t) * Math.cos(phi) - ry * Math.sin(t) * Math.sin(phi),
-        cy + ry * Math.cos(t) * Math.sin(phi) + ry * Math.sin(t) * Math.cos(phi) 
-      ];
-    } else {
-      return [
-        cx + rx * Math.cos(t),
-        cy + ry * Math.sin(t)
-      ];
-    }
+    return [
+      cx + rx * Math.cos(t),
+      cy + ry * Math.sin(t)
+    ];
   }
 
   /**
@@ -176,14 +161,26 @@ class EllipseArc extends Curve {
   toCanvasPathDef() {
     let [cx,cy] = this.center;
     let [x1,y1] = this.evaluate(this.start);
-    return {
-      type : 'path',
-      curveseq : [
-        ['M',x1,y1],
-        ['E',cx,cy,this.rx,this.ry, this.xrot,
-          this.start,this.end, this.ccw?1:0]
-      ]
-    };
+    if(this.getAngleSpan() >= 2*Math.PI) {
+      // Split the arc into two semicircles
+      // SVG definition for elliptical arc doesn't work for full ellipse
+      return {
+        type : 'path',
+        curveseq : [
+          ['M',x1,y1],
+          ['E',cx,cy,this.rx,this.ry, 0,Math.PI, this.ccw?1:0],
+          ['E',cx,cy,this.rx,this.ry, Math.PI,2*Math.PI, this.ccw?1:0]
+        ]
+      };
+    } else {
+      return {
+        type : 'path',
+        curveseq : [
+          ['M',x1,y1],
+          ['E',cx,cy,this.rx,this.ry, this.start,this.end, this.ccw?1:0]
+        ]
+      };
+    }
   }
 
   /**
@@ -252,7 +249,7 @@ class EllipseArc extends Curve {
 
     let radius = vec2.dist(pA, center);
 
-    return new EllipseArc(center, radius, radius, 0, startAngle, endAngle, ccw);
+    return new EllipseArc(center, radius, radius, startAngle, endAngle, ccw);
   }
 
   static circularArcFrom2PointsAndRadius(pA, pB, radius, sideflag) {
