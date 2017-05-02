@@ -23,7 +23,7 @@
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0",
     "babili-webpack-plugin": "0.0.11",
-    "mocha": "^3.2.0",
+    "qunitjs": "^2.3.2",
     "webpack": "^1.14.0",
     "zbits": "github:jay3sh/zbits",
     "zcanvas": "github:jay3sh/zcanvas",

@@ -19,24 +19,6 @@ let indexConfig = {
   }
 };
 
-let mochaConfig = {
-  entry : "./test/mocha",
-  devtool : "inline-source-map",
-  output : {
-    path : path.resolve(__dirname, "build"),
-    filename : "zmath-mocha.js"
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loader: 'babel-loader'
-      }
-    ]
-  }
-};
-
-
 let bundleConfig = {
   entry : "./index",
   target : 'node',
@@ -59,4 +41,4 @@ let bundleConfig = {
   }
 };
 
-module.exports = mochaConfig;
+module.exports = indexConfig;
