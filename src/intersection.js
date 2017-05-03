@@ -7,6 +7,7 @@ let inRangeInclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
     return 0<=t && t <=1;
   } else if(crv instanceof geom.EllipseArc) {
+    t = geom.EllipseArc.wrapAngle(t);
     return (crv.ccw && (t <= crv.start || t >= crv.end)) ||
       (!crv.ccw && (t >= crv.start && t <= crv.end));
   } else {
@@ -18,6 +19,10 @@ let inRangeExclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
     return 0<t && t <1;
   } else if(crv instanceof geom.EllipseArc) {
+    if(isEqualFloat(crv.getAngleSpan(), 2*Math.PI)) {
+      return true;
+    }
+    t = geom.EllipseArc.wrapAngle(t);
     return (crv.ccw && (t < crv.start || t > crv.end)) ||
       (!crv.ccw && (t > crv.start && t < crv.end));
   } else {
@@ -182,6 +187,26 @@ export default class Intersection {
         let tB0 = earcB.getAngle([k,iy0]);
         let tB1 = earcB.getAngle([k,iy1]);
         tbArr = [tB0,tB1];
+      } else if(isEqualFloat(Math.abs(k), a)) { // Line is tangent to the ellipse
+        
+        let tB;
+        // A vertical line can be tangent to the ellipse only at two points
+        // because the ellipse is not rotated
+        if(k > 0) {
+          tB = 0;
+        } else {
+          tB = Math.PI;
+        }
+        // evaluate the point on ellipse, it will be in global coordinate system
+        // transform it to ellipse's coordinate system, i.e. that of xlineA
+        let [ix,iy] = vec2.sub(earcB.evaluate(tB), earcB.center);
+        
+        let [xs,ys] = xlineA.start;
+        let [xe,ye] = xlineA.end;
+        let tA = (iy-ys)/(ye-ys);
+
+        taArr.push(tA);
+        tbArr.push(tB);
       }
     } else {
       let c = xlineA.getYIntercept();
@@ -212,6 +237,16 @@ export default class Intersection {
         
         taArr = [tA0,tA1];
         tbArr = [tB0,tB1];
+      } else if(isEqualFloat(c2, b2+a2*m2)) { // Line is tangent to ellipse
+        
+        let ix = -a2*m*c/(a2*m2+b2);
+        let iy = ix*m+c;
+        let [xs,ys] = xlineA.start;
+        let [xe,ye] = xlineA.end;
+        let tA = (ix-xs)/(xe-xs);
+        taArr.push(tA);
+        let tB = earcB.getAngle([ix, iy]);
+        tbArr.push(tB);
       }
     }
     
@@ -229,8 +264,7 @@ export default class Intersection {
       }
     }
       
-    return [taArr,tbArr];
-      
+    return [taArrOut,tbArrOut];
   }
 
   static linecubicbez(lineA, qbezB) {

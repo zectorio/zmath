@@ -3,6 +3,7 @@ import vec2 from '../vec2'
 import Curve from './curve'
 import AABB from '../aabb'
 import {EPSILON} from '../constants'
+import {isZero} from '..'
 
 class EllipseArc extends Curve {
 
@@ -77,16 +78,35 @@ class EllipseArc extends Curve {
   getAngle(point) {
     let [x,y] = point;
     let angle = Math.atan2(y/x, this.ry/this.rx);
-    if(y > 0 && x > 0) {
+    // Place the angle in right quadrant
+    // If x == 0, no additional logic is required to place it in right quadrant
+    if(y > 0) {
+      if(x > 0) {
+      } 
+      if(x < 0) {
+        angle = Math.PI-Math.abs(angle);
+      }
+      if(isZero(x)) {
+        angle = Math.PI/2;  // TODO: assumption Y-increases down
+      }
     }
-    if(y > 0 && x < 0) {
-      angle = Math.PI-angle;
+    if(y < 0) {
+      if(x > 0) {
+        angle = -Math.abs(angle);
+      } 
+      if(x < 0) {
+        angle = Math.PI+Math.abs(angle);
+      }
+      if(isZero(x)) {
+        angle = 3*Math.PI/2; // TODO: assumption Y-increases down
+      }
     }
-    if(y < 0 && x < 0) {
-      angle = Math.PI+angle;
-    }
-    if(y < 0 && x > 0) {
-      angle = -angle;
+    if(isZero(y)) {
+      if(x > 0) {
+      }
+      if(x < 0) {
+        angle = Math.PI-Math.abs(angle);
+      }
     }
     return angle;
   }
@@ -282,22 +302,23 @@ class EllipseArc extends Curve {
   static getCircleAngle(center, pt) {
     let dot = vec2.dot([1,0], vec2.unit(vec2.sub(pt, center)));
     if(pt[1] > center[1]) {
-      return wrapAngle(Math.acos(dot));
+      return EllipseArc.wrapAngle(Math.acos(dot));
     } else {
-      return wrapAngle(2*Math.PI - Math.acos(dot));
+      return EllipseArc.wrapAngle(2*Math.PI - Math.acos(dot));
     }
   }
+  
+  static wrapAngle(angle) {
+    while(angle < 0) {
+      angle = angle + 2*Math.PI;
+    }
+    while(angle > 2*Math.PI) {
+      angle = angle - 2*Math.PI;
+    }
+    return angle;
+  }
 }
 
 
-function wrapAngle(angle) {
-  while(angle < 0) {
-    angle = angle + 2*Math.PI;
-  }
-  while(angle > 2*Math.PI) {
-    angle = angle - 2*Math.PI;
-  }
-  return angle;
-}
 
 export default EllipseArc;
