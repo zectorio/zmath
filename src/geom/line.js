@@ -2,6 +2,7 @@
 import vec2 from '../vec2'
 import AABB from '../aabb'
 import Curve from './curve'
+import {isEqualFloat} from '..'
 
 class Line extends Curve {
 
@@ -15,10 +16,14 @@ class Line extends Curve {
     this.end = end;
   }
   
+  isVertical() {
+    return isEqualFloat(this.start[0], this.end[0]);
+  }
+  
   getLineSlope() {
     let [x1,y1] = this.start;
     let [x2,y2] = this.end;
-    if(x1 == x2) {
+    if(isEqualFloat(x1,x2)) {
       return Infinity;
     } else {
       return (y2-y1)/(x2-x1);

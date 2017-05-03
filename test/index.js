@@ -866,7 +866,7 @@ function testIntersections() {
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
     let line = new geom.Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
-    let [lineIParams, earcIParams] = (Intersection.lineellipsearc(line, earc));
+    let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
     plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
   }
@@ -874,6 +874,14 @@ function testIntersections() {
   X+=GAP+W;
   
   {
+    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
+    console.log(lineIParams, earcIParams);
+    plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
   }
   
   zc.render();

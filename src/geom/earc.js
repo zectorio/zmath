@@ -69,6 +69,29 @@ class EllipseArc extends Curve {
   }
 
   /**
+   * Given a point on the circumference of this ellipse, return corresponding
+   * angle
+   * @param {Point2D} point
+   * @returns {number} Angle
+   */
+  getAngle(point) {
+    let [x,y] = point;
+    let angle = Math.atan2(y/x, this.ry/this.rx);
+    if(y > 0 && x > 0) {
+    }
+    if(y > 0 && x < 0) {
+      angle = Math.PI-angle;
+    }
+    if(y < 0 && x < 0) {
+      angle = Math.PI+angle;
+    }
+    if(y < 0 && x > 0) {
+      angle = -angle;
+    }
+    return angle;
+  }
+
+  /**
    * @returns {AABB}
    */
   aabb() {

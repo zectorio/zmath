@@ -154,46 +154,83 @@ export default class Intersection {
    */
   static lineellipsearc(lineA, earcB) {
     
+    let taArr = [];
+    let tbArr = [];
     let xlineA = lineA.clone();
     xlineA.start = vec2.sub(xlineA.start, earcB.center);
     xlineA.end = vec2.sub(xlineA.end, earcB.center);
     
     let a = earcB.rx;
     let b = earcB.ry;
-    let c = xlineA.getYIntercept();
-    let m = xlineA.getLineSlope();
-    let c2 = c*c;
-    let b2 = b*b;
-    let a2 = a*a;
-    let m2 = m*m;
-    if(c2 < b2+a2*m2) {
-      
-      let A = -2*a2*m*c;
-      let B = 2*a*Math.sqrt(a2*m2*b2-b2*c2+b2*b2);
-      let C = 2*(a2*m2+b2);
-      
-      let ix0 = (A+B)/C;
-      let ix1 = (A-B)/C;
-      let iy0 = m*ix0+c;
-      let iy1 = m*ix1+c;
-      
-      let [xs,ys] = xlineA.start;
-      let [xe,ye] = xlineA.end;
-      
-      let tA0 = (ix0-xs)/(xe-xs);
-      let tA1 = (ix1-xs)/(xe-xs);
-      
-      let tB0 = Math.atan2(iy0/ix0, earcB.ry/earcB.rx);
-      let tB1 = Math.atan2(iy1/ix1, earcB.ry/earcB.rx);
-      
-      return [
-        [tA0,tA1],[tB0,tB1]
-      ];
-      
+    
+    let tA0, tB0, tA1, tB1;
+    
+    if(xlineA.isVertical()) {
+
+      let k = xlineA.start[0]; // line equation is x=k
+      if(Math.abs(k) < a) { // Otherwise line is too far from ellipse to intersect
+        let iy0 = b*Math.sqrt(1-k*k/a*a);
+        let iy1 = -iy0;
+
+        let [xs,ys] = xlineA.start;
+        let [xe,ye] = xlineA.end;
+
+        let tA0 = (iy0 - ys)/(ye-ys);
+        let tA1 = (iy1 - ys)/(ye-ys);
+        taArr = [tA0,tA1];
+
+        let tB0 = earcB.getAngle([k,iy0]);
+        let tB1 = earcB.getAngle([k,iy1]);
+        tbArr = [tB0,tB1];
+      }
     } else {
-      // No intersection
-      return [[],[]];
+      let c = xlineA.getYIntercept();
+      let m = xlineA.getLineSlope();
+      let c2 = c*c;
+      let b2 = b*b;
+      let a2 = a*a;
+      let m2 = m*m;
+      if(c2 < b2+a2*m2) { // Otherwise line is too far from ellipse to intersect
+
+        let A = -2 * a2 * m * c;
+        let B = 2 * a * Math.sqrt(a2 * m2 * b2 - b2 * c2 + b2 * b2);
+        let C = 2 * (a2 * m2 + b2);
+
+        let ix0 = (A + B) / C;
+        let ix1 = (A - B) / C;
+        let iy0 = m * ix0 + c;
+        let iy1 = m * ix1 + c;
+
+        let [xs,ys] = xlineA.start;
+        let [xe,ye] = xlineA.end;
+
+        tA0 = (ix0 - xs) / (xe - xs);
+        tA1 = (ix1 - xs) / (xe - xs);
+
+        tB0 = earcB.getAngle([ix0, iy0]);
+        tB1 = earcB.getAngle([ix1, iy1]);
+        
+        taArr = [tA0,tA1];
+        tbArr = [tB0,tB1];
+      }
     }
+    
+    let taArrOut=[];
+    let tbArrOut=[];
+    
+    for(let i=0; i<taArr.length; i++) {
+      if (inRangeExclusive(taArr[i], lineA) && inRangeInclusive(tbArr[i], earcB)) {
+        taArrOut.push(taArr[i]);
+      }
+    }
+    for(let i=0; i<taArr.length; i++) {
+      if (inRangeInclusive(taArr[i], lineA) && inRangeExclusive(tbArr[i], earcB)) {
+        tbArrOut.push(tbArr[i]);
+      }
+    }
+      
+    return [taArr,tbArr];
+      
     // //
     // // The idea is to transform the circle (by translation and rotation) so
     // // that in the transformed coordinate system the line appears as X-axis.
