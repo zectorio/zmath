@@ -3,13 +3,65 @@ import {EPSILON} from './constants'
 import geom from './geom'
 import {vec2, isZero, isEqualFloat} from '.'
 
+/**
+ *                                ---> cw
+ *
+ *
+ *  (A)     T(1)        S           T(2)           E          T(3)
+ *
+ *     |---------------------------------------------------------|
+ *     0                           PI                           2*PI
+ *
+ *  (B)     T(1)        E           T(2)           S          T(3)
+ *
+ *
+ *                                <--- ccw
+ */
+
+let inRangeInclusiveEllipse = (t, earc) => {
+  t = geom.EllipseArc.wrapAngle(t);
+  let {start,end,ccw} = earc;
+  if(start < end) {
+    if(ccw) {
+      return t <= start || end <= t; 
+    } else {
+      return start <= t && t <= end; 
+    }
+  } else {
+    if(ccw) {
+      return end <= t && t <= start; 
+    } else {
+      return t <= end || start <= t; 
+    }
+  }
+};
+
+let inRangeExclusiveEllipse = (t, earc) => {
+  if(isEqualFloat(earc.getAngleSpan(), 2*Math.PI)) {
+    return true;
+  }
+  t = geom.EllipseArc.wrapAngle(t);
+  let {start,end,ccw} = earc;
+  if(start < end) {
+    if(ccw) {
+      return t < start || end < t;
+    } else {
+      return start < t && t < end;
+    }
+  } else {
+    if(ccw) {
+      return end < t && t < start;
+    } else {
+      return t < end || start < t;
+    }
+  }
+};
+
 let inRangeInclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
     return 0<=t && t <=1;
   } else if(crv instanceof geom.EllipseArc) {
-    t = geom.EllipseArc.wrapAngle(t);
-    return (crv.ccw && (t <= crv.start || t >= crv.end)) ||
-      (!crv.ccw && (t >= crv.start && t <= crv.end));
+    return inRangeInclusiveEllipse(t, crv);
   } else {
     console.assert(false);
   }
@@ -19,12 +71,7 @@ let inRangeExclusive = (t, crv) => {
   if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
     return 0<t && t <1;
   } else if(crv instanceof geom.EllipseArc) {
-    if(isEqualFloat(crv.getAngleSpan(), 2*Math.PI)) {
-      return true;
-    }
-    t = geom.EllipseArc.wrapAngle(t);
-    return (crv.ccw && (t < crv.start || t > crv.end)) ||
-      (!crv.ccw && (t > crv.start && t < crv.end));
+    return inRangeExclusiveEllipse(t, crv);
   } else {
     console.assert(false);
   }
