@@ -1388,6 +1388,65 @@ function testIntersectionsLineEllipsePartial() {
   
 }
 
+function testIntersectionsLineCBez() {
+  let WIDTH=1000;
+  let HEIGHT=800;
+  let zc = new ZCanvas('svg',WIDTH,HEIGHT);
+  zdom.add(document.body, zc.getDOMElement());
+
+  let GAP=10;
+  let X=GAP;
+  let Y=GAP;
+  let W=100;
+  let H=100;
+  let IPR=2;
+
+  let geomStyle = {stroke:'#000', strokeWidth:2, fill:'none'};
+  let ipointStyle1 = {stroke:'none', fill:'#f00'};
+  let ipointStyle2 = {stroke:'#00f', fill:'none', strokeWidth:3};
+  
+  function plotIPoints(points, style) {
+    for(let point of points) {
+      zc.root().add(new ZCanvas.RenderShape(
+        {type:'circle',r:IPR,cx:point[0],cy:point[1]}, style));
+    }
+  }
+  
+  {
+    let cbez = new geom.CubicBezier([[X+W,Y],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+  }
+  
+  X += GAP+W;
+  {
+    let cbez = new geom.CubicBezier([[X+W,Y],[X+W,Y+2*H],[X,Y-H],[X,Y+H]]);
+    zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+  }
+
+  X += GAP+W;
+  {
+    let cbez = new geom.CubicBezier([[X,Y+H],[X+W,Y],[X,Y],[X+W,Y+H]]);
+    zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+  }
+
+  zc.render();
+}
+
 window.onload = () => {
 
   // --- test bezsurf subdiv
@@ -1412,6 +1471,9 @@ window.onload = () => {
       break;
     case '#int-line-ellipse-partial':
       testIntersectionsLineEllipsePartial();
+      break;
+    case '#int-line-cbez':
+      testIntersectionsLineCBez();
       break;
     case '#unittests':
       runUnitTests();

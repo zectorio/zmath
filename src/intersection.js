@@ -314,7 +314,7 @@ export default class Intersection {
     return [taArrOut,tbArrOut];
   }
 
-  static linecubicbez(lineA, qbezB) {
+  static linecubicbez(lineA, cbezB) {
     // Ref:
     // https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js
     // http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
@@ -328,7 +328,7 @@ export default class Intersection {
     //
 
     let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
-    let tcpoints = qbezB.cpoints.map(align);
+    let tcpoints = cbezB.cpoints.map(align);
     let tqbezB = new geom.CubicBezier(tcpoints);
 
     let crt = (v) => (v<0) ? -Math.pow(-v,1/3) : Math.pow(v,1/3);
@@ -388,7 +388,7 @@ export default class Intersection {
     // this intersection point on the other curve is in its parameter
     // range inclusively (i.e. it could be on its end points)
     for(let tb of qbezParams) {
-      if(inRangeExclusive(tb, qbezB)) {
+      if(inRangeExclusive(tb, cbezB)) {
         let pt = unalign(tqbezB.evaluate(tb));
         let ta;
         if(isZero(ye-ys)) {
@@ -402,7 +402,7 @@ export default class Intersection {
       }
     }
     for(let tb of qbezParams) {
-      if(inRangeInclusive(tb, qbezB)) {
+      if(inRangeInclusive(tb, cbezB)) {
         let pt = unalign(tqbezB.evaluate(tb));
         let ta;
         if(isZero(ye-ys)) {
