@@ -375,7 +375,7 @@ export default class Intersection {
       let aby3 = a / 3;
 
       if (isZero(p)) {
-        
+
         tbArr.push(cubeRoot(-q)-aby3);
         
       } else if (isZero(q)) {

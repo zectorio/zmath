@@ -1455,6 +1455,19 @@ function testIntersectionsLineCBez() {
     plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
   }
 
+  X = GAP;
+  Y += GAP+H;
+  {
+    let cbez = new geom.CubicBezier([[X,Y+H/2],[X+W/4,(Y+H/2)+20],[X+3*W/4,(Y+H/2)+30],[X+W,(Y+H/2)+35]]);
+    zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y+3*H/4],[X+W,Y+3*H/4]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    console.log(cbezIParams);
+    plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+  }
+
   zc.render();
 }
 
