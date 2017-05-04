@@ -399,7 +399,7 @@ export default class Intersection {
           let sqrtdelta = Math.sqrt(delta);
           let u1 = cubeRoot(-qby2 + sqrtdelta);
           let v1 = cubeRoot(qby2 + sqrtdelta);
-          tbArr.push(u1 - v1 - a / 3); // eqn 20
+          tbArr.push(u1-v1-aby3); // eqn 20
 
         } else if (delta < 0) {
 

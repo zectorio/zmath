@@ -1432,7 +1432,35 @@ function testIntersectionsLineCBez() {
     plotIPoints(g,lineIParams.map(t => line.evaluate(t)), ipointStyle1);
     plotCPoints(g,cbez);
   }
+
+  X += GAP+W;
+  {
+    let g = new ZCanvas.RenderGroup();
+    zc.root().add(g);
+    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(g,cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(g,lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+    plotCPoints(g,cbez);
+  }
   
+  X += GAP+W;
+  {
+    let g = new ZCanvas.RenderGroup();
+    zc.root().add(g);
+    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X+W,Y+H],[X,Y]);
+    g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(g,cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(g,lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+    plotCPoints(g,cbez);
+  }
+
   X += GAP+W;
   {
     let g = new ZCanvas.RenderGroup();
@@ -1451,7 +1479,7 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y],[X+W,Y+2*H],[X,Y-H],[X,Y+H]]);
+    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+2*H],[X,Y-H],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
@@ -1519,7 +1547,36 @@ function testIntersectionsLineCBez() {
     plotIPoints(g, lineIParams.map(t => line.evaluate(t)), ipointStyle1);
     plotCPoints(g, cbez);
   }
+  
+  X += GAP+W;
+  {
+    let g = new ZCanvas.RenderGroup();
+    zc.root().add(g);
+    let cbez = new geom.CubicBezier(
+      [[X+W/3,Y+2*H/3],[X+W/2+W/4,Y+H/3],[X+W/2+W/4,Y+H/6],[X+W,Y]]);
+    g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(g, lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+    plotCPoints(g, cbez);
+  }
 
+  X += GAP+W;
+  {
+    let g = new ZCanvas.RenderGroup();
+    zc.root().add(g);
+    let cbez = new geom.CubicBezier(
+      [[X+W/2,Y+H/2],[X+W/2+W/4,Y+H/3],[X+W/2+W/4,Y+H/6],[X+W,Y]]);
+    g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y+H/3], [X+W,Y+2*H/3]);
+    g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(g, lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+    plotCPoints(g, cbez);
+  }
   zc.render();
 }
 
