@@ -1457,8 +1457,9 @@ function testIntersectionsLineCBez() {
 
   X = GAP;
   Y += GAP+H;
-  {
-    let cbez = new geom.CubicBezier([[X,Y+H/2],[X+W/4,(Y+H/2)+20],[X+3*W/4,(Y+H/2)+30],[X+W,(Y+H/2)+35]]);
+  { // Makes p=0 in line-cbez intersection code
+    let cbez = new geom.CubicBezier(
+      [[X,Y+H/2],[X+W/4,(Y+H/2)+20],[X+3*W/4,(Y+H/2)+30],[X+W,(Y+H/2)+35]]);
     zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     let line = new geom.Line([X,Y+3*H/4],[X+W,Y+3*H/4]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
