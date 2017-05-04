@@ -1443,6 +1443,17 @@ function testIntersectionsLineCBez() {
     plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
     plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
   }
+  
+  X += GAP+W;
+  {
+    let cbez = new geom.CubicBezier([[X+W/2,Y],[X,Y+H/2],[X+W,Y+H/2],[X+W/2,Y+H]]);
+    zc.root().add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+  }
 
   zc.render();
 }

@@ -1,7 +1,9 @@
 
 import {EPSILON} from './constants'
 import geom from './geom'
-import {vec2, isZero, isEqualFloat} from '.'
+import {vec2, isZero, isEqualFloat, Transform,Translation,Rotation,cubeRoot} from '.'
+
+const PI = Math.PI;
 
 /**
  *                                ---> cw
@@ -315,128 +317,139 @@ export default class Intersection {
   }
 
   static linecubicbez(lineA, cbezB) {
-    // Ref:
-    // https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js
+
+    let taArr = [], tbArr = [];
+
+    let theta = -lineA.getInclination();
+    let xform = new Rotation(theta).mul(new Translation(vec2.mul(lineA.start,-1)));
+
+    // Control points of the cbez curve when transformed to coordinate system
+    // that has the line as its X-axis
+    let [p0,p1,p2,p3] = cbezB.cpoints.map(pt => xform.transformPoint(pt));
+
+    // Intersection of cbez with the line is at points where it crosses the
+    // line (i.e. X-axis in the transformed coordinate system).
+    // So we have to find the roots of the cubic equation of y-coordinates of
+    // the cbez curve
+
+
+    // The math to find roots of cubic polynomial
     // http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
+
+    // Accordingly out equation is
+    // t^3 + a * t^2 + b * t + c = 0
+
+
+    // The cubic bezier curve with controls points p0,p1,p2,p3 can be expanded to
+    // (-p0+3p1-3p2+p3) t^3 + (3p0-6p1+3p2) t^2 + (-3p0+3p1) t + p0
     //
-    // The idea is to transform the Cubic Bezier curve (by translation and
-    // rotation) so that the line appears as X-axis in the transformed
-    // coordinate system. Then the points of intersection are same as the
-    // roots of the bezier curve. We find parametric values of these roots.
-    // Evaluate the curve at those values to get points of intersection, then
-    // find their parametric values on the line.
-    //
+    //         d                    a*d               b*d        c*d
 
-    let [align, unalign] = alignToLineTransform(lineA.start, lineA.end);
-    let tcpoints = cbezB.cpoints.map(align);
-    let tqbezB = new geom.CubicBezier(tcpoints);
+    let y0 = p0[1];
+    let y1 = p1[1];
+    let y2 = p2[1];
+    let y3 = p3[1];
 
-    let crt = (v) => (v<0) ? -Math.pow(-v,1/3) : Math.pow(v,1/3);
-
-    let qbezParams;
-
-    let pa = tcpoints[0][1],
-      pb = tcpoints[1][1],
-      pc = tcpoints[2][1],
-      pd = tcpoints[3][1],
-      d = (-pa + 3*pb - 3*pc + pd),
-      a = (3*pa - 6*pb + 3*pc) / d,
-      b = (-3*pa + 3*pb) / d,
-      c = pa / d,
-      p = (3*b - a*a)/3,
-      p3 = p/3,
-      q = (2*a*a*a - 9*a*b + 27*c)/27,
-      q2 = q/2,
-      discriminant = q2*q2 + p3*p3*p3,
-      tau = 2*Math.PI,
-      u1,v1,x1,x2,x3;
-    if (discriminant < 0) {
-      let mp3 = -p/3,
-        mp33 = mp3*mp3*mp3,
-        r = Math.sqrt( mp33 ),
-        t = -q/(2*r),
-        cosphi = t<-1 ? -1 : t>1 ? 1 : t,
-        phi = Math.acos(cosphi),
-        crtr = crt(r),
-        t1 = 2*crtr;
-      x1 = t1 * Math.cos(phi/3) - a/3;
-      x2 = t1 * Math.cos((phi+tau)/3) - a/3;
-      x3 = t1 * Math.cos((phi+2*tau)/3) - a/3;
-      qbezParams = [x1, x2, x3];
-    } else if(discriminant === 0) {
-      u1 = q2 < 0 ? crt(-q2) : -crt(q2);
-      x1 = 2*u1-a/3;
-      x2 = -u1 - a/3;
-      qbezParams = [x1,x2];
+    let d = (-y0 + 3*y1 - 3*y2 + y3);
+    if (isZero(d)) {
+      // That reduces this to quadratic equation from cubic
+      // a * t^2 + b * t + c = 0 // - the a,b,c have different meaning from above
+      let a = 3*y0 - 6*y1 + 3*y2;
+      let b = -3*y0 + 3*y1;
+      let c = y0;
+      
+      let delta = b*b-4*a*c;
+      if(delta > 0) {
+        tbArr.push((-b+Math.sqrt(delta))/(2*a));
+        tbArr.push((-b-Math.sqrt(delta))/(2*a));
+      }
+      
     } else {
-      let sd = Math.sqrt(discriminant);
-      u1 = crt(-q2+sd);
-      v1 = crt(q2+sd);
-      qbezParams = [u1-v1-a/3];
-    }
+      let a = (3*y0 - 6*y1 + 3*y2) / d;
+      let b = (-3*y0 + 3*y1) / d;
+      let c = y0 / d;
 
+      let p = (3*b - a*a) / 3;
+      let q = (2*a*a*a - 9*a*b + 27*c) / 27;
+
+      let aby3 = a / 3;
+
+      if (isZero(p)) {
+        
+        tbArr.push(cubeRoot(-q)-aby3);
+        
+      } else if (isZero(q)) {
+        
+        tbArr.push(-aby3);
+        if (p < 0) {
+          let sqrtmp = Math.sqrt(-p);
+          tbArr.push(-aby3 + sqrtmp);
+          tbArr.push(-aby3 - sqrtmp);
+        }
+        
+      } else {
+        let pby2 = p/2;
+        let qby2 = q/2;
+        let qby3 = q/3;
+        let delta = pby2 * pby2 + qby3 * qby3 * qby3;
+
+        if (delta > 0) {
+
+          // one real root exists
+          let sqrtdelta = Math.sqrt(delta);
+          let u1 = cubeRoot(-qby2 + sqrtdelta);
+          let v1 = cubeRoot(qby2 + sqrtdelta);
+          tbArr.push(u1 - v1 - a / 3); // eqn 20
+
+        } else if (delta < 0) {
+
+          // From eq 33 in link above
+          let mpby3 = -p / 3;
+          let r = Math.sqrt(mpby3 * mpby3 * mpby3);
+          let cosphi = -q / (2 * r);
+          let phi = Math.acos(cosphi);
+          let crtr = cubeRoot(r);
+          let A = 2 * crtr;
+          tbArr.push(A * Math.cos(phi / 3) - aby3);
+          tbArr.push(A * Math.cos((phi + 2 * PI) / 3 - aby3));
+          tbArr.push(A * Math.cos((phi + 4 * PI) / 3 - aby3));
+
+        } else { // delta == 0
+
+          let u1 = cubeRoot(-qby2);
+          tbArr.push(2*u1-aby3); // eqn 12
+          tbArr.push(-u1-aby3); // eqn 15
+
+        }
+      }
+    }
+    
     let [xs,ys] = lineA.start;
     let [xe,ye] = lineA.end;
-
-    let taArr=[], tbArr=[];
-
-    // We do not record the breaks that are at the end of the interval
-    // We have to do this on both curves (a and b) separately.
-    // The intersection points whose break parameter is exclusively inside
-    // the curve's interval (i.e. not on its end points), then it can be
-    // recorded as intersection point, provided that the break parameter of
-    // this intersection point on the other curve is in its parameter
-    // range inclusively (i.e. it could be on its end points)
-    for(let tb of qbezParams) {
-      if(inRangeExclusive(tb, cbezB)) {
-        let pt = unalign(tqbezB.evaluate(tb));
-        let ta;
-        if(isZero(ye-ys)) {
-          ta = (pt[0]-xs)/(xe-xs);
-        } else {
-          ta = (pt[1]-ys)/(ye-ys);
-        }
-        if(inRangeInclusive(ta, lineA)) {
-          tbArr.push(tb);
-        }
+    for(let tb of tbArr) {
+      let [ix,iy] = cbezB.evaluate(tb);
+      if(isEqualFloat(ys,ye)) {
+        taArr.push((ix-xs)/(xe-xs));
+      } else {
+        taArr.push((iy-ys)/(ye-ys)); 
       }
     }
-    for(let tb of qbezParams) {
-      if(inRangeInclusive(tb, cbezB)) {
-        let pt = unalign(tqbezB.evaluate(tb));
-        let ta;
-        if(isZero(ye-ys)) {
-          ta = (pt[0]-xs)/(xe-xs);
-        } else {
-          ta = (pt[1]-ys)/(ye-ys);
-        }
-        if(inRangeExclusive(ta, lineA)) {
-          taArr.push(ta);
-        }
+    
+    // Filter out-of-range parameters
+    let taArrOut=[];
+    let tbArrOut=[];
+
+    for(let i=0; i<taArr.length; i++) {
+      if (inRangeExclusive(taArr[i], lineA) && inRangeInclusive(tbArr[i], cbezB)) {
+        taArrOut.push(taArr[i]);
       }
     }
-
-    return [taArr, tbArr];
+    for(let i=0; i<taArr.length; i++) {
+      if (inRangeInclusive(taArr[i], lineA) && inRangeExclusive(tbArr[i], cbezB)) {
+        tbArrOut.push(tbArr[i]);
+      }
+    }
+    return [taArrOut,tbArrOut];
   }
 }
 
-function alignToLineTransform([x1,y1], [x2,y2]) {
-  let tx = x1, ty = y1;
-  let a = -Math.atan2(y2-y1,x2-x1);
-  return [
-    (p) => { // align (forward transform)
-      let [x,y] = p;
-      return [
-        (x-tx) * Math.cos(a) - (y-ty) * Math.sin(a),
-        (x-tx) * Math.sin(a) + (y-ty) * Math.cos(a)
-      ];
-    },
-    (p) => { // unalign (reverse transform)
-      let [x,y] = p;
-      return [
-        x * Math.cos(a) + y * Math.sin(a) + tx,
-        -x * Math.sin(a) + y * Math.cos(a) + ty
-      ];
-    }
-  ]
-}

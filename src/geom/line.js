@@ -35,6 +35,16 @@ class Line extends Curve {
     let [x2,y2] = this.end;
     return (x2*y1-x1*y2)/(x2-x1);
   }
+  
+  getInclination() {
+    let [x1,y1] = this.start;
+    let [x2,y2] = this.end;
+    if(isEqualFloat(x1,x2)) {
+      return Math.PI/2; 
+    } else {
+      return Math.atan2(y2-y1,x2-x1);
+    }
+  }
 
   /**
    * Evaluate line at given parameter value

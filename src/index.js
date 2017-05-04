@@ -48,6 +48,18 @@ function isEqualFloat(a, b, tolerance=EPSILON) {
   return isZero(a-b, tolerance);
 }
 
+/**
+ * Find cube root of given number. Math.pow return NaN while taking
+ * cube root of negative number, because some of the results might
+ * be complex numbers. This function only return the real cubeRoot
+ * of given number
+ * @param {number} x
+ * @returns {number}
+ */
+function cubeRoot(x) {
+  return x<0 ? -Math.pow(-x,1/3) : Math.pow(x,1/3);
+}
+
 export {
   vec2,
   Transform,
@@ -56,5 +68,5 @@ export {
   AABB,
   Intersection,
   geom,
-  toDeg, toRad, isZero, isEqualFloat
+  toDeg, toRad, isZero, isEqualFloat, cubeRoot
 };
