@@ -1419,7 +1419,21 @@ function testIntersectionsLineCBez() {
         {type:'circle',r:IPR,cx:point[0],cy:point[1]}, style));
     }
   }
-  
+
+  {
+    let g = new ZCanvas.RenderGroup();
+    zc.root().add(g);
+    let cbez = new geom.CubicBezier([[X+W/4,Y+H/4],[X+W/2,Y+H/4],[X+3*W/4,Y+H/2],[X+3*W/4,Y+3*H/4]]);
+    g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
+    let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
+    plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
+    plotIPoints(g, lineIParams.map(t => line.evaluate(t)), ipointStyle1);
+    plotCPoints(g, cbez);
+  }
+
+  X += GAP+W;
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
