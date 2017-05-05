@@ -1,5 +1,6 @@
 /*
- Copyright (C) 2017 Jayesh Salvi
+
+ Copyright (C) 2017 Jayesh Salvi, Blue Math Software Inc.
 
  This file is part of Zector Math.
 
@@ -15,6 +16,7 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with Zector Math.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 export default class BSplineCurve {
