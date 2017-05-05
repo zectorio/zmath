@@ -74,7 +74,7 @@ function findSpan(p, U, u) {
  * Evaluate basis function values 
  * @param {number} p Degree
  * @param {Array.<number>} U Knot vector
- * @param {number} i
+ * @param {number} i Knot span index
  * @param {number} u Parameter
  * @returns {Array} Basis function values at i,u
  */
@@ -95,4 +95,10 @@ function getBasisFunction(p, U, i, u) {
     N[j] = saved;
   }
   return N;
+}
+
+export {
+  bernstein,
+  findSpan,
+  getBasisFunction
 }

@@ -26,11 +26,12 @@ import CubicBezier from './cbezier'
 import CubicBezierSurface from './cbezsurf'
 import CubicBezierSurfacePatch from './cbezsurfpatch'
 import EllipseArc from './earc'
+import nurbs from './nurbs'
 
 const geom = {
   Curve, Line, Bezier, CubicBezier,
   CubicBezierSurface, CubicBezierSurfacePatch,
-  EllipseArc
+  EllipseArc, nurbs
 };
 
 export default geom;
