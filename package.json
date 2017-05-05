@@ -1,6 +1,6 @@
 {
   "name": "zmath",
-  "version": "0.1.15",
+  "version": "0.2.0",
   "description": "Math functionality for Zector",
   "main": "src/index.js",
   "scripts": {
