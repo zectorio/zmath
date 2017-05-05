@@ -1600,10 +1600,10 @@ function plotNURBSBasis() {
   let zc = new ZCanvas('svg',WIDTH,HEIGHT);
   zdom.add(document.body, zc.getDOMElement());
 
-  const RESOLUTION=20;
+  const RESOLUTION=100;
 
   let cpoints = [[1,0],[2,0],[3,0],[4,2]];
-  let knots = [0,0,0,0,1,5,6,8,8,8,8];
+  let knots = [0,0,0,0,1/8,5/8,6/8,1,1,1,1];
   let p = 3;
   let m = knots.length-1;
   let n = m-p-1;
@@ -1612,26 +1612,30 @@ function plotNURBSBasis() {
   
   let Nip = new Array(n+1);
   for(let i=0; i<n+1; i++) {
-    Nip[i] = new Array(RESOLUTION);
+    Nip[i] = new Array(RESOLUTION+1);
+    for(let j=0;j<RESOLUTION+1; j++) {
+      Nip[i][j] = 0.0;
+    }
   }
   
-  for(let i=0; i<RESOLUTION; i++) {
+  for(let i=0; i<RESOLUTION+1; i++) {
     let u = i/RESOLUTION;
     let span = bcurve.findSpan(u);
-    console.log(u,span);
     let N = bcurve.evaluateBasis(span, u);
     for(let j=p; j>=0; j--) {
       Nip[span-j][i] = N[p-j];
     }
   }
   
-  const PLOT_W = 400;
-  const PLOT_H = 300;
+  const PLOT_W = 800;
+  const PLOT_H = 600;
+  const TOP_MARGIN=50;
   
   for(let Ni of Nip) {
     zc.root().add(new ZCanvas.RenderShape({
       type : 'polyline',
-      points : Ni.map((y,i) => [PLOT_W*(i/RESOLUTION),PLOT_H-y*PLOT_H])
+      points : Ni.map((y,i) => [PLOT_W*(i/RESOLUTION),
+        TOP_MARGIN+PLOT_H-y*PLOT_H])
     }, {stroke:'#000',fill:'none'}));
   }
   
