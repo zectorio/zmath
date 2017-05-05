@@ -24,8 +24,8 @@
     "babili-webpack-plugin": "0.0.11",
     "qunitjs": "^2.3.2",
     "webpack": "^1.14.0",
-    "zbits": "github:jay3sh/zbits",
-    "zcanvas": "github:jay3sh/zcanvas",
+    "zbits": "github:zectorio/zbits",
+    "zcanvas": "github:zectorio/zcanvas",
     "zdom": "github:zectorio/zdom"
   },
   "babel": {
