@@ -2,6 +2,14 @@
  * @module zmath
  */
 
+/**
+ * @typedef {Array.<number>} Point - n-dimensional point (typically n=2,3)
+ */
+
+/**
+ * @typedef {Array.<number>} Vector - n-dimensional vector (typically n=2,3)
+ */
+
 import vec2 from './vec2'
 import {Transform, Translation, Rotation} from './transform'
 import geom from './geom'

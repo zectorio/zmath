@@ -11,7 +11,7 @@ class Curve {
   /**
    * @abstract
    */
-  generateMemento() {
+  toMemento() {
     throw new Error('Not implemented');
   }
 
