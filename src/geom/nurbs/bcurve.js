@@ -19,6 +19,8 @@
 
  */
 
+import {findSpan, getBasisFunction} from './nurbs'
+
 export default class BSplineCurve {
 
   /**
@@ -48,8 +50,6 @@ export default class BSplineCurve {
      */
     this.knots = knots;
 
-    console.assert(this.knots.length === this.cpoints.length+degree+1);
-
     /**
      * Weights for Rational BSpline Curve.
      * If null, it's non-rational bspline curve.
@@ -75,5 +75,13 @@ export default class BSplineCurve {
    */
   evaluate(t) {
     
+  }
+  
+  evaluateBasis(span, t) {
+    return getBasisFunction(this.degree, this.knots, span, t);
+  }
+  
+  findSpan(t) {
+    return findSpan(this.degree, this.knots, t);
   }
 }

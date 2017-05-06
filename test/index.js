@@ -1594,6 +1594,55 @@ function testIntersectionsLineCBez() {
   zc.render();
 }
 
+function plotNURBSBasis() {
+  let WIDTH=1000;
+  let HEIGHT=800;
+  let zc = new ZCanvas('svg',WIDTH,HEIGHT);
+  zdom.add(document.body, zc.getDOMElement());
+
+  const RESOLUTION=100;
+
+  let cpoints = [[1,0],[2,0],[3,0],[4,2]];
+  let knots = [0,0,0,0,1/8,5/8,6/8,1,1,1,1];
+  let p = 3;
+  let m = knots.length-1;
+  let n = m-p-1;
+  
+  let bcurve = new geom.nurbs.BSplineCurve(3,cpoints,knots);
+  
+  let Nip = new Array(n+1);
+  for(let i=0; i<n+1; i++) {
+    Nip[i] = new Array(RESOLUTION+1);
+    for(let j=0;j<RESOLUTION+1; j++) {
+      Nip[i][j] = 0.0;
+    }
+  }
+  
+  for(let i=0; i<RESOLUTION+1; i++) {
+    let u = i/RESOLUTION;
+    let span = bcurve.findSpan(u);
+    let N = bcurve.evaluateBasis(span, u);
+    for(let j=p; j>=0; j--) {
+      Nip[span-j][i] = N[p-j];
+    }
+  }
+  
+  const PLOT_W = 800;
+  const PLOT_H = 600;
+  const TOP_MARGIN=50;
+  
+  for(let Ni of Nip) {
+    zc.root().add(new ZCanvas.RenderShape({
+      type : 'polyline',
+      points : Ni.map((y,i) => [PLOT_W*(i/RESOLUTION),
+        TOP_MARGIN+PLOT_H-y*PLOT_H])
+    }, {stroke:'#000',fill:'none'}));
+  }
+  
+
+  zc.render();
+}
+
 window.onload = () => {
 
   // --- test bezsurf subdiv
@@ -1621,6 +1670,9 @@ window.onload = () => {
       break;
     case '#int-line-cbez':
       testIntersectionsLineCBez();
+      break;
+    case '#nurbs-basis':
+      plotNURBSBasis();
       break;
     case '#unittests':
       runUnitTests();
