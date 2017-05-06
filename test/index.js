@@ -7,6 +7,9 @@ import zdom from 'zdom'
 const PI=Math.PI;
 const sin = Math.sin;
 const cos = Math.cos;
+let Line = geom.classic.Line;
+let CubicBezier = geom.classic.CubicBezier;
+let EllipseArc = geom.classic.EllipseArc;
 
 function runUnitTests() {
   let qunitDiv = zdom.createDiv();
@@ -31,7 +34,7 @@ function runUnitTests() {
   });
 
   QUnit.test('should find midpoint of line segment', assert => {
-    let line = new geom.Line([0,0],[10,10]);
+    let line = new Line([0,0],[10,10]);
     assert.deepEqual(line.evaluate(0.5), [5,5]);
   });
 
@@ -65,41 +68,41 @@ function runUnitTests() {
   let X = () => [cx-r*Math.sin(Math.PI/6), cy+r*Math.cos(Math.PI/6)];
 
   QUnit.test('Semi circle 1', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( A(), B(), C() );
+    let earc = EllipseArc.circularArcFrom3Points( A(), B(), C() );
     assert.equal(earc.start, Math.PI);
     assert.equal(earc.end, 2*Math.PI);
     assert.equal(earc.ccw, false);
   });
 
   QUnit.test('Semi circle 1 - rvs', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( C(), B(), A() );
+    let earc = EllipseArc.circularArcFrom3Points( C(), B(), A() );
     assert.equal(earc.start, 2*Math.PI);
     assert.equal(earc.end, Math.PI);
     assert.equal(earc.ccw, true);
   });
 
   QUnit.test('Semi circle 2', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( B(), A(), D() );
+    let earc = EllipseArc.circularArcFrom3Points( B(), A(), D() );
     assert.equal(earc.start, 3*Math.PI/2);
     assert.equal(earc.end, Math.PI/2);
     assert.equal(earc.ccw, true);
   });
 
   QUnit.test('Semi circle 2 - rvs', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( B(), C(), D() );
+    let earc = EllipseArc.circularArcFrom3Points( B(), C(), D() );
     assert.equal(earc.start, 3*Math.PI/2);
     assert.equal(earc.end, Math.PI/2);
     assert.equal(earc.ccw, false);
   });
 
   QUnit.test('Quarter Circle 1', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( A(), P(), B() );
+    let earc = EllipseArc.circularArcFrom3Points( A(), P(), B() );
     assert.equal(earc.start, Math.PI);
     assert.equal(earc.end, 3*Math.PI/2);
     assert.equal(earc.ccw, false);
   });
   QUnit.test('Quarter Circle 1 - rvs', assert => {
-    let earc = geom.EllipseArc.circularArcFrom3Points( B(), P(), A() );
+    let earc = EllipseArc.circularArcFrom3Points( B(), P(), A() );
     assert.equal(earc.start, 3*Math.PI/2);
     assert.equal(earc.end, Math.PI);
     assert.equal(earc.ccw, true);
@@ -109,31 +112,31 @@ function runUnitTests() {
 
   QUnit.test('Line-Line : At midpoint', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,50],[100,50]), new geom.Line([50,0],[50,100]));
+      new Line([0,50],[100,50]), new Line([50,0],[50,100]));
     assert.deepEqual(iparams, [[0.5],[0.5]]);
   });
 
   QUnit.test('Line-Line : At endpoint', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,50],[100,50]), new geom.Line([100,0],[100,100]));
+      new Line([0,50],[100,50]), new Line([100,0],[100,100]));
     assert.deepEqual(iparams, [[],[0.5]]);
   });
   
   QUnit.test('Line-Line : No intersection', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,50],[100,50]), new geom.Line([101,0],[101,100]));
+      new Line([0,50],[100,50]), new Line([101,0],[101,100]));
     assert.deepEqual(iparams, [[],[]]);
   });
   
   QUnit.test('Line-Line : meet at endpoints, no intersection', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,100],[100,100]), new geom.Line([100,0],[100,100]));
+      new Line([0,100],[100,100]), new Line([100,0],[100,100]));
     assert.deepEqual(iparams, [[],[]]);
   });
   
   QUnit.test('Line-Line : slanted lines meet at midpoint', assert => {
     let iparams = Intersection.lineline(
-      new geom.Line([0,0],[100,100]), new geom.Line([100,0],[0,100]));
+      new Line([0,0],[100,100]), new Line([100,0],[0,100]));
     assert.deepEqual(iparams, [[0.5],[0.5]]);
   });
   
@@ -163,7 +166,7 @@ function testBBox() {
   }
   
   {
-    let line = new geom.Line([X+10,Y+10],[X+W-10,Y+H-30]);
+    let line = new Line([X+10,Y+10],[X+W-10,Y+H-30]);
     zc.root().add(
       new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -174,7 +177,7 @@ function testBBox() {
   Y += W+GAP;
   
   {
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+.25*W,Y],[X+.75*W,Y],[X+W,Y+H]]);
+    let cbez = new CubicBezier([[X,Y+H],[X+.25*W,Y],[X+.75*W,Y],[X+W,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -184,29 +187,7 @@ function testBBox() {
 
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y+H/2],[X+.25*W,Y+H+0.25*H],[X+.75*W,Y-0.25*H],[X+W,Y+H/2]]);
-    zc.root().add(
-      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    zc.root().add(
-      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
-    drawCPoints(cbez);
-  }
-  
-  X += W+GAP;
-
-  {
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+.25*W,Y+H],[X+.75*W,Y],[X+W,Y]]);
-    zc.root().add(
-      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    zc.root().add(
-      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
-    drawCPoints(cbez);
-  }
-
-  X += W+GAP;
-
-  {
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+.75*W,Y],[X+.25*W,Y],[X+W,Y+H]]);
+    let cbez = new CubicBezier([[X,Y+H/2],[X+.25*W,Y+H+0.25*H],[X+.75*W,Y-0.25*H],[X+W,Y+H/2]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -217,7 +198,18 @@ function testBBox() {
   X += W+GAP;
 
   {
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+W+0.25*W,Y+H/2],[X-0.25*W,Y+H/2],[X+W,Y+H]]);
+    let cbez = new CubicBezier([[X,Y+H],[X+.25*W,Y+H],[X+.75*W,Y],[X+W,Y]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+
+  X += W+GAP;
+
+  {
+    let cbez = new CubicBezier([[X,Y+H],[X+.75*W,Y],[X+.25*W,Y],[X+W,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -228,7 +220,18 @@ function testBBox() {
   X += W+GAP;
 
   {
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+W+0.25*W,Y+H/2],[X-0.25*W,Y+H/2],[X+W,Y+2*H/3]]);
+    let cbez = new CubicBezier([[X,Y+H],[X+W+0.25*W,Y+H/2],[X-0.25*W,Y+H/2],[X+W,Y+H]]);
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
+    zc.root().add(
+      new ZCanvas.RenderShape(cbez.aabb().toCanvasPathDef(), aabbStyle));
+    drawCPoints(cbez);
+  }
+  
+  X += W+GAP;
+
+  {
+    let cbez = new CubicBezier([[X,Y+H],[X+W+0.25*W,Y+H/2],[X-0.25*W,Y+H/2],[X+W,Y+2*H/3]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -240,7 +243,7 @@ function testBBox() {
   Y += W+4*GAP;
 
   {
-    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+0.25*H],[X+W,Y+0.75*H],[X,Y+H]]);
+    let cbez = new CubicBezier([[X,Y],[X+W,Y+0.25*H],[X+W,Y+0.75*H],[X,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -250,7 +253,7 @@ function testBBox() {
   
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X+W/2,Y],[X-W,Y+0.25*H],[X+2*W,Y+0.75*H],[X+W/2,Y+H]]);
+    let cbez = new CubicBezier([[X+W/2,Y],[X-W,Y+0.25*H],[X+2*W,Y+0.75*H],[X+W/2,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -260,7 +263,7 @@ function testBBox() {
   
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+0.75*H],[X+W,Y+0.25*H],[X,Y+H]]);
+    let cbez = new CubicBezier([[X,Y],[X+W,Y+0.75*H],[X+W,Y+0.25*H],[X,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -270,7 +273,7 @@ function testBBox() {
 
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y-H],[X+W,Y+2*H],[X,Y+H]]);
+    let cbez = new CubicBezier([[X,Y],[X+W,Y-H],[X+W,Y+2*H],[X,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -280,7 +283,7 @@ function testBBox() {
   
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y],[X+W,Y+2*H],[X+W,Y-H],[X,Y+H]]);
+    let cbez = new CubicBezier([[X,Y],[X+W,Y+2*H],[X+W,Y-H],[X,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -290,7 +293,7 @@ function testBBox() {
 
   X += W+GAP;
   {
-    let cbez = new geom.CubicBezier([[X,Y+H/2],[X+W,Y-H],[X+W,Y],[X+W/2,Y+H]]);
+    let cbez = new CubicBezier([[X,Y+H/2],[X+W,Y-H],[X+W,Y],[X+W/2,Y+H]]);
     zc.root().add(
       new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
     zc.root().add(
@@ -304,7 +307,7 @@ function testBBox() {
   X = GAP;
   Y += H+3*GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
       0, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -313,7 +316,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
       0, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -322,7 +325,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
       0, Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -331,7 +334,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.4*W,0.4*W,
       0, Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -340,7 +343,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -349,7 +352,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,0, 3*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -360,7 +363,7 @@ function testBBox() {
   X = GAP;
   Y += H+3*GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -369,7 +372,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,3*Math.PI/2, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -378,7 +381,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -387,7 +390,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,Math.PI/4, 5*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -396,7 +399,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -405,7 +408,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.4*W,0.4*W,0, Math.PI, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -417,7 +420,7 @@ function testBBox() {
   X = GAP;
   Y += H+3*GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -426,7 +429,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -435,7 +438,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -444,7 +447,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -453,7 +456,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, 3*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -462,7 +465,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, 3*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -473,7 +476,7 @@ function testBBox() {
   X = GAP;
   Y += H+3*GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,3*Math.PI/2, Math.PI/2, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -482,7 +485,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,3*Math.PI/2, Math.PI/2, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -491,7 +494,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,Math.PI/4, 5*Math.PI/4, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -500,7 +503,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,Math.PI/4, 5*Math.PI/4, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -509,7 +512,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI, false);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -518,7 +521,7 @@ function testBBox() {
   }
   X += W+GAP;
   {
-    let earc = new geom.EllipseArc(
+    let earc = new EllipseArc(
       [X+W/2,Y+H/2],0.5*W,0.3*W,0, Math.PI, true);
     zc.root().add(
       new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
@@ -532,14 +535,14 @@ function testBBox() {
 function testBezSurfSubdivision(ipoint) {
   let points = [];
 
-  // let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({points:[
+  // let surfgrid = new CubicBezierSurfacePatch([[new CubicBezierSurface({points:[
   //   [ [100,50], [200,100], [300,100], [310,50] ],
   //   [ [120,150], [200,150], [300,150], [400,150] ],
   //   [ [70,300], [200,350], [300,350], [450,300] ],
   //   [ [100,450], [200,400], [300,400], [400,450] ]
   // ]})]]);
 
-  let surfgrid = new geom.CubicBezierSurfacePatch([[new geom.CubicBezierSurface({
+  let surfgrid = new CubicBezierSurfacePatch([[new CubicBezierSurface({
     coons : [
       [100,100], [100,100],
       [400,100], [400,100], [400,100],
@@ -673,171 +676,171 @@ function drawCircleArcs() {
   let X = () => [cx-r*Math.sin(Math.PI/6), cy+r*Math.cos(Math.PI/6)];
   
   // 1/8 Pie
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),U(),P()));
+  draw(EllipseArc.circularArcFrom3Points(A(),U(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),V(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(B(),V(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),W(),R()));
+  draw(EllipseArc.circularArcFrom3Points(C(),W(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),X(),S()));
+  draw(EllipseArc.circularArcFrom3Points(D(),X(),S()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),U(),A()));
+  draw(EllipseArc.circularArcFrom3Points(P(),U(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),V(),B()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),V(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),W(),C()));
+  draw(EllipseArc.circularArcFrom3Points(R(),W(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),X(),D()));
+  draw(EllipseArc.circularArcFrom3Points(S(),X(),D()));
 
   // Quarter Pie
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),P(),B()));
+  draw(EllipseArc.circularArcFrom3Points(A(),P(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),Q(),C()));
+  draw(EllipseArc.circularArcFrom3Points(B(),Q(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),R(),D()));
+  draw(EllipseArc.circularArcFrom3Points(C(),R(),D()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),S(),A()));
+  draw(EllipseArc.circularArcFrom3Points(D(),S(),A()));
   
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),P(),A()));
+  draw(EllipseArc.circularArcFrom3Points(B(),P(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),Q(),B()));
+  draw(EllipseArc.circularArcFrom3Points(C(),Q(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),R(),C()));
+  draw(EllipseArc.circularArcFrom3Points(D(),R(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),S(),D()));
+  draw(EllipseArc.circularArcFrom3Points(A(),S(),D()));
   
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),B(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(P(),B(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),C(),R()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),C(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),D(),S()));
+  draw(EllipseArc.circularArcFrom3Points(R(),D(),S()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),A(),P()));
+  draw(EllipseArc.circularArcFrom3Points(S(),A(),P()));
   
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),B(),P()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),B(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),C(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(R(),C(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),D(),R()));
+  draw(EllipseArc.circularArcFrom3Points(S(),D(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),A(),S()));
+  draw(EllipseArc.circularArcFrom3Points(P(),A(),S()));
   
   // Half Pie
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),B(),C()));
+  draw(EllipseArc.circularArcFrom3Points(A(),B(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),C(),D()));
+  draw(EllipseArc.circularArcFrom3Points(B(),C(),D()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),D(),A()));
+  draw(EllipseArc.circularArcFrom3Points(C(),D(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),A(),B()));
+  draw(EllipseArc.circularArcFrom3Points(D(),A(),B()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),B(),A()));
+  draw(EllipseArc.circularArcFrom3Points(C(),B(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),C(),B()));
+  draw(EllipseArc.circularArcFrom3Points(D(),C(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),D(),C()));
+  draw(EllipseArc.circularArcFrom3Points(A(),D(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),A(),D()));
+  draw(EllipseArc.circularArcFrom3Points(B(),A(),D()));
 
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),Q(),R()));
+  draw(EllipseArc.circularArcFrom3Points(P(),Q(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),R(),S()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),R(),S()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),S(),P()));
+  draw(EllipseArc.circularArcFrom3Points(R(),S(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),P(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(S(),P(),Q()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),Q(),P()));
+  draw(EllipseArc.circularArcFrom3Points(R(),Q(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),R(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(S(),R(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),S(),R()));
+  draw(EllipseArc.circularArcFrom3Points(P(),S(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),P(),S()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),P(),S()));
   
   // Three Quarters Pie
   cx = 10; cy+= step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),A(),B()));
+  draw(EllipseArc.circularArcFrom3Points(C(),A(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),B(),C()));
+  draw(EllipseArc.circularArcFrom3Points(D(),B(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),C(),D()));
+  draw(EllipseArc.circularArcFrom3Points(A(),C(),D()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),D(),A()));
+  draw(EllipseArc.circularArcFrom3Points(B(),D(),A()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),A(),C()));
+  draw(EllipseArc.circularArcFrom3Points(B(),A(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),B(),D()));
+  draw(EllipseArc.circularArcFrom3Points(C(),B(),D()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),C(),A()));
+  draw(EllipseArc.circularArcFrom3Points(D(),C(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),D(),B()));
+  draw(EllipseArc.circularArcFrom3Points(A(),D(),B()));
   
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),B(),S()));
+  draw(EllipseArc.circularArcFrom3Points(P(),B(),S()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),C(),P()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),C(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),D(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(R(),D(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),A(),R()));
+  draw(EllipseArc.circularArcFrom3Points(S(),A(),R()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),B(),P()));
+  draw(EllipseArc.circularArcFrom3Points(S(),B(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),C(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(P(),C(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),D(),R()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),D(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),A(),S()));
+  draw(EllipseArc.circularArcFrom3Points(R(),A(),S()));
   
   // 7/8 Pie
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),S(),A()));
+  draw(EllipseArc.circularArcFrom3Points(P(),S(),A()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),P(),B()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),P(),B()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),Q(),C()));
+  draw(EllipseArc.circularArcFrom3Points(R(),Q(),C()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),R(),D()));
+  draw(EllipseArc.circularArcFrom3Points(S(),R(),D()));
 
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(A(),S(),P()));
+  draw(EllipseArc.circularArcFrom3Points(A(),S(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(B(),P(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(B(),P(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(C(),Q(),R()));
+  draw(EllipseArc.circularArcFrom3Points(C(),Q(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(D(),R(),S()));
+  draw(EllipseArc.circularArcFrom3Points(D(),R(),S()));
   
   // > 7/8 Pie
   cx = 10; cy += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(P(),A(),U()));
+  draw(EllipseArc.circularArcFrom3Points(P(),A(),U()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(Q(),B(),V()));
+  draw(EllipseArc.circularArcFrom3Points(Q(),B(),V()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(R(),C(),W()));
+  draw(EllipseArc.circularArcFrom3Points(R(),C(),W()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(S(),D(),X()));
+  draw(EllipseArc.circularArcFrom3Points(S(),D(),X()));
   
   cx += 2*step;
-  draw(geom.EllipseArc.circularArcFrom3Points(U(),A(),P()));
+  draw(EllipseArc.circularArcFrom3Points(U(),A(),P()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(V(),B(),Q()));
+  draw(EllipseArc.circularArcFrom3Points(V(),B(),Q()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(W(),C(),R()));
+  draw(EllipseArc.circularArcFrom3Points(W(),C(),R()));
   cx += step;
-  draw(geom.EllipseArc.circularArcFrom3Points(X(),D(),S()));
+  draw(EllipseArc.circularArcFrom3Points(X(),D(),S()));
 }
 
 function testIntersectionsLineEllipseFull() {
@@ -869,9 +872,9 @@ function testIntersectionsLineEllipseFull() {
   // Fat ellipse
   //
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -881,9 +884,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
   
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -893,9 +896,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
 
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X-0.05*W,Y+H/2],[X+1.05*W,Y+H/2]);
+    let line = new Line([X-0.05*W,Y+H/2],[X+1.05*W,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -905,9 +908,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
   
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W,Y],[X,Y+H]);
+    let line = new Line([X+W,Y],[X,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -922,9 +925,9 @@ function testIntersectionsLineEllipseFull() {
   Y+=GAP+H;
   
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -934,9 +937,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
 
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y-0.05*H],[X+W/2,Y+1.05*H]);
+    let line = new Line([X+W/2,Y-0.05*H],[X+W/2,Y+1.05*H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -946,9 +949,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
 
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X-0.05*W,Y+H/2],[X+1.05*W,Y+H/2]);
+    let line = new Line([X-0.05*W,Y+H/2],[X+1.05*W,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -958,9 +961,9 @@ function testIntersectionsLineEllipseFull() {
   X+=GAP+W;
 
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W,Y],[X,Y+H]);
+    let line = new Line([X+W,Y],[X,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -976,9 +979,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx-rx*cos(PI/4),cy-ry*sin(PI/4)],
       [cx+rx*cos(PI/4),cy+ry*sin(PI/4)]
     );
@@ -990,9 +993,9 @@ function testIntersectionsLineEllipseFull() {
 
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,0,2*Math.PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1005,9 +1008,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx-rx,cy],
       [cx+rx,cy]
     );
@@ -1023,9 +1026,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx+rx*cos(PI/4),cy-ry*sin(PI/4)],
       [cx-rx*cos(PI/4),cy+ry*sin(PI/4)]
     );
@@ -1044,9 +1047,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx,cy],
       [cx+rx,cy+ry]
     );
@@ -1063,9 +1066,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx+0.5*rx*cos(PI/4),cy-0.5*ry*sin(PI/4)],
       [cx-0.5*rx*cos(PI/4),cy+0.5*ry*sin(PI/4)]
     );
@@ -1081,9 +1084,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X+W-2,Y],
       [X+W-2,Y+H]
     );
@@ -1099,9 +1102,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.5*H;
     let ry=0.3*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X,Y+2],
       [X+W,Y+2]
     );
@@ -1119,9 +1122,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.5*H;
     let ry=0.3*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X,cy-ry],
       [X+W,cy-ry]
     );
@@ -1137,9 +1140,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.5*H;
     let ry=0.3*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X,cy+ry],
       [X+W,cy+ry]
     );
@@ -1155,9 +1158,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx+rx,Y],
       [cx+rx,Y+H]
     );
@@ -1173,9 +1176,9 @@ function testIntersectionsLineEllipseFull() {
     let cy=Y+H/2;
     let rx=0.3*H;
     let ry=0.5*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,0,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,0,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [cx-rx,Y],
       [cx-rx,Y+H]
     );
@@ -1216,9 +1219,9 @@ function testIntersectionsLineEllipsePartial() {
   // Slanted lines intersecting half ellipses
   //
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1227,9 +1230,9 @@ function testIntersectionsLineEllipsePartial() {
   
   X+=W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,Math.PI,0,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,Math.PI,0,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1238,9 +1241,9 @@ function testIntersectionsLineEllipsePartial() {
 
   X+=W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,PI,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,0,PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W,Y],[X,Y+H]);
+    let line = new Line([X+W,Y],[X,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1249,9 +1252,9 @@ function testIntersectionsLineEllipsePartial() {
 
   X+=W+GAP;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,Math.PI,0,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,Math.PI,0,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W,Y],[X,Y+H]);
+    let line = new Line([X+W,Y],[X,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1264,9 +1267,9 @@ function testIntersectionsLineEllipsePartial() {
   X = GAP;
   Y += GAP+H;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,Math.PI,0,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,Math.PI,0,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1275,9 +1278,9 @@ function testIntersectionsLineEllipsePartial() {
   
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,Math.PI,0,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,Math.PI,0,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1286,9 +1289,9 @@ function testIntersectionsLineEllipsePartial() {
   
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.4*H,Math.PI,0,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.4*H,Math.PI,0,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1297,9 +1300,9 @@ function testIntersectionsLineEllipsePartial() {
 
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,PI/2,3*PI/2,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,PI/2,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1308,9 +1311,9 @@ function testIntersectionsLineEllipsePartial() {
   
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,PI/2,3*PI/2,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.5*H,0.3*H,PI/2,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1319,9 +1322,9 @@ function testIntersectionsLineEllipsePartial() {
   
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.4*H,0.3*H,PI/2,3*PI/2,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.4*H,0.3*H,PI/2,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1331,9 +1334,9 @@ function testIntersectionsLineEllipsePartial() {
   X = GAP;
   Y += GAP+H;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,PI/2,3*PI/2,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.5*H,PI/2,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H/2]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1341,9 +1344,9 @@ function testIntersectionsLineEllipsePartial() {
   }
   X+=GAP+W;
   {
-    let earc = new geom.EllipseArc([X+W/2,Y+H/2],0.3*H,0.4*H,PI/2,3*PI/2,false);
+    let earc = new EllipseArc([X+W/2,Y+H/2],0.3*H,0.4*H,PI/2,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H/2]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H/2]);
     zc.root().add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, earcIParams] = Intersection.lineellipsearc(line, earc);
     plotIPoints(earcIParams.map(t => earc.evaluate(t)), ipointStyle2);
@@ -1355,9 +1358,9 @@ function testIntersectionsLineEllipsePartial() {
     let cy=Y+H/2;
     let rx=0.5*H;
     let ry=0.3*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,PI,2*PI,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,PI,2*PI,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X,cy-ry],
       [X+W,cy-ry]
     );
@@ -1372,9 +1375,9 @@ function testIntersectionsLineEllipsePartial() {
     let cy=Y+H/2;
     let rx=0.5*H;
     let ry=0.3*H;
-    let earc = new geom.EllipseArc([cx,cy],rx,ry,PI,3*PI/2,false);
+    let earc = new EllipseArc([cx,cy],rx,ry,PI,3*PI/2,false);
     zc.root().add(new ZCanvas.RenderShape(earc.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line(
+    let line = new Line(
       [X,cy-ry],
       [X+W,cy-ry]
     );
@@ -1423,9 +1426,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W/4,Y+H/4],[X+W/2,Y+H/4],[X+3*W/4,Y+H/2],[X+3*W/4,Y+3*H/4]]);
+    let cbez = new CubicBezier([[X+W/4,Y+H/4],[X+W/2,Y+H/4],[X+3*W/4,Y+H/2],[X+3*W/4,Y+3*H/4]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1437,9 +1440,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    let cbez = new CubicBezier([[X+W,Y],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g,cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1451,9 +1454,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    let cbez = new CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g,cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1465,9 +1468,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    let cbez = new CubicBezier([[X+W,Y+H/4],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W,Y+H],[X,Y]);
+    let line = new Line([X+W,Y+H],[X,Y]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g,cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1479,9 +1482,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
+    let cbez = new CubicBezier([[X+W,Y],[X+W,Y+H/2],[X,Y+H/2],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+3*W/4,Y],[X+W/4,Y+H]);
+    let line = new Line([X+3*W/4,Y],[X+W/4,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1493,9 +1496,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W,Y+H/4],[X+W,Y+2*H],[X,Y-H],[X,Y+H]]);
+    let cbez = new CubicBezier([[X+W,Y+H/4],[X+W,Y+2*H],[X,Y-H],[X,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1507,9 +1510,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X,Y+H],[X+W,Y],[X,Y],[X+W,Y+H]]);
+    let cbez = new CubicBezier([[X,Y+H],[X+W,Y],[X,Y],[X+W,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/2],[X+W,Y+H/2]);
+    let line = new Line([X,Y+H/2],[X+W,Y+H/2]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1521,9 +1524,9 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier([[X+W/2,Y],[X,Y+H/2],[X+W,Y+H/2],[X+W/2,Y+H]]);
+    let cbez = new CubicBezier([[X+W/2,Y],[X,Y+H/2],[X+W,Y+H/2],[X+W/2,Y+H]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X+W/2,Y],[X+W/2,Y+H]);
+    let line = new Line([X+W/2,Y],[X+W/2,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1536,10 +1539,10 @@ function testIntersectionsLineCBez() {
   { // Makes p=0 in line-cbez intersection code
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier(
+    let cbez = new CubicBezier(
       [[X,Y+H/2],[X+W/4,(Y+H/2)+20],[X+3*W/4,(Y+H/2)+30],[X+W,(Y+H/2)+35]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+3*H/4],[X+W,Y+3*H/4]);
+    let line = new Line([X,Y+3*H/4],[X+W,Y+3*H/4]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1551,10 +1554,10 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier(
+    let cbez = new CubicBezier(
       [[X+W/2,Y+H/2],[X+W/2+W/4,Y+H/3],[X+W/2+W/4,Y+H/6],[X+W,Y]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1566,10 +1569,10 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier(
+    let cbez = new CubicBezier(
       [[X+W/3,Y+2*H/3],[X+W/2+W/4,Y+H/3],[X+W/2+W/4,Y+H/6],[X+W,Y]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y],[X+W,Y+H]);
+    let line = new Line([X,Y],[X+W,Y+H]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);
@@ -1581,10 +1584,10 @@ function testIntersectionsLineCBez() {
   {
     let g = new ZCanvas.RenderGroup();
     zc.root().add(g);
-    let cbez = new geom.CubicBezier(
+    let cbez = new CubicBezier(
       [[X+W/2,Y+H/2],[X+W/2+W/4,Y+H/3],[X+W/2+W/4,Y+H/6],[X+W,Y]]);
     g.add(new ZCanvas.RenderShape(cbez.toCanvasPathDef(), geomStyle));
-    let line = new geom.Line([X,Y+H/3], [X+W,Y+2*H/3]);
+    let line = new Line([X,Y+H/3], [X+W,Y+2*H/3]);
     g.add(new ZCanvas.RenderShape(line.toCanvasPathDef(), geomStyle));
     let [lineIParams, cbezIParams] = Intersection.linecubicbez(line, cbez);
     plotIPoints(g, cbezIParams.map(t => cbez.evaluate(t)), ipointStyle2);

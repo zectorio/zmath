@@ -24,6 +24,9 @@ import Bezier from './bezier'
 import vec2 from '../../vec2'
 import AABB from '../../aabb'
 
+/**
+ * @ignore
+ */
 class CubicBezier extends Bezier {
 
   evaluate(t) {

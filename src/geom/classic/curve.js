@@ -20,6 +20,9 @@
  */
 
 
+/**
+ * @ignore
+ */
 class Curve {
 
   /**

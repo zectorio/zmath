@@ -20,13 +20,17 @@
  */
 
 
-import {EPSILON} from './constants'
-import geom from './geom'
-import {vec2, isZero, isEqualFloat, Transform,Translation,Rotation,cubeRoot} from '.'
+import {EPSILON} from '../../constants'
+import {
+  vec2, isZero, isEqualFloat, Transform, Translation,Rotation,cubeRoot
+} from '../..'
+import Line from './line'
+import EllipseArc from './earc'
+import CubicBezier from './cbezier'
 
 const PI = Math.PI;
 
-/**
+/*
  *                                ---> cw
  *
  *
@@ -42,7 +46,7 @@ const PI = Math.PI;
  */
 
 let inRangeInclusiveEllipse = (t, earc) => {
-  t = geom.EllipseArc.wrapAngle(t);
+  t = EllipseArc.wrapAngle(t);
   let {start,end,ccw} = earc;
   if(start < end) {
     if(ccw) {
@@ -63,7 +67,7 @@ let inRangeExclusiveEllipse = (t, earc) => {
   if(isEqualFloat(earc.getAngleSpan(), 2*Math.PI)) {
     return true;
   }
-  t = geom.EllipseArc.wrapAngle(t);
+  t = EllipseArc.wrapAngle(t);
   let {start,end,ccw} = earc;
   if(start < end) {
     if(ccw) {
@@ -81,9 +85,9 @@ let inRangeExclusiveEllipse = (t, earc) => {
 };
 
 let inRangeInclusive = (t, crv) => {
-  if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
+  if(crv instanceof Line || crv instanceof CubicBezier) {
     return 0<=t && t <=1;
-  } else if(crv instanceof geom.EllipseArc) {
+  } else if(crv instanceof EllipseArc) {
     return inRangeInclusiveEllipse(t, crv);
   } else {
     console.assert(false);
@@ -91,15 +95,18 @@ let inRangeInclusive = (t, crv) => {
 };
 
 let inRangeExclusive = (t, crv) => {
-  if(crv instanceof geom.Line || crv instanceof geom.CubicBezier) {
+  if(crv instanceof Line || crv instanceof CubicBezier) {
     return 0<t && t <1;
-  } else if(crv instanceof geom.EllipseArc) {
+  } else if(crv instanceof EllipseArc) {
     return inRangeExclusiveEllipse(t, crv);
   } else {
     console.assert(false);
   }
 };
 
+/**
+ * @ignore
+ */
 export default class Intersection {
 
   /**

@@ -19,14 +19,14 @@
 
 */
 
-/**
- * @namespace geom
- * @memberof! zmath
- */
 
 import classic from './classic'
 import nurbs from './nurbs'
 
+/**
+ * 
+ * @type {{classic: {Curve: Curve, Line: Line, Bezier: Bezier, CubicBezier: CubicBezier, CubicBezierSurface: CubicBezierSurface, CubicBezierSurfacePatch: CubicBezierSurfacePatch, EllipseArc: EllipseArc}, nurbs: {BSplineCurve: BSplineCurve}}}
+ */
 const geom = {
   classic, nurbs
 };

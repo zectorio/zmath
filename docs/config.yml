@@ -1,0 +1,17 @@
+toc:
+  - name: geom
+  - AABB
+  - vec2
+  - Transform
+  - Point
+  - Vector
+  - Point2D
+  - Vector2D
+  - toDeg
+  - toRad
+  - isZero
+  - isEqualFloat
+  - cubeRoot
+  - name: geom.nurbs
+  - BSplineCurve
+  - Line

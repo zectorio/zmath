@@ -21,15 +21,14 @@
 
 import {findSpan, getBasisFunction} from './nurbs'
 
+/**
+ * @param {number} degree
+ * @param {Array.<Point>} cpoints
+ * @param {Array.<number>} knots
+ * @param {Array.<number>} weights
+ */
 export default class BSplineCurve {
 
-  /**
-   *
-   * @param {number} degree
-   * @param {Array.<Point>} cpoints
-   * @param {Array.<number>} knots
-   * @param {Array.<number>} weights
-   */
   constructor(degree, cpoints, knots, weights) {
 
     /**
@@ -76,11 +75,21 @@ export default class BSplineCurve {
   evaluate(t) {
     
   }
-  
+
+  /**
+   * 
+   * @param {number} span
+   * @param {number} t
+   * @returns {Array}
+   */
   evaluateBasis(span, t) {
     return getBasisFunction(this.degree, this.knots, span, t);
   }
-  
+
+  /**
+   * @param {number} t
+   * @returns {number}
+   */
   findSpan(t) {
     return findSpan(this.degree, this.knots, t);
   }

@@ -111,15 +111,12 @@ function interpolateCoons(coons) {
  */
 
 /**
- * @private
+ * @ignore
+ * @param points
+ * @param coons
  */
 class CubicBezierSurface {
 
-  /**
-   *
-   * @param points
-   * @param coons
-   */
   constructor({points,coons}) {
     if(points) {
       this.points = points;
@@ -333,7 +330,7 @@ class CubicBezierSurface {
    * @param {number} u
    */
   splitU(u) {
-    /**
+    /*
                    v0left                              v0right
 
            0      1        2      3             0      1        2      3
@@ -400,7 +397,7 @@ class CubicBezierSurface {
    * @param {number} v
    */
   splitV(v) {
-    /**
+    /*
                    top
 
            0      1        2      3        
@@ -487,7 +484,7 @@ class CubicBezierSurface {
    */
   splitUV(u,v) {
 
-    /**
+    /*
                    v0left                              v0right
 
            0      1        2      3             0      1        2      3

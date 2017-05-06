@@ -19,16 +19,16 @@
 
  */
 
-
 import Curve from './curve'
 import vec2 from '../../vec2'
 import AABB from '../../aabb'
 
+/**
+ * @ignore
+ * @param {Point2D[]} cpoints
+ */
 class Bezier extends Curve {
 
-  /**
-   * @param {Point2D[]} cpoints
-   */
   constructor(cpoints) {
     super();
 

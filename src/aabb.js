@@ -22,12 +22,13 @@
 
 import vec2 from './vec2'
 
+/**
+ * @param {Object} options
+ * @param {Object.number[]} options.min
+ * @param {Object.number[]} options.max
+ */
 class AABB {
 
-  /**
-   * @param {number[]} min
-   * @param {number[]} max
-   */
   constructor({min,max}) {
     this.min = min || [Infinity, Infinity];
     this.max = max || [-Infinity, -Infinity];

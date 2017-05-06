@@ -31,7 +31,6 @@ import {EPSILON} from './constants';
  */
 
 /**
- * @class
  */
 class vec2 {
 

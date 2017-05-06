@@ -20,10 +20,6 @@
  */
 
 /**
- * @module zmath
- */
-
-/**
  * @typedef {Array.<number>} Point - n-dimensional point (typically n=2,3)
  */
 
@@ -36,7 +32,7 @@ import {Transform, Translation, Rotation} from './transform'
 import geom from './geom'
 import AABB from './aabb'
 import {EPSILON} from './constants'
-import Intersection from './intersection'
+import Intersection from './geom/classic/intersection'
 
 /**
  * Convert angle to degrees

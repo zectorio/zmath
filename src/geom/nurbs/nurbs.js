@@ -22,6 +22,7 @@
 import {isEqualFloat} from '../..'
 
 /**
+ * @ignore
  * Compute all n'th degree bernstein polynomials at given parameter value
  * @param {number} n Degree
  * @param {number} u Parameter value
@@ -44,6 +45,7 @@ function bernstein(n, u) {
 }
 
 /**
+ * @ignore
  * Find the index of the knot span in which `u` lies
  * @param {number} p Degree
  * @param {Array.<number>} U Knot vector
@@ -71,6 +73,7 @@ function findSpan(p, U, u) {
 }
 
 /**
+ * @ignore
  * Evaluate basis function values 
  * @param {number} p Degree
  * @param {Array.<number>} U Knot vector

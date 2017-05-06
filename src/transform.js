@@ -20,10 +20,10 @@
  */
 
 
+/**
+ * @param {number[]} [array]
+ */
 class Transform {
-  /**
-   * @param {number[]} [array]
-   */
   constructor(array) {
     if(array) {
       this.fromArray(array);

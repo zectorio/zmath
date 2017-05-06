@@ -20,25 +20,23 @@
  */
 
 
-import vec2 from '../../vec2'
 import Curve from './curve'
-import AABB from '../../aabb'
 import {EPSILON} from '../../constants'
-import {isZero} from '..'
+import {vec2, AABB, isZero} from '../..'
+
 
 /**
+ * @ignore
+ * 
+ * @param {number[]} center - Center of ellipse
+ * @param {number} rx - Radius along X
+ * @param {number} ry - Radius along Y
+ * @param {number} start - Start angle in radians
+ * @param {number} end - End angle in radians
+ * @param {boolean} ccw - Counter Clock Wise
  */
-  
 class EllipseArc extends Curve {
 
-  /**
-   * @param {number[]} center - Center of ellipse
-   * @param {number} rx - Radius along X
-   * @param {number} ry - Radius along Y
-   * @param {number} start - Start angle in radians
-   * @param {number} end - End angle in radians
-   * @param {boolean} ccw - Counter Clock Wise
-   */
   constructor(center, rx, ry, start, end, ccw) {
 
     super();
@@ -155,7 +153,7 @@ class EllipseArc extends Curve {
       });
     } else {
 
-      /**
+      /*
        *                                ---> cw
        *                         S                      E
        *
@@ -281,7 +279,7 @@ class EllipseArc extends Curve {
 
     let ccw;
 
-    /**
+    /*
      *                                ---> cw
      *                                
      * 

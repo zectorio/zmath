@@ -23,7 +23,7 @@
 const EPSILON = 0.001;
 
 /**
- * @private
+ * @ignore
  */
 class CubicBezierSurfacePatch {
 

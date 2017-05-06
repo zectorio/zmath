@@ -23,14 +23,15 @@
 import vec2 from '../../vec2'
 import AABB from '../../aabb'
 import Curve from './curve'
-import {isEqualFloat} from '..'
+import {isEqualFloat} from '../..'
 
+/**
+ * @ignore
+ * @param {Point2D} start
+ * @param {Point2D} end
+ */
 class Line extends Curve {
 
-  /**
-   * @param {Point2D} start
-   * @param {Point2D} end
-   */
   constructor(start, end) {
     super();
     this.start = start;
