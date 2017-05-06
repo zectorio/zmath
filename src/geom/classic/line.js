@@ -20,8 +20,8 @@
  */
 
 
-import vec2 from '../vec2'
-import AABB from '../aabb'
+import vec2 from '../../vec2'
+import AABB from '../../aabb'
 import Curve from './curve'
 import {isEqualFloat} from '..'
 

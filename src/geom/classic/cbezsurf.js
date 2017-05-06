@@ -21,7 +21,7 @@
 
 
 import CubicBezier from './cbezier'
-import vec2 from '../vec2'
+import vec2 from '../../vec2'
 
 const EPSILON = 0.001;
 const MAX_INTERSECTION_PARAM_ITERS = 15;
@@ -110,6 +110,9 @@ function interpolateCoons(coons) {
  *
  */
 
+/**
+ * @private
+ */
 class CubicBezierSurface {
 
   /**

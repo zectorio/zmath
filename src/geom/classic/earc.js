@@ -20,12 +20,15 @@
  */
 
 
-import vec2 from '../vec2'
+import vec2 from '../../vec2'
 import Curve from './curve'
-import AABB from '../aabb'
-import {EPSILON} from '../constants'
+import AABB from '../../aabb'
+import {EPSILON} from '../../constants'
 import {isZero} from '..'
 
+/**
+ */
+  
 class EllipseArc extends Curve {
 
   /**
