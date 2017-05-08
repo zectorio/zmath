@@ -1637,19 +1637,36 @@ function plotNURBSBasis() {
   const PLOT_W = 800;
   const PLOT_H = 600;
   const TOP_MARGIN=50;
+  const BOTTOM_MARGIN=100;
+  const LEFT_MARGIN=20;
   
   for(let Ni of Nip) {
     zc.root().add(new ZCanvas.RenderShape({
       type : 'polyline',
-      points : Ni.map((y,i) => [PLOT_W*(i/RESOLUTION),
+      points : Ni.map((y,i) => [
+        LEFT_MARGIN+PLOT_W*(i/RESOLUTION),
         TOP_MARGIN+PLOT_H-y*PLOT_H])
     }, {stroke:'#000',fill:'none'}));
   }
   
   zc.root().add(new ZCanvas.RenderShape({
     type : 'polyline',
-    points : tess.map(([x,y]) => [x * PLOT_W/10,PLOT_H-y*PLOT_H/10])
+    points : tess.map(([x,y]) => [LEFT_MARGIN+x * PLOT_W/10,PLOT_H-y*PLOT_H/10])
   }, {stroke:'#f00',fill:'none'}));
+  
+  cpoints.forEach(([cx,cy]) => {
+    zc.root().add(new ZCanvas.RenderShape({
+      type : 'circle',
+      r : 3, cx:LEFT_MARGIN+ cx * PLOT_W/10, cy: PLOT_H - cy * PLOT_H/10
+    }, {stroke:'none',fill:'#66f'}));
+  });
+  
+  knots.forEach((knot, idx) => {
+    zc.root().add(new ZCanvas.RenderShape({
+      type : 'circle',
+      r : 3, cx:LEFT_MARGIN+ knot * PLOT_W, cy: TOP_MARGIN+BOTTOM_MARGIN+PLOT_H - 8*idx
+    }, {stroke:'none',fill:'#0f0'}));
+  });
 
   zc.render();
 }
