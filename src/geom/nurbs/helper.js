@@ -100,6 +100,101 @@ function getBasisFunction(p, U, i, u) {
   return N;
 }
 
+/**
+ * Compute non-zero basis functions and their derivatives, upto and including
+ * n'th derivative (n <= p). Output is 2-dimensional array `ders`
+ * @param {number} p Degree
+ * @param {number} u Parameter
+ * @param {number} i Knot span
+ * @param {Array.<number>} U Knot vector
+ * @param {number} n nth derivative
+ * @returns {Array.<Array<number>>} ders ders[k][j] is k'th derivative of
+ *            basic function N(i-p+j,p), where 0<=k<=n and 0<=j<=p
+ */
+function getBasisFunctionDerivatives(p, u, i, U, n) {
+
+  let ders = new Array(n+1);
+  for(let i=0; i<n+1; i++) { ders[i] = new Array(p+1); }
+  let ndu = new Array(p+1);
+  for(let i=0; i<p+1; i++) { ndu[i] = new Array(p+1); }
+  let a = new Array(2);
+  for(let i=0; i<2; i++) { a[i] = new Array(p+1); }
+  let left = [];
+  let right = [];
+
+  for(let j=1; j<=p; j++) {
+    left[j] = u - U[i+1-j];
+    right[j] = U[i+j]-u;
+    let saved = 0.0;
+    for(let r=0; r<j; r++) {
+      // Lower triangle
+      ndu[j][r] = right[r+1]+left[j-r];
+      let temp = ndu[r][j-1]/ndu[j][r];
+      // Upper triangle
+      ndu[r][j] = saved + right[r+1]*temp;
+      saved = left[j-r]*temp;
+    }
+    ndu[j][j] = saved;
+  }
+  
+  for(let j=0; j<=p; j++) { // Load the basis functions
+    ders[0][j] = ndu[j][p];
+  }
+  
+  // This section computes the derivatives (eq 2.9)
+  for(let r=0; r<=p; r++) {
+    let s1=0;
+    let s2=1;
+    // Alternate rows in array a
+    a[0][0] = 1.0;
+    for(let k=1; k<=n; k++) {
+      let d = 0.0;
+      let rk = r-k;
+      let pk = p-k;
+      if(r >= k) {
+        a[s2][0] = a[s1][0]/ndu[pk+1][rk];
+        d = a[s2][0] * ndu[rk][pk];
+      }
+      let j1, j2;
+      if(rk >= -1) {
+        j1 = 1;
+      } else {
+        j1 = -rk;
+      }
+      if(r-1 <= pk) {
+        j2 = k-1;
+      } else {
+        j2 = p-r;
+      }
+      for(let j=j1; j<=j2; j++) {
+        a[s2][j] = (a[s1][j]-a[s1][j-1]) / ndu[pk+1][rk+j];
+        d += a[s2][j] * ndu[rk+j][pk];
+      }
+      if(r <= pk) {
+        a[s2][k] = -a[s1][k-1]/ndu[pk+1][r];
+        d += a[s2][k]*ndu[r][pk];
+      }
+      ders[k][r] = d;
+
+      // Switch rows
+      let temp = s1;
+      s1 = s2;
+      s2 = temp;
+    }
+  }
+
+  // Multiply through by the correct factors (eq 2.9)
+  let r = p;
+  for(let k=1; k<=n; k++) {
+    for(let j=0; j<=p; j++) {
+      ders[k][j] *= r;
+      r *= p-k;
+    }
+  }
+  return ders;
+
+}
+
 export {
   bernstein,
   findSpan,
