@@ -1605,7 +1605,7 @@ function plotNURBSBasis() {
 
   const RESOLUTION=100;
 
-  let cpoints = [[1,0],[2,0],[3,0],[4,2]];
+  let cpoints = [[1,0],[2,0],[3,0],[4,2],[3,5],[3,-4],[6,7]];
   let knots = [0,0,0,0,1/8,5/8,6/8,1,1,1,1];
   let p = 3;
   let m = knots.length-1;
@@ -1621,6 +1621,8 @@ function plotNURBSBasis() {
     }
   }
   
+  let tess = new Array(RESOLUTION+1);
+  
   for(let i=0; i<RESOLUTION+1; i++) {
     let u = i/RESOLUTION;
     let span = bcurve.findSpan(u);
@@ -1628,6 +1630,8 @@ function plotNURBSBasis() {
     for(let j=p; j>=0; j--) {
       Nip[span-j][i] = N[p-j];
     }
+    
+    tess[i] = bcurve.evaluate(u);
   }
   
   const PLOT_W = 800;
@@ -1642,9 +1646,14 @@ function plotNURBSBasis() {
     }, {stroke:'#000',fill:'none'}));
   }
   
+  zc.root().add(new ZCanvas.RenderShape({
+    type : 'polyline',
+    points : tess.map(([x,y]) => [x * PLOT_W/10,PLOT_H-y*PLOT_H/10])
+  }, {stroke:'#f00',fill:'none'}));
 
   zc.render();
 }
+
 
 window.onload = () => {
 
