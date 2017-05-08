@@ -185,13 +185,13 @@ function getBasisFunctionDerivatives(p, u, i, U, n) {
   }
 
   // Multiply through by the correct factors (eq 2.9)
-  // let r = p;
-  // for(let k=1; k<=n; k++) {
-  //   for(let j=0; j<=p; j++) {
-  //     ders[k][j] *= r;
-  //     r *= p-k;
-  //   }
-  // }
+  let r = p;
+  for(let k=1; k<=n; k++) {
+    for(let j=0; j<=p; j++) {
+      ders[k][j] *= r;
+    }
+    r *= p-k;
+  }
   return ders;
 
 }

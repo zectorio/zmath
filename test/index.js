@@ -1683,7 +1683,7 @@ function plotNURBSBasis() {
       type : 'polyline',
       points : Nid.map((y,i) => [
         LEFT_MARGIN+PLOT_W*(i/RESOLUTION),
-        PLOT_H/2-y*PLOT_H/40])
+        PLOT_H/2-y*PLOT_H/100])
     }, {stroke:'#f0f',fill:'none'}));
   }
   
