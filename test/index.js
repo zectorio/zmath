@@ -1654,9 +1654,7 @@ function plotNURBSBasis() {
   const BOTTOM_MARGIN=HEIGHT*0.1;
   const LEFT_MARGIN=WIDTH*0.1;
 
-  let iidx = 0;
   for(let Ni of Nip) {
-    if(iidx++ !== 1) { continue; }
     zc.root().add(new ZCanvas.RenderShape({
       type : 'polyline',
       points : Ni.map((y,i) => [
@@ -1676,9 +1674,7 @@ function plotNURBSBasis() {
     x1:LEFT_MARGIN, y1:PLOT_H/2, x2:LEFT_MARGIN+PLOT_W, y2:PLOT_H/2
   }, {stroke:'#666', strokeDasharray:[3,6]}));
   
-  iidx = 0;
   for(let Nid of basisDers) {
-    if(iidx++ !== 1) { continue; }
     zc.root().add(new ZCanvas.RenderShape({
       type : 'polyline',
       points : Nid.map((y,i) => [
