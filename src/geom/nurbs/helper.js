@@ -117,6 +117,7 @@ function getBasisFunctionDerivatives(p, u, i, U, n) {
   for(let i=0; i<n+1; i++) { ders[i] = new Array(p+1); }
   let ndu = new Array(p+1);
   for(let i=0; i<p+1; i++) { ndu[i] = new Array(p+1); }
+  ndu[0][0] = 1.0;
   let a = new Array(2);
   for(let i=0; i<2; i++) { a[i] = new Array(p+1); }
   let left = [];
@@ -184,13 +185,13 @@ function getBasisFunctionDerivatives(p, u, i, U, n) {
   }
 
   // Multiply through by the correct factors (eq 2.9)
-  let r = p;
-  for(let k=1; k<=n; k++) {
-    for(let j=0; j<=p; j++) {
-      ders[k][j] *= r;
-      r *= p-k;
-    }
-  }
+  // let r = p;
+  // for(let k=1; k<=n; k++) {
+  //   for(let j=0; j<=p; j++) {
+  //     ders[k][j] *= r;
+  //     r *= p-k;
+  //   }
+  // }
   return ders;
 
 }
@@ -198,5 +199,6 @@ function getBasisFunctionDerivatives(p, u, i, U, n) {
 export {
   bernstein,
   findSpan,
-  getBasisFunction
+  getBasisFunction,
+  getBasisFunctionDerivatives
 }

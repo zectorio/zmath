@@ -19,7 +19,9 @@
 
  */
 
-import {findSpan, getBasisFunction} from './helper'
+import {
+  findSpan, getBasisFunction, getBasisFunctionDerivatives
+} from './helper'
 
 /**
  * @param {number} degree
@@ -122,6 +124,17 @@ export default class BSplineCurve {
     }
     console.assert(!isNaN(point[0]) && !isNaN(point[1]));
     return point;
+  }
+
+  /**
+   * Evaluate basis function derivatives upto n'th 
+   * @param <number> span Knot span index
+   * @param <number> n n'th derivative
+   * @param <number> t
+   * @returns {Array.<Array.<number>>}
+   */
+  evaluateBasisDerivatives(span, n, t) {
+    return getBasisFunctionDerivatives(this.degree, t, span, this.knots, n) 
   }
 
   /**

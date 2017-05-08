@@ -1598,8 +1598,8 @@ function testIntersectionsLineCBez() {
 }
 
 function plotNURBSBasis() {
-  let WIDTH=1000;
-  let HEIGHT=800;
+  let WIDTH=window.innerWidth;
+  let HEIGHT=window.innerHeight;
   let zc = new ZCanvas('svg',WIDTH,HEIGHT);
   zdom.add(document.body, zc.getDOMElement());
 
@@ -1612,7 +1612,7 @@ function plotNURBSBasis() {
   let n = m-p-1;
   
   let bcurve = new geom.nurbs.BSplineCurve(3,cpoints,knots);
-  
+
   let Nip = new Array(n+1);
   for(let i=0; i<n+1; i++) {
     Nip[i] = new Array(RESOLUTION+1);
@@ -1622,6 +1622,14 @@ function plotNURBSBasis() {
   }
   
   let tess = new Array(RESOLUTION+1);
+
+  let basisDers = new Array(n+1);
+  for(let i=0; i<n+1; i++) {
+    basisDers[i] = new Array(RESOLUTION+1);
+    for(let j=0; j<RESOLUTION+1; j++) {
+      basisDers[i][j] = 0.0;
+    }
+  }
   
   for(let i=0; i<RESOLUTION+1; i++) {
     let u = i/RESOLUTION;
@@ -1632,15 +1640,23 @@ function plotNURBSBasis() {
     }
     
     tess[i] = bcurve.evaluate(u);
+
+    let Nd = bcurve.evaluateBasisDerivatives(span, 1, u);
+
+    for(let j=p; j>=0; j--) {
+      basisDers[span-j][i] = Nd[1][p-j];
+    }
   }
   
-  const PLOT_W = 800;
-  const PLOT_H = 600;
-  const TOP_MARGIN=50;
-  const BOTTOM_MARGIN=100;
-  const LEFT_MARGIN=20;
-  
+  const PLOT_W = WIDTH*0.8;
+  const PLOT_H = HEIGHT*0.8;
+  const TOP_MARGIN=HEIGHT*0.1;
+  const BOTTOM_MARGIN=HEIGHT*0.1;
+  const LEFT_MARGIN=WIDTH*0.1;
+
+  let iidx = 0;
   for(let Ni of Nip) {
+    if(iidx++ !== 1) { continue; }
     zc.root().add(new ZCanvas.RenderShape({
       type : 'polyline',
       points : Ni.map((y,i) => [
@@ -1653,6 +1669,23 @@ function plotNURBSBasis() {
     type : 'polyline',
     points : tess.map(([x,y]) => [LEFT_MARGIN+x * PLOT_W/10,PLOT_H-y*PLOT_H/10])
   }, {stroke:'#f00',fill:'none'}));
+  
+  // Derivative baseline
+  zc.root().add(new ZCanvas.RenderShape({
+    type : 'line',
+    x1:LEFT_MARGIN, y1:PLOT_H/2, x2:LEFT_MARGIN+PLOT_W, y2:PLOT_H/2
+  }, {stroke:'#666', strokeDasharray:[3,6]}));
+  
+  iidx = 0;
+  for(let Nid of basisDers) {
+    if(iidx++ !== 1) { continue; }
+    zc.root().add(new ZCanvas.RenderShape({
+      type : 'polyline',
+      points : Nid.map((y,i) => [
+        LEFT_MARGIN+PLOT_W*(i/RESOLUTION),
+        PLOT_H/2-y*PLOT_H/40])
+    }, {stroke:'#f0f',fill:'none'}));
+  }
   
   cpoints.forEach(([cx,cy]) => {
     zc.root().add(new ZCanvas.RenderShape({
