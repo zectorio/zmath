@@ -30,8 +30,13 @@ function runNDArrayUnitTests() {
     assert.equal(ndarr.get([0,0,2]), 25);
     assert.notEqual(ndarr.get([0,0,1]), 25);
   });
-  QUnit.test('LUDecompose', assert => {
-    
+  QUnit.test('Fill', assert => {
+    let ndarr = new NDArray(0);
+    ndarr.fill([
+      [1,4,3,4],
+      [3,5,6,7]
+    ]);
+    assert.deepEqual(ndarr.shape, [2,4]);
   });
 }
 

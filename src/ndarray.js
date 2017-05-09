@@ -40,15 +40,17 @@ export default class NDArray {
   }
 
   fill(data) {
+    console.assert(Array.isArray(data));
+    // extract shape of the data from first item at each level
+    this.shape = [];
     let D = data;
-    if(Array.isArray(D)) {
-      
-    } else {
-      
+    while(Array.isArray(D)) {
+      this.shape.push(D.length);
+      D = D[0]; 
     }
-    for(let i=0; i<data.length; i++) {
-      let item = data[i];
-
+    
+    if(this.data.length < this.size()) {
+      this.data = new Float32Array(this.size()); // reallocate
     }
   }
   
