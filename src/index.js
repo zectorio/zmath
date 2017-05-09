@@ -33,6 +33,7 @@ import geom from './geom'
 import AABB from './aabb'
 import {EPSILON} from './constants'
 import Intersection from './geom/classic/intersection'
+import NDArray from './ndarray'
 
 /**
  * Convert angle to degrees
@@ -87,6 +88,7 @@ function cubeRoot(x) {
 
 export {
   vec2,
+  NDArray,
   Transform,
   Translation,
   Rotation,

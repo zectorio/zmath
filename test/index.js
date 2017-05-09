@@ -1,5 +1,5 @@
 
-import {vec2, Transform, Translation, Intersection, geom} from '..';
+import {vec2, Transform, Translation, Intersection, geom, NDArray} from '..';
 import {Kolor} from 'zbits'
 import ZCanvas from 'zcanvas'
 import zdom from 'zdom'
@@ -10,6 +10,27 @@ const cos = Math.cos;
 let Line = geom.classic.Line;
 let CubicBezier = geom.classic.CubicBezier;
 let EllipseArc = geom.classic.EllipseArc;
+
+function runNDArrayUnitTests() {
+  let qunitDiv = zdom.createDiv();
+  zdom.id(qunitDiv,'qunit');
+  zdom.add(document.body, qunitDiv);
+  let qunitFixtureDiv = zdom.createDiv();
+  zdom.id(qunitFixtureDiv,'qunit-fixture');
+  zdom.add(document.body, qunitFixtureDiv);
+  
+  QUnit.test('Check size', assert => {
+    let ndarr = new NDArray([2,3,4]); 
+    ndarr.set([0,0,2], 25);
+    assert.equal(ndarr.size(), 24);
+  });
+  QUnit.test('Set and Get', assert => {
+    let ndarr = new NDArray([2,3,4]);
+    ndarr.set([0,0,2], 25);
+    assert.equal(ndarr.get([0,0,2]), 25);
+    assert.notEqual(ndarr.get([0,0,1]), 25);
+  });
+}
 
 function runUnitTests() {
   let qunitDiv = zdom.createDiv();
@@ -1734,6 +1755,9 @@ window.onload = () => {
       break;
     case '#unittests':
       runUnitTests();
+      break;
+    case '#ndarrunittests':
+      runNDArrayUnitTests();
       break;
   }
   document.querySelector('select').value = choice.substr(1);
