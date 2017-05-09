@@ -38,6 +38,19 @@ export default class NDArray {
       this.data = new Float32Array(0);
     }
   }
+
+  fill(data) {
+    let D = data;
+    if(Array.isArray(D)) {
+      
+    } else {
+      
+    }
+    for(let i=0; i<data.length; i++) {
+      let item = data[i];
+
+    }
+  }
   
   size() {
     return this.data.length;

@@ -30,6 +30,9 @@ function runNDArrayUnitTests() {
     assert.equal(ndarr.get([0,0,2]), 25);
     assert.notEqual(ndarr.get([0,0,1]), 25);
   });
+  QUnit.test('LUDecompose', assert => {
+    
+  });
 }
 
 function runUnitTests() {
