@@ -18,11 +18,14 @@
  along with Zector Math. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 import BSplineCurve from './bcurve'
+import Line from './line'
 
 
 const nurbs = {
-  BSplineCurve
+  BSplineCurve,
+  Line
 };
 
 export default nurbs;

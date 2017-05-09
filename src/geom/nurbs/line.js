@@ -19,18 +19,17 @@
 
 */
  
- import BSplineCurve from './bcurve'
+import BSplineCurve from './bcurve'
 
 
- /**
-  * @param {Point} start
-  * @param {Point} end
-  */
- export default class Line extends BSplineCurve {
+/**
+ * @param {Point} start
+ * @param {Point} end
+ */
+export default class Line extends BSplineCurve {
   
   constructor(start, end) {
-   super();
-   
+    super(1, [start, end], [0,0,1,1]);
   }
    
- }
+}

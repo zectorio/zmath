@@ -1729,6 +1729,35 @@ function plotNURBSBasis() {
   zc.render();
 }
 
+function plotCurvesAsNURBS() {
+  let WIDTH=window.innerWidth;
+  let HEIGHT=window.innerHeight;
+  let zc = new ZCanvas('svg',WIDTH,HEIGHT);
+  zdom.add(document.body, zc.getDOMElement());
+
+  const RESOLUTION=100;
+  const PLOT_W = WIDTH*0.8;
+  const PLOT_H = HEIGHT*0.8;
+  const TOP_MARGIN=HEIGHT*0.1;
+  const BOTTOM_MARGIN=HEIGHT*0.1;
+  const LEFT_MARGIN=WIDTH*0.1;
+  
+  let line = new geom.nurbs.Line([100,100],[300,400]);
+
+  let tess = new Array(RESOLUTION+1);
+  for(let i=0; i<RESOLUTION+1; i++) {
+    let u = i/RESOLUTION;
+
+    tess[i] = line.evaluate(u);
+  }
+  
+  zc.root().add(new ZCanvas.RenderShape({
+    type : 'polyline',
+    points : tess.map(([x,y]) => [LEFT_MARGIN+x ,PLOT_H-y])
+  }, {stroke:'#f00',fill:'none'}));
+  zc.render();
+}
+
 
 window.onload = () => {
 
@@ -1760,6 +1789,9 @@ window.onload = () => {
       break;
     case '#nurbs-basis':
       plotNURBSBasis();
+      break;
+    case '#nurbs-curves':
+      plotCurvesAsNURBS();
       break;
     case '#unittests':
       runUnitTests();
